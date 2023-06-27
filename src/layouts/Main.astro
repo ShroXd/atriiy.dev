@@ -13,7 +13,9 @@ const { pageTitle, pageDesc } = Astro.props;
 <main id="main-content">
   <h1>{pageTitle}</h1>
   <p>{pageDesc}</p>
-  <slot />
+  <div class="mt-12">
+    <slot />
+  </div>
 </main>
 
 <style>
