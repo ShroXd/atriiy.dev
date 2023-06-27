@@ -1,6 +1,6 @@
 ---
 title: "Algorithm Connect! Re: Dive - Graph"
-pubDatetime: 2022-12-10
+pubDatetime: 2022-12-10T13:22:51Z
 # tags: ["algorithm", "tree"]
 draft: false
 description: "A Graph data structure consists of a set of vertices (or nodes) and a set of edges that connect these vertices."

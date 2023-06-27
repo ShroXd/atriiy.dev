@@ -1,6 +1,6 @@
 ---
 title: "Writing and new blog website"
-pubDatetime: 2021-07-30
+pubDatetime: 2021-07-30T13:22:51Z
 # tags: ["diary"]
 draft: false
 description: "Hexo is shit, so I migrate to next.js & vercel"

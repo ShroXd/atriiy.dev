@@ -1,6 +1,6 @@
 ---
 title: "Algorithm Connect! Re: Dive - B Tree"
-pubDatetime: 2022-12-3T03:42:51Z
+pubDatetime: 2022-12-3T14:42:51Z
 # tags: ["algorithm", "tree"]
 draft: false
 description: "A B-tree is a self-balancing tree data structure that maintains sorted data and allows searches, insertions, and deletions in logarithmic time."

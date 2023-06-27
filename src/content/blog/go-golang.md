@@ -1,6 +1,6 @@
 ---
 title: "Go, Golang!"
-pubDatetime: 2021-11-6T03:42:51Z
+pubDatetime: 2021-11-6T14:42:51Z
 # tags: ["programming", "language"]
 draft: false
 description: "Golang always is a good programming language, except error handling and generics"

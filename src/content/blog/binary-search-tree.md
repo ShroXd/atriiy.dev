@@ -1,6 +1,6 @@
 ---
 title: "Algorithm Connect! Re: Dive - Binary Search Tree"
-pubDatetime: 2022-8-24T03:42:51Z
+pubDatetime: 2022-8-24T09:42:51Z
 # tags: ["algorithm", "search"]
 draft: false
 description: "Binary Search Tree is a node-based binary tree data structure, smaller node in the left and larger node in the right"

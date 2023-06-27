@@ -1,6 +1,6 @@
 ---
 title: "Algorithm Connect! Re: Dive - Red Black Tree"
-pubDatetime: 2022-11-8T03:42:51Z
+pubDatetime: 2022-11-8T13:15:51Z
 # tags: ["algorithm", "tree"]
 draft: false
 description: "A Red-Black Tree is a tree that's always trying to keep its cool, but never quite succeeds (since it's constantly balancing itself)."
