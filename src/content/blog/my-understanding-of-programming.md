@@ -1,7 +1,7 @@
 ---
 title: "My understanding of programming"
 pubDatetime: 2021-07-31T12:42:51Z
-# tags: ["programming", "thinking"]
+tags: ["programming", "thinking"]
 draft: false
 description: "The most fantastic thing in programming is finding the connection between pieces of knowledge"
 ---

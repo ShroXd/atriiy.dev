@@ -1,7 +1,7 @@
 ---
 title: "Algorithm Connect! Re: Dive - Merge sort"
 pubDatetime: 2022-7-10T09:42:51Z
-# tags: ["algorithm", "sort"]
+tags: ["algorithm", "sort"]
 draft: false
 description: "Sorting plays a major role in commercial data processing and in modern scientific computing"
 ---

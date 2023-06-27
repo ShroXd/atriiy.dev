@@ -1,7 +1,7 @@
 ---
 title: What we talk about when we talk about assignment
 pubDatetime: 2021-09-01T13:22:51Z
-# tags: ["programming", "thinking"]
+tags: ["programming", "thinking"]
 draft: false
 description: Assignment profoundly changes the way we understand code
 ---

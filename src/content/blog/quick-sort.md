@@ -1,7 +1,7 @@
 ---
 title: "Algorithm Connect! Re: Dive - Quick sort"
 pubDatetime: 2022-7-17T14:42:51Z
-# tags: ["algorithm", "sort"]
+tags: ["algorithm", "sort"]
 draft: false
 description: "Non terrae plus ultra!"
 ---

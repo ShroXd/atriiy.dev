@@ -1,7 +1,7 @@
 ---
 title: "冰封的大海，斧头以及鲍勃·迪伦"
 pubDatetime: 2021-10-10T14:42:51Z
-# tags: ["reading"]
+tags: ["reading"]
 draft: false
 description: "'Ahh, but I was so much older then, I'm younger than that now.'"
 ---

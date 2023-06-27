@@ -1,7 +1,7 @@
 ---
 title: "Algorithm Connect! Re: Dive - Minimum Spanning Tree"
 pubDatetime: 2022-12-16T14:42:51Z
-# tags: ["algorithm", "tree"]
+tags: ["algorithm", "tree"]
 draft: false
 description: "Minimum spanning tree is a subset of the edges of a connected, undirected graph that connects all the vertices together, without any cycles and with the minimum total edge weight."
 ---
