@@ -49,7 +49,7 @@
     sm:scale-110;
   }
   .prose {
-    @apply prose-headings:!mb-3 prose-headings:!text-skin-base 
+    @apply prose-headings:!mb-3 prose-headings:!text-skin-base  text-skin-base
     prose-h3:italic prose-p:!text-skin-base 
     prose-a:!text-skin-base prose-a:!decoration-dashed prose-a:underline-offset-8
     hover:prose-a:text-skin-accent prose-blockquote:!border-l-skin-accent
@@ -68,6 +68,9 @@
     prose-td:border-skin-line prose-img:mx-auto 
     prose-img:!mt-2 prose-img:border-2 
     prose-img:border-skin-line prose-hr:!border-skin-line;
+  }
+  .prose {
+    @apply !text-skin-base;
   }
   .prose a {
     @apply hover:!text-skin-accent;
