@@ -57,7 +57,7 @@ module.exports = {
       transparent: "transparent",
     },
     fontFamily: {
-      sans: ["Hiragino Sans GB"],
+      sans: ['Lato', 'sans-serif'],
     },
   },
   plugins: [require("@tailwindcss/typography")],
