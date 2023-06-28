@@ -9,7 +9,7 @@ export interface Props {
 export default function Card({ href, frontmatter }: Props) {
   const { title, pubDatetime, description } = frontmatter;
   return (
-    <li className="mb-8">
+    <li className="mb-8 box-border rounded-md p-3 transition-colors duration-100 hover:bg-skin-card-hover">
       <a
         href={href}
         className="inline-block w-full font-medium decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"

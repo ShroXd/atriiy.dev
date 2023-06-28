@@ -34,6 +34,7 @@ module.exports = {
         inverted: rgba("--color-text-base"),
         card: rgba("--color-card"),
         "card-muted": rgba("--color-card-muted"),
+        "card-hover": rgba("--color-card-hover"),
       },
     },
     outlineColor: {
