@@ -23,7 +23,9 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header />
   <main id="main-content">
     <section id="hero">
-      <h1>Atriiy</h1>
+      <span class="text-sm font-semibold inline-block mb-6">
+        Hi there, I'm Atriiy, an interest-driven dev.
+      </span>
       <a
         target="_blank"
         href="/rss.xml"
@@ -40,43 +42,21 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         </svg>
       </a>
 
-      <p>
+      <p class="text-sm leading-6">
+        I'm not good at introducing myself not only in reality but also on the
+        web. But even if I can escape, I still have to face it. So, the
+        following is my introduction.
       </p>
-      <p>
-        While the world sleeps, you dream.
+
+      <p class="text-sm leading-6">
+        Dev, using React and TypeScript. Vim fans. Eighteen plus seven years old
+        now, still have hair, wanna learn many things.
       </p>
-      {
-        // only display if at least one social link is enabled
-        socialCount > 0 && (
-          <div class="social-wrapper">
-            <div class="social-links">Social Links:</div>
-            <Socials />
-          </div>
-        )
-      }
+      <p class="text-sm leading-6">Writing, reading, playing video games.</p>
+      <p class="text-sm leading-6">Ok, stop right here.</p>
     </section>
 
     <Hr />
-
-    <!-- {
-      featuredPosts.length > 0 && (
-        <>
-          <section id="featured">
-            <h2>Featured</h2>
-            <ul>
-              {featuredPosts.map(({ data }) => (
-                <Card
-                  href={`/posts/${slugify(data)}`}
-                  frontmatter={data}
-                  secHeading={false}
-                />
-              ))}
-            </ul>
-          </section>
-          <Hr />
-        </>
-      )
-    } -->
 
     <section id="recent-posts">
       <!-- <h2>Recent Posts</h2> -->
@@ -84,12 +64,8 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         {
           sortedPosts.map(
             ({ data }, index) =>
-              index < 4 && (
-                <Card
-                  href={`/posts/${slugify(data)}`}
-                  frontmatter={data}
-                  secHeading={false}
-                />
+              index < 5 && (
+                <Card href={`/posts/${slugify(data)}`} frontmatter={data} />
               )
           )
         }
@@ -119,10 +95,9 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     @apply my-4 inline-block text-3xl text-skin-accent font-bold sm:my-8 sm:text-5xl;
   }
   #hero .rss-link {
-    @apply mb-6;
   }
   #hero .rss-icon {
-    @apply mb-2 h-6 w-6 scale-110 fill-skin-accent sm:mb-3 sm:scale-125;
+    @apply mb-1 h-6 w-6 fill-skin-accent;
   }
   #hero p {
     @apply my-2;
@@ -137,7 +112,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   /* ===== Featured & Recent Posts Sections ===== */
   #featured,
   #recent-posts {
-    @apply pb-6 pt-12;
+    @apply pb-6 pt-6;
   }
   #featured h2,
   #recent-posts h2 {

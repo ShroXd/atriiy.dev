@@ -6,7 +6,11 @@
   :root,
   html[data-theme="light"] {
     --color-fill: 251, 254, 251;
-    --color-text-base: 40, 39, 40;
+    --color-text-base: 0, 0, 0; /* 更新为黑色 */
+    --color-text-primary: 0, 0, 0, 1; /* 新增，用于主标题 */
+    --color-text-secondary: 0, 0, 0, 0.87; /* 新增，用于副标题 */
+    --color-text-body: 0, 0, 0, 0.6; /* 新增，用于正文 */
+    --color-text-muted: 0, 0, 0, 0.38; /* 新增，用于辅助文字 */
     --color-accent: 40, 39, 40;
     --color-card: 230, 230, 230;
     --color-card-muted: 205, 205, 205;
@@ -14,7 +18,11 @@
   }
   html[data-theme="dark"] {
     --color-fill: 29, 29, 31;
-    --color-text-base: 187, 187, 187;
+    --color-text-base: 255, 255, 255; /* 更新为白色 */
+    --color-text-primary: 255, 255, 255, 1; /* 新增，用于主标题 */
+    --color-text-secondary: 255, 255, 255, 0.87; /* 新增，用于副标题 */
+    --color-text-body: 255, 255, 255, 0.7; /* 新增，用于正文 */
+    --color-text-muted: 255, 255, 255, 0.5; /* 新增，用于辅助文字 */
     --color-accent: 245, 245, 247;
     --color-card: 52, 63, 96;
     --color-card-muted: 138, 51, 2;
@@ -29,7 +37,7 @@
     display: block;
   }
   body {
-    @apply flex min-h-screen flex-col bg-skin-fill font-mono text-skin-base 
+    @apply flex flex-col bg-skin-fill font-sans text-skin-base 
     selection:bg-skin-accent selection:bg-opacity-70 selection:text-skin-inverted;
   }
   section,

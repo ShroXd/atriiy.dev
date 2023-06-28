@@ -57,9 +57,8 @@ module.exports = {
       transparent: "transparent",
     },
     fontFamily: {
-      mono: ["IBM Plex Mono", "monospace"],
+      sans: ["Hiragino Sans GB"],
     },
-    // },
   },
   plugins: [require("@tailwindcss/typography")],
 };
