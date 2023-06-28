@@ -1,10 +1,5 @@
-function withOpacity(variableName) {
-  return ({ opacityValue }) => {
-    if (opacityValue !== undefined) {
-      return `rgba(var(${variableName}), ${opacityValue})`;
-    }
-    return `rgb(var(${variableName}))`;
-  };
+function rgba(variableName) {
+  return `rgb(var(${variableName}))`;
 }
 
 /** @type {import('tailwindcss').Config} */
@@ -23,36 +18,40 @@ module.exports = {
     // extend: {
     textColor: {
       skin: {
-        base: withOpacity("--color-text-base"),
-        accent: withOpacity("--color-accent"),
-        inverted: withOpacity("--color-fill"),
+        base: rgba("--color-text-base"),
+        primary: rgba("--color-text-primary"),  // 新增，对应主标题
+        secondary: rgba("--color-text-secondary"),  // 新增，对应副标题
+        body: rgba("--color-text-body"),  // 新增，对应正文
+        muted: rgba("--color-text-muted"),  // 新增，对应辅助文字
+        accent: rgba("--color-accent"),
+        inverted: rgba("--color-fill"),
       },
     },
     backgroundColor: {
       skin: {
-        fill: withOpacity("--color-fill"),
-        accent: withOpacity("--color-accent"),
-        inverted: withOpacity("--color-text-base"),
-        card: withOpacity("--color-card"),
-        "card-muted": withOpacity("--color-card-muted"),
+        fill: rgba("--color-fill"),
+        accent: rgba("--color-accent"),
+        inverted: rgba("--color-text-base"),
+        card: rgba("--color-card"),
+        "card-muted": rgba("--color-card-muted"),
       },
     },
     outlineColor: {
       skin: {
-        fill: withOpacity("--color-accent"),
+        fill: rgba("--color-accent"),
       },
     },
     borderColor: {
       skin: {
-        line: withOpacity("--color-border"),
-        fill: withOpacity("--color-text-base"),
-        accent: withOpacity("--color-accent"),
+        line: rgba("--color-border"),
+        fill: rgba("--color-text-base"),
+        accent: rgba("--color-accent"),
       },
     },
     fill: {
       skin: {
-        base: withOpacity("--color-text-base"),
-        accent: withOpacity("--color-accent"),
+        base: rgba("--color-text-base"),
+        accent: rgba("--color-accent"),
       },
       transparent: "transparent",
     },

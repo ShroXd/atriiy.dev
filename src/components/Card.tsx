@@ -12,14 +12,19 @@ export default function Card({ href, frontmatter }: Props) {
     <li className="mb-8">
       <a
         href={href}
-        className="inline-block font-medium text-skin-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
+        className="inline-block w-full font-medium decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
       >
-        <h3 className="inline-block text-base font-medium text-skin-base decoration-dashed transition duration-500 hover:text-skin-accent">
-          {title}
-        </h3>
+        <div className="flex items-baseline justify-between">
+          <h3 className="inline-block text-lg font-medium text-skin-secondary decoration-dashed">
+            {title}
+          </h3>
+          <Datetime
+            className="shrink-0 text-sm text-skin-muted"
+            datetime={pubDatetime}
+          />
+        </div>
       </a>
-      <p className="mt-1 text-sm text-skin-base opacity-60">{description}</p>
-      <Datetime className="text-sm opacity-60" datetime={pubDatetime} />
+      <p className="mt-1 text-sm text-skin-body">{description}</p>
     </li>
   );
 }
