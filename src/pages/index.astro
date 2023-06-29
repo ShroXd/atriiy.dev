@@ -92,12 +92,12 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     @apply pb-6 pt-8;
   }
   #hero h1 {
-    @apply my-4 inline-block text-3xl text-skin-accent font-bold sm:my-8 sm:text-5xl;
+    @apply my-4 inline-block text-3xl text-skin-accent font-bold;
   }
   #hero .rss-link {
   }
   #hero .rss-icon {
-    @apply mb-1 h-6 w-6 fill-skin-accent;
+    @apply mb-1 h-6 w-6 fill-skin-primary transition-colors duration-300 hover:fill-skin-muted;
   }
   #hero p {
     @apply text-base leading-6 text-skin-secondary my-2;

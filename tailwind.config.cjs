@@ -53,6 +53,8 @@ module.exports = {
       skin: {
         base: rgba("--color-text-base"),
         accent: rgba("--color-accent"),
+        primary: rgba("--color-text-primary"),
+        muted: rgba("--color-text-muted"),
       },
       transparent: "transparent",
     },
