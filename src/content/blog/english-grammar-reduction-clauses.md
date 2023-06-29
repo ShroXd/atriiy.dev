@@ -1,7 +1,6 @@
 ---
 title: "旋元佑文法笔记——减化子句"
 pubDatetime: 2022-10-28T13:15:51Z
-# lastmod: "2022-10-28"
 tags: ["english", "grammar"]
 draft: false
 description: ""
