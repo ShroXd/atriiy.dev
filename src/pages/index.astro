@@ -23,7 +23,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header />
   <main id="main-content">
     <section id="hero">
-      <span class="text-sm font-semibold inline-block mb-6">
+      <span class="text-2xl font-semibold inline-block mb-6">
         Hi there, I'm Atriiy, an interest-driven dev.
       </span>
       <a
@@ -42,20 +42,18 @@ const socialCount = SOCIALS.filter(social => social.active).length;
         </svg>
       </a>
 
-      <p class="text-sm leading-6 text-skin-body">
+      <p>
         I'm not good at introducing myself not only in reality but also on the
         web. But even if I can escape, I still have to face it. So, the
         following is my introduction.
       </p>
 
-      <p class="text-sm leading-6 text-skin-body">
+      <p>
         Dev, using React and TypeScript. Vim fans. Eighteen plus seven years old
         now, still have hair, wanna learn many things.
       </p>
-      <p class="text-sm leading-6 text-skin-body">
-        Writing, reading, playing video games.
-      </p>
-      <p class="text-sm leading-6 text-skin-body">Ok, stop right here.</p>
+      <p>Writing, reading, playing video games.</p>
+      <p>Ok, stop right here.</p>
     </section>
 
     <Hr />
@@ -102,7 +100,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     @apply mb-1 h-6 w-6 fill-skin-accent;
   }
   #hero p {
-    @apply my-2;
+    @apply text-base leading-6 text-skin-secondary my-2;
   }
   .social-wrapper {
     @apply mt-4 flex flex-col sm:flex-row sm:items-center;

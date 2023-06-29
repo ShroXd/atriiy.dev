@@ -1,5 +1,5 @@
 ---
-title: "system's bizarre adventure - reliable, scalable, and maintainable applications"
+title: "System's bizarre adventure - reliable, scalable, and maintainable applications"
 pubDatetime: 2023-01-03T04:22:51Z
 tags: ["system architecture"]
 draft: false
