@@ -20,7 +20,7 @@ This article will introduce a way to implement the weighted graph first. We impl
 
 # Weighted graph
 
-Recalling the fundamental knowledge about the graph in [Algorithm Connect! Re: Dive - Graph](https://www.atriiy.com/blogs/graph), we showed how to implement the weighted graph. This time we will use Kotlin's excellent syntax to finish this work.
+Recalling the fundamental knowledge about the graph in [Algorithm Connect! Re: Dive - Graph](https://www.atriiy.dev/posts/algorithm-connect-re-dive---graph), we showed how to implement the weighted graph. This time we will use Kotlin's excellent syntax to finish this work.
 
 The first task is to define `Edge` class. The edge is a line to connect two vertices in a graph. Therefore, the best data structure to express this logic is `Pair`. The following is the code with comments.
 
