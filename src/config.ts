@@ -4,7 +4,7 @@ export const SITE: Site = {
   website: "https://atriiy.com/",
   author: "Atriiy",
   desc: "While the world sleeps, you dream.",
-  title: "HOMO",
+  title: "Konmakan",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerPage: 10,
