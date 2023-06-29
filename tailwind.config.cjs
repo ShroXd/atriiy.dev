@@ -57,7 +57,7 @@ module.exports = {
       transparent: "transparent",
     },
     fontFamily: {
-      sans: ['Lato', 'sans-serif'],
+      round: ['Raleway', 'sans-serif']
     },
   },
   plugins: [require("@tailwindcss/typography")],
