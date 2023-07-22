@@ -50,8 +50,8 @@ devDependencies:
     specifier: ^2.0.0
     version: 2.0.0
   '@astrojs/tailwind':
-    specifier: ^3.1.2
-    version: 3.1.2(astro@2.4.5)(tailwindcss@3.3.2)(ts-node@10.9.1)
+    specifier: ^4.0.0
+    version: 4.0.0(astro@2.4.5)(tailwindcss@3.3.2)(ts-node@10.9.1)
   '@divriots/jampack':
     specifier: ^0.13.0
     version: 0.13.0
@@ -203,13 +203,12 @@ packages:
       zod: 3.21.4
     dev: true
 
-  /@astrojs/tailwind@3.1.2(astro@2.4.5)(tailwindcss@3.3.2)(ts-node@10.9.1):
-    resolution: {integrity: sha512-KyZ84WExLRU/TRIQm09ce+ND/0UG9AK9+7k/gjCbxuKScc/RieZ73oh4MkoEFrN/9OToMklvt+wmkAt3+u/ubQ==}
+  /@astrojs/tailwind@4.0.0(astro@2.4.5)(tailwindcss@3.3.2)(ts-node@10.9.1):
+    resolution: {integrity: sha512-HmCAXFFes7MUBt5ihdfH1goa8QyGkHejIpz6Z4XBKK9VNYY9G2E3brCn8+pNn5zAOzcwl3FYcuH2AiOa/NGoMQ==}
     peerDependencies:
-      astro: ^2.3.3
+      astro: ^2.6.5
       tailwindcss: ^3.0.24
     dependencies:
-      '@proload/core': 0.3.3
       astro: 2.4.5(@types/node@20.3.2)
       autoprefixer: 10.4.14(postcss@8.4.24)
       postcss: 8.4.24
