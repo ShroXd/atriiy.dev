@@ -80,8 +80,8 @@ devDependencies:
     specifier: ^8.40.0
     version: 8.40.0
   eslint-plugin-astro:
-    specifier: ^0.28.0
-    version: 0.28.0(eslint@8.40.0)
+    specifier: ^0.29.0
+    version: 0.29.0(eslint@8.40.0)
   husky:
     specifier: ^8.0.3
     version: 8.0.3
@@ -1519,22 +1519,6 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /astro-eslint-parser@0.14.0:
-    resolution: {integrity: sha512-3F8l1h7+5MNxzDg1cSQxEloalG7fj64K6vOERChUVG7RLnAzSoafADnPQlU8DpMM3WRNfRHSC4NwUCORk/aPrA==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    dependencies:
-      '@astrojs/compiler': 1.6.1
-      '@typescript-eslint/scope-manager': 5.60.1
-      '@typescript-eslint/types': 5.60.1
-      astrojs-compiler-sync: 0.3.3(@astrojs/compiler@1.6.1)
-      debug: 4.3.4
-      eslint-visitor-keys: 3.4.1
-      espree: 9.5.2
-      semver: 7.5.3
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /astro-eslint-parser@0.15.0:
     resolution: {integrity: sha512-iC3VvAS/o6TX92Frwp5Yht/AO3a2tQhCnOe9CdbiICwy+ZYTH/ZOiBxeXI2I5qE1YlbtP2wvBLr+SCgwOAEZvg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -1622,16 +1606,6 @@ packages:
       - sugarss
       - supports-color
       - terser
-
-  /astrojs-compiler-sync@0.3.3(@astrojs/compiler@1.6.1):
-    resolution: {integrity: sha512-LbhchWgsvjvRBb5n5ez8/Q/f9ZKViuox27VxMDOdTUm8MRv9U7phzOiLue5KluqTmC0z1LId4gY2SekvoDrkuw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      '@astrojs/compiler': '>=0.27.0'
-    dependencies:
-      '@astrojs/compiler': 1.6.1
-      synckit: 0.8.5
-    dev: true
 
   /astrojs-compiler-sync@0.3.3(@astrojs/compiler@2.0.0):
     resolution: {integrity: sha512-LbhchWgsvjvRBb5n5ez8/Q/f9ZKViuox27VxMDOdTUm8MRv9U7phzOiLue5KluqTmC0z1LId4gY2SekvoDrkuw==}
@@ -2418,8 +2392,8 @@ packages:
     resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
     engines: {node: '>=12'}
 
-  /eslint-plugin-astro@0.28.0(eslint@8.40.0):
-    resolution: {integrity: sha512-fZ3B93nXLSXMmEYSAnHkDRBKDbUFuIkWj5CoKE4fxjPnE/EZEHu6zxtX2UJZeclJKu33Uf2mWdeCJKFufyracg==}
+  /eslint-plugin-astro@0.29.0(eslint@8.40.0):
+    resolution: {integrity: sha512-JFgonlwmDXPorv7+HLecpHeUF3EzGIxIFwgBueaCrTN7PYPjPeoGVtObJzYSkOtBj1qvagghWRD/qETZdLMDHw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       eslint: '>=7.0.0'
@@ -2427,7 +2401,7 @@ packages:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.40.0)
       '@jridgewell/sourcemap-codec': 1.4.15
       '@typescript-eslint/types': 5.60.1
-      astro-eslint-parser: 0.14.0
+      astro-eslint-parser: 0.15.0
       eslint: 8.40.0
       postcss: 8.4.24
       postcss-selector-parser: 6.0.13
