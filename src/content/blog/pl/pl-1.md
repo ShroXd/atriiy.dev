@@ -32,26 +32,26 @@ In this blog series, we'll concentrate on semantics and idioms. While AI tools l
 
 FP (functional programming) and OOP (object-oriented programming) are prealent programming paradigms. Neither is a one-size-fits-all solution. They're employed in distinct scenarios. Let's illustrate this with an example.
 
-Sppose we will design a programming language for the planimetry. In our PL, we have 4 basic data structures:
+Suppsoe we are designing a programming language for planimetry. In this language, we have four funcdamental data structures:
 
 - NoPoint
 - Point
 - Line
 - LineSegment
 
-For these data structures, we offers some built-in functions for developing program based on them.
+We provide built-in functions for these structures to facilitate program development:
 
 - Simplify: return the simplified shape of given shape
 - Intersect: return the intersection of two given shape
 - Shift: move the given shape a given distence
 
-To make the requirements clearly, we can use the following table to illustrate them.
+To clarify the requirements, the following table illustrate them.
 
 ![Our planimetry PL](https://raw.githubusercontent.com/ShroXd/img-hosting/main/blog/2023-10-23-7wmRZu.png)
 
-If we are using the functional programming language, it would pretty simple to implement and extend our PL _in column_. Here is the pseudo-code.
+Using a functional programming language, it becomes straightforward to implement and expand our PL in a columnar format. Below is the pseudo-code.
 
-There's something worth mentioning, although we use `is_x` in the following PL, but in a static functional programming, we have better feature to finish this work, which is the pattern matching. We will explain the details of it in the future.
+It's important to note that while we utilize `is_x` in the upcoming PL, static functional programming offers a superior feature for this task: pattern matching. We'll delve into its details in future discussions.
 
 ```python
 def simplify(shape):
@@ -62,7 +62,7 @@ def simplify(shape):
     # ...
 ```
 
-And if we want to add a new function _spin_ accepting a shape and angle, returnning the spinned shape. It would be a easy work. Because we can add that function directly without changing any existing code.
+If we wish to introcude a new function _spin_, that accepts a shape and an angle and returns the rotated shape, it would be straightforward. This is because we can incorporate the function without altering any existing code.
 
 ```python
 def spin(shape):
@@ -73,7 +73,7 @@ def spin(shape):
     # ...
 ```
 
-But if we want to add a new shape _square_ and let all of our functions support this new shape, it would be pretty painful. Because we need to change all functions in our program.
+However, introducing a new shape, square, and ensuring all our functions accommodate this addition would be quite challenging. This is because it necessitates modifications to every function in our program.
 
 ```python
 type Square
@@ -91,7 +91,7 @@ def intersect(shape):
 # ...
 ```
 
-In contrast, OOP is complete opposite. It can implement and extend the program in rows easily but hard to do the same in columns.
+In contrast, Object-Oriented Programming (OOP) is the complete opposite. While it facilitates implementing and extending the program row-wise, it struggles to achieve the same column-wise.
 
 ```python
 class NoPoint:
@@ -196,12 +196,12 @@ When we assign the returing function from `fnBuilder` to `fn`, we not only assig
 
 ### High order function
 
-Based on the lexical scope and closures, we can use a powerful idiom in the functional programming: the high order function. It is a concept refers to functions that operate on other functions. Specifically, a high-order function does at least one of the following:
+Drawing from the principles of lexical scope and closures, functional programming introduces a powerful idiom: the high-order function. This concept pertains to functions that act upon other functions. Specifically, a high-order function fulfills at least one of the following criteria:
 
 1. Takes one or more functions as arguments
 2. Returns a function
 
-This idiom allows greater abstraction and can lead to more concise and expressive code. To describe this, let's suppose a requirements. We have a integer array and the requirement is to minus 10 to each number in the given array. If we don't know the high-order function, we may use a simple `for` loop to finish this work.
+This idiom facilitates higher abstraction, resulting in more succinct and expressive code. To illustrate, consider a scenario where we have an array of integers and the task is to subtract 10 from each number in the array. Without the knowledge of high-order functions, one might typically resort to a basic `for` loop to achieve this.
 
 ```python
 nums = [1, 2, 3]
@@ -211,7 +211,7 @@ for num in nums:
     doubled.append(nums * 10)    # 1
 ```
 
-This is correct, but the problem is that we put the logic for **iterate** the given array and the logic for **processing** the elements from the array at the same place. It makes the development in the future difficult. Thus, a mroe common solution is to use the `map` and `lambda` to decouple the logic.
+Indeed, but the challenge arises when we intertwine the logic for iterating over the array with the logic for processing its elements. This conflation can complicate future development. A more refined approach is to leverage map and lambda functions, which effectively decouple these logics.
 
 ```python
 doubled = list(map(lambda num: num * 2, numbers))
@@ -230,7 +230,7 @@ Because of using high order function, it's pretty easy to understand the logic.
 
 #### Combining functions
 
-In the real program, we usually need to program with lots of functions. To reuse the existing code and create robust program, it's useful to create new functions that are just combinations of other functions. Here is a example of `compose`.
+In practical programming, we often work with numerous functions. To maximize code reusability and build robust applications, it's beneficial to craft new functions by combining existing ones. Let's explore this through the example of compose.
 
 ```javascript
 const compose = (f, g) => x => f(g(x));
@@ -252,7 +252,7 @@ const pipeline =
 const incrementThenDouble = pipeline(increment, double);
 ```
 
-Of course, because the weak supporting for high order function in JavaScript, it's more common to use an array to implement this pattern. A good example is the middleware feature of `Koa`. Here is the [source code](https://github.com/koajs/koa/blob/dbf4b8f41286befd53dfd802740f2021441435bf/lib/application.js#L12).
+Certainly. Due to JavaScript's limited support for high-order functions, it's more typical to use arrays to implement this pattern. A prime example is the middleware feature in Koa. You can refer to the [source code](https://github.com/koajs/koa/blob/dbf4b8f41286befd53dfd802740f2021441435bf/lib/application.js#L12) for a deeper understanding.
 
 ```javascript
 middleware = []
