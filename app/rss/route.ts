@@ -1,5 +1,5 @@
-import { baseUrl } from 'app/sitemap'
 import { getBlogPosts } from 'app/blog/utils'
+import { baseUrl } from 'app/sitemap'
 
 export async function GET() {
   let allBlogs = await getBlogPosts()
@@ -12,7 +12,7 @@ export async function GET() {
       return 1
     })
     .map(
-      (post) =>
+      post =>
         `<item>
           <title>${post.metadata.title}</title>
           <link>${baseUrl}/blog/${post.slug}</link>

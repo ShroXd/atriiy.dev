@@ -1,8 +1,9 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import { highlight } from 'sugar-high'
 import React from 'react'
+
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import Image from 'next/image'
+import Link from 'next/link'
+import { highlight } from 'sugar-high'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -41,11 +42,11 @@ function CustomLink(props) {
     return <a {...props} />
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />
+  return <a target='_blank' rel='noopener noreferrer' {...props} />
 }
 
 function RoundedImage(props) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />
+  return <Image alt={props.alt} className='rounded-lg' {...props} />
 }
 
 function Code({ children, ...props }) {

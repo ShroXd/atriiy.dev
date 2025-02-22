@@ -1,0 +1,9 @@
+.next
+out
+build
+dist
+
+node_modules
+
+.gitignore
+README.md
