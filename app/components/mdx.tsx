@@ -1,9 +1,11 @@
 import React from 'react'
-
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
 import Link from 'next/link'
 import { highlight } from 'sugar-high'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -16,7 +18,6 @@ function Table({ data }) {
       ))}
     </tr>
   ))
-
   return (
     <table>
       <thead>
@@ -29,7 +30,6 @@ function Table({ data }) {
 
 function CustomLink(props) {
   let href = props.href
-
   if (href.startsWith('/')) {
     return (
       <Link href={href} {...props}>
@@ -37,11 +37,9 @@ function CustomLink(props) {
       </Link>
     )
   }
-
   if (href.startsWith('#')) {
     return <a {...props} />
   }
-
   return <a target='_blank' rel='noopener noreferrer' {...props} />
 }
 
@@ -81,9 +79,7 @@ function createHeading(level) {
       children
     )
   }
-
   Heading.displayName = `Heading${level}`
-
   return Heading
 }
 
@@ -101,9 +97,19 @@ let components = {
 }
 
 export function CustomMDX(props) {
+  const options = {
+    mdxOptions: {
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex],
+      ...props.options?.mdxOptions
+    },
+    ...props.options
+  }
+
   return (
     <MDXRemote
       {...props}
+      options={options}
       components={{ ...components, ...(props.components || {}) }}
     />
   )
