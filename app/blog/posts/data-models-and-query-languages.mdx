@@ -1,0 +1,271 @@
+---
+title: 'Oh My Database - Data Models and Query Languages'
+publishedAt: 2023-07-21
+tags: ['database']
+draft: false
+description: '"The limits of my language mean the limits of my world."'
+---
+
+## Data Model
+
+To some extent, the design of the data model determines the design of the software. It expresses how we think about the problem that we are solving. The developers build the system by layering one data model on top of another.
+
+This approach comes from the most important idea in software engineering: hierarchical thinking. The essence of this approach lies in constructing the upper layer based on the lower layer, while hiding the complexity of the lower layer.
+
+Nowadays, there are three models widely used: the **relational model**, the **document model**, and the **graph model**. Each of them has its respective domain. Theoretically speaking, one model can be implemented using another model, but it always results in complex code and poor performance. Therefore, it’s important to master the essence of different models before making decisions about the system architecture.
+
+## Relational Model
+
+The relational model is the primary data model in use today. It’s derived from the relational model created by E. F. Codd in the 1960s at IBM. Since then, it has become the dominant choice for **storing structured data**.
+
+The central idea of the relational model is the concept of a **relation**. The data is organized into _relations_ (called _tables_ in SQL), where each relation is an unordered collection of _tuples_ (_rows_ in SQL).
+
+### Translation layer
+
+Most applications today are developed by using object-oriented or functional programming language. The way we manipulate the data in the programming language is completely different from the way we store it in the relational tables. Therefore, it’s necessary to implement a translation layer between the data in application code and the database model of tables, rows, and columns.
+
+Nowadays, developers always use the object-relational mapping (ORM) frameworks like ActiveRecord and Hibernate to reduce the boilerplate code in the translation layer. For all this, this cannot completely hide the differences between the two models.
+
+### Data Relationships
+
+Since the relational model focus on the relationship between different sets of data or data entities, it’s important to know some common types of data relationships.
+
+1. One-to-one relationship (1:1). In the one-to-one relationship, _each_ record in one dataset is associated with _exactly one_ record in another dataset. For example, in a database of students, each student has a unique ID, and the ID is linked to a single record in the student personal information table.
+2. One-to-many relationship (1:N). In the one-to-many relationship, _each_ record in the dataset is associated with _many_ record in another dataset. For example, in a database of customers and their orders, each customer can have multiple orders associated with their unique customer ID.
+3. Many-to-many relationship (N:N). In the many-to-many relationship, _multiple_ records in the dataset is associated with _multiple_ records in another dataset. This relationship is typically implemented using an intermediate or junction table. For example, in a database of students and courses. Each student can enroll in multiples courses, and each course can have multiple students enrolled.
+
+In addition to these three relationships, there are also another relationships like hierarchical relationship and associative relationship etc. But in these section, we will only focus on three relationships above because they are often involved in day-to-day development.
+
+Additionally, in relational databases, it’s normal to refer to rows in other tables by ID because joins are easy. By contrast, the document databases don’t need join for one-to-many tree structures.
+
+But it doesn’t mean the document databases can be the default choice in the system architecture design. In fact, as development process unfolded, data has a tendency of becoming more interconnected. Document databases always provide poor supporting of the join, which may impede adding new features.
+
+### Query language
+
+It’s common to use SQL as the query language in the application based on relational database. But before introducing the SQL, it’s important to discuss _declarative_ query language and _imperative_ query language.
+
+#### Declarative & imperative
+
+In many programming language, we always use the imperative way to get the data.
+
+```python
+def getSharks():
+    sharks = []
+    for animal in animals:
+        if animal.family == "Sharks":
+            sharks.append(animal)
+
+    return sharks
+```
+
+As you can see, we write the logic for getting sharks from animal list in the code. Whenever calling this function, the computer runs each statement and return the result to us. We can control all details of code if we use the imperative way to get the data, but once we want to optimize the implementation or performance, we need to change the code. These changes may even affect the application’s code.
+
+Another way it using the _declarative_ query language. In such pattern, all we need to do is specify the pattern of the data we want: conditions, quantity. As well as the way of transforming the data: sorted, grouped, and aggregated.
+
+A widely used declarative query language is SQL. For example, we can rewrite the logic above via the SQL way.
+
+```sql
+SELECT * FROM animals WHERE family = 'Sharks';
+```
+
+As you can see, the declarative query language is attractive because it’s concise and easier to work. It hides the complexity of the database engine, which is convenient for the database to optimize the performance without requiring any changes to queries.
+
+Another advantage of declarative query is it supports parallel execution easily. Because we don’t introduce any details in the declarative query language, thus the database engine can run the SQL parallel on multiple machines, which can improve the performance significantly.
+
+#### SQL
+
+SQL (Structured Query Language) is a programming language used by nearly all relational database to query, manipulate, and define data, and to provide control over security and database transactions.
+
+A SQL is structured by _keywords_, _expressions_, _clauses_, and _statements_:
+
+1. Keywords: these are predefined words that are used in SQL to perform a certain operations. For example, `SELECT`, `FROM`, `WHERE`, `GROUP BY`, etc.
+2. Expressions: these are combinations of symbols and operators that the DBMS evaluates to a particular value. They can be used in `SELECT`, `WHERE`, and `ORDER BY` clauses.
+3. Clauses: clauses are components of queries and statements in SQL. For example, `WHERE`, `FROM`, `ORDER BY`, etc.
+4. Statements: statements are the combination of keywords, expressions, and clauses that make full command to execute a specific task.
+
+We can combine multiple clauses, potentially involving several tables.
+
+```sql
+SELECT Employees.Name, Departments.DepartmentName
+FROM Employees
+JOIN Departments ON Employees.DepartmentID = Departments.DepartmentID
+WHERE Employees.Salary > 50000
+ORDER BY Departments.DepartmentName, Employees.Name;
+```
+
+## Document Model
+
+The relational model is widely used in different applications since its good support for join, which gives devs ability to do one-to-many relationship easily. But in some system, the data has a document-like structure. It looks like a tree, whose nodes have one-to-many relationships with other nodes and we always load entire tree at once. In this case, it would be a good idea to use document model in our application.
+
+So, what is the document model? A document model is a record in a document database. It stores information about one object and any of its related metadata. Here is an example of MongoDB:
+
+```json
+{
+  "_id": 1,
+  "first_name": "Donna",
+  "likes": ["video game", "running"],
+  "businesses": [
+    {
+      "name": "Castle Realty",
+      "status": "Thriving",
+      "date_founded": {
+        "$date": "2013-11-21T04:00:00Z"
+      }
+    }
+  ]
+}
+```
+
+As you can see, the document is a self-contained data entry containing everything needed to understand its meaning, similar to documents used in the real world.
+
+### Schema flexibility
+
+A significant advantage of document model is the flexible schema. It means devs can add arbitrary key-value pairs into the document without any data migration. But it also means there is no any guarantees provided by database that what files the documents may contains.
+
+The document databases provides _schema-on-read_ for the data consumer, which means the structure of data is implicit and only interpreted when the data is read. On the contrary, the relational model provides _schema-on-write_ pattern, which means the schema is explicit and the database ensures all data conforms to it.
+
+If we make an analogy with type checking, the schema-on-read is more like the dynamic (runtime) type checking and the schema-on-write is more like the the static (compile-time) type checking.
+
+The difference on the schema pattern makes the way to do the data format updating significantly different. Suppose we have a table storing the information of students, and we want to store first name and last name separately instead of storing the full name directly. In a document database model, we have add the following logic in our application to handle the edge case:
+
+```python
+if student and student.name and not sutdent.first_name:
+    student.first_name = student.name.split(" ")[0]
+```
+
+This can update the data format in database when we read the data.
+
+On the other hand, in the relational model, the schema will be checked before writing into the database. Thus we should do a data migration before working with the new schema.
+
+```sql
+alter table users add column first_name text
+update users set first_name = split_part(name, ' ', 1)
+```
+
+Most relational databases execute the `alter table` in a few milliseconds. But MySQL copies the entire table on `alter table`, which results in significant downtime. In the modern application, it’s unexpected.
+
+At the same time, updating value also spend lots of time. Because the database engine will scan every rows and update the value, the time complexity is $O(n)$. This process becomes particularly costly when working with large tables.
+
+If the records in the database don’t have the same structure for some reason, it would be better to use the document model. It always occurs when external data need to be used and stored in our database. But if we expect the data has the same structure, we should use the relational model.
+
+### Data locality
+
+In document model, the data always stored as a single continuous string and encoded as JSON, XML, or BSON etc. Therefore, if your application usually needs to load entire document at the same time, using the document database model would give you a good performance as its _storage locality_.
+
+But the advantage can also becomes to the disadvantage when you only want to use a small portion of it. The document database model will wast a lot of resource to load much useless information, this can significantly affect the performance.
+
+Another thing need to be mentioned is when updating the document, only the modifications that don’t change the encoded size of a document can easily be performed in place, other changes would cause the entire document be rewritten. Of course, we can avoid this situation by keeping the document small and do not do any writing which increase the size of document. This _feature_ 😉 limits the usage of document model in modern application. It’s also worth to mentioned that the idea of grouping related data together for locality is not the patent of document model. Many modern relational database also provide the same feature.
+
+### Query language
+
+Unlike the relational database model, many document data model implement their own query language. For example, the MongoDB use the MongoDB Query Language (MQL) and CouchDB uses a combination of JavaScript and HTTP-based queries.
+
+#### MapReduce querying
+
+MapReduce is a programming model for processing large amounts of data in bulk across many machines. Some NoSQL datastores like MongoDB and CouchDB supports a limited form of MapReduce as a way for performing read-only queries across many documents.
+
+The core syntax of MapReduce is to use a bunch of query expressed with snippets of code, which are called repeatedly by the processing framework. it is based on the `map` and `reduce` functions.
+
+For example, let’s assume we have a database with a table `Orders` and we want to find out the total price for all orders by each customer. In SQL, we can write the following SQL:
+
+```sql
+SELECT customer.id, SUM(price) AS total_price
+FROM Orders
+GROUP BY customer_id;
+```
+
+But in the MapReduce mode, we can separate our computation into two stages: map and reduce. We can express the operation in MongoDB’s MapReduce:
+
+```javascript
+var mapFunction = function () {
+  emit(this.customer_id, this.price)
+}
+
+var reduceFunction = function () {
+  return Array.sum(values)
+}
+
+db.Orders.mapReduce(mapFunction, reduceFunction, {
+  out: 'total_price_per_customer',
+})
+```
+
+Pay attention, the `map` and `reduce` function should be **pure** functions, which means they only use the data that is passed to them as input, they must not have side effects. These restrictions allow database engine run the functions anywhere, in any order, and return them on failure.
+
+The MapReduce is also not perfect. It’s always hard to write two carefully coordinated JavaScript functions compared with a single query. Additionally, a declarative query language gives query optimizer more freedom to improve the performance. Therefore, MongoDB 2.2 supports a declarative query language called **aggregation pipeline**.
+
+```javascript
+db.Orders.aggregate({
+    { $group: {
+        _id: "$customer_id",
+        total_price: { $sum: "$price" }
+    }},
+    { $out: "total_price_per_customer" }
+})
+```
+
+## Graph Model
+
+If the application has mostly one-to-many relationships or no relationships between records, it’s appropriate to use the document model. But if the many-to-many relationships are the major in the application, it becomes more natural to start using graph model.
+
+The graph model is pretty useful when dealing with system where the **relationships** between entities are of primary importance, such as social networks, web graph, recommendation systems.
+
+In a graph database model, data is stored as nodes, edges, and properties:
+
+1. _Nodes_: nodes are the entities in the graph. They represent any item that needs to be tracked like a person, a business, a video game.
+2. _Edges_: edges are the relationships between nodes. They can represent relationships like friends with, married to, etc. In the graph database model, the relationship takes first priority, which makes it suited for interconnected data.
+3. _Properties:_ properties are the information associated to the nodes or edges. It holds anything that describes the nodes or edges in more detail.
+
+The strength of a graph database comes from the idea that the relationships between the nodes are as important as the nodes themselves. This is different from traditional relational databases where the relationships (foreign keys) are metadata and not treated as first class citizens like they are in a graph database.
+
+### Query language
+
+\***\*Cypher\*\*** is a declarative query language for property graphs, created for the Neo4j graph database. It is developed by Neo4j for querying and manipulating graph data and heavily inspired by SQL.
+
+Cypher has a unique way of visualizing queries that aligns with graph-oriented model of the data. This is done by representing nodes with parentheses (like `()`), and relationships using arrows (like `-->` or `<--`).
+
+Here is an example that using Cypher query to insert data into a graph database.
+
+```sql
+CREATE
+    (NAmerical:Location {name:'North America', type:'continent'}),
+    (USA:Location       {name:'United States', type:'country'}),
+    (Idaho:Location     {name:'Idaho', type:'state'})
+    (Lucy:Person        {name:'Lucy'}),
+    (Idaho) -[:WITHIN]-> (USA) -[:WITHIN]-> (NAmerica),
+    (Lucy)  -[:BORN_IN]-> (Idaho)
+```
+
+We insert several nodes like `USA`, `Idaho`, or `Lucy` into the database, and other parts of the query can use those names to create edges between the nodes, using an arrow notation: `(Lucy)  -[:BORN_IN]-> (Idaho)` creates relationships between the nodes.
+
+Of course, after inserting data into the graph database, we can use Cypher to ask interesting questions about the data. For example, find the names of all the people who emigrated from the United State to Europe. To be more precise, we should find people who `BORN_IN` US and `LIVING_IN` Europe. The following is the query:
+
+```sql
+MATCH
+    (person) -[:BORN_IN]-> () -[:WITHIN*0..]-> (us:Location {name:'United States'}),
+    (person) -[:LIVES_IN]-> () -[:WITHIN*0..]-> (eu:Location {name:'Europe'})
+RETURN person.name
+```
+
+Basically, the query can be explained:
+
+1. `person` has an outgoing `BORN_IN` edge to some node. From that node, you can follow a chain of outgoing `WITHIN` edges until eventually you reach a node of type `Location`, whose `name` property is equal to `"United States"`.
+2. In a similar way, but the node of type `Location` should have `name` property whose value is `"Europe"`.
+
+Of course, you can start from the `Location` to find people. Because the graph model doesn’t enforce the way that you query the data.
+
+Additionally, Cypher is a declarative query language, which means you don’t need to care about the algorithm behind it, the query optimizer automatically choose the strategy that is predicted to be the most efficient.
+
+## Summary
+
+Although there are many other data models, we only introduce three widely used data model in this article because I can’t write anymore. 😅 But this overview can help us continue learning more detail about relational model, document model, and graph model, which can cover the needs of most applications.
+
+Basically, these three different data model is inverted for different scenarios:
+
+1. Relational database model is used to represent many-to-many relationships, which also is the reason it replaces hierarchical model.
+2. Document database model target use cases where data comes in self-contained documents and relationships between one document and another are rare.
+3. Graph database model target use cases where anything is potentially related to everything.
+
+Each data model comes with its own query language or framework, which we also covered briefly in this article.
+
+As we mentioned at the starting of this article, the data model we chosen represents the way we understand the problem that we are solving. Therefore it’s important to choose an appropriate data model for our requirements.

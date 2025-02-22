@@ -1,0 +1,233 @@
+---
+title: My understanding of MVI architecture
+publishedAt: 2023-06-26
+tags: ['programming', 'thinking']
+draft: false
+description: 'MVI architecture utilizes intent to handle state changes.'
+---
+
+# Context
+
+Recently, I’ve been attempting to construct an RSS reader app on the iOS platform. Despite my limited experience in iOS development, I’ve utilized the MVVM pattern to structure my code due to its simplicity.
+
+However, as the development process unfolded, I discovered the challenge in managing and understanding data flow when dealing with multiple views. I also faced difficulty when certain actions necessitated the modification of multiple states, without a straightforward method to illustrate these changes. Although I sought to encapsulate the state updating logic, achieving this proved difficult.
+
+Fortunately, during a knowledge-sharing session at work, a mobile developer colleague introduced a potent architecture for iOS development: the MVI pattern.
+
+Subsequently, I’ve devoted time to studying this architecture via resources like ChatGPT 😉 and Google. I’ve successfully transitioned my code to this new architecture. Even though my daily responsibilities do not involve mobile development, the learning journey provided insightful concepts. As such, I’ve compiled these findings into this article to provide a succinct overview.
+
+# Overview
+
+While it’s essential for an article to concentrate on a single topic, I intend to explore multiple themes in this piece, given their significance in elucidating my understanding.
+
+Initially, I plan to delve into the mechanics of the modern UI framework. Regardless of whether the framework is employed on a browser or mobile platform, employing different technologies, these exist shared principles underpinning it.
+
+Drawing on the discourse around the UI framework, we will then address the fundamental challenge that front-end development aims to overcome.
+
+Following that, I’ll outline the mental model pertaining to the MVI architecture. We won’t devote extensive time to specific MVI concepts, as they are not the crux of our discussion. Instead, we’ll delve into the precise functionality of this architecture and how it aids in reducing system complexity.
+
+# UI framework
+
+There exists a multitude of UI frameworks worldwide. Given that different platforms utilize different languages, the frameworks for mobile platform differ from those for the web. However, if we disregard the technical specifics, what is the primary function of a UI framework?
+
+The answer lies in **maintaining synchronization between the UI and the state**.
+
+Contrasted with the framework of decade ago, today’s UI developers handle an enormous amount of data. This data comes from varied sources and possesses different structures. Our task extends beyond merely retrieving a static array from the backend and wrap it within a series of `<li>`. Our focus lies in **generating data from rendering**. Hence, the UI framework assumes the remaining responsibility: maintaining synchronization between the UI and the data (state).
+
+![UI framework](https://raw.githubusercontent.com/ShroXd/img-hosting/main/blog/2023-06-26-NZ3P45.png)
+
+By the way, the _state_ referred to here denotes data that induces side effects by updating the UI.
+
+If you find this topic engaging, here’s [an amazing article](https://medium.com/dailyjs/the-deepest-reason-why-modern-javascript-frameworks-exist-933b86ebc445) offering a detailed information.
+
+# The difficult in UI development
+
+As previously mentioned, the UI framework updates the UI based on the state, making our task the production of data usable by the UI framework. Sounds straightforward, doesn’t it? However, it’s actually the most complex part of the process.
+
+The first challenge is the **diversity** of data sources. We need to render data originating from the Backend, and user actions can also create new data impacting existing data.
+
+The second challenge lies in the dynamism of the data. Backend data may be changed by other systems, and users can also modify the data. In other words, the data transitions into a data stream, requiring us to update the state based on this stream. This introduces logical mutability to the state. Regardless of the framework or platform in use, a pressing question arises: how to comprehend the logic of state changes within a large system?
+
+The third challenge is that a single UI update might involve multiple states. For instance, when we dispatch a network request to the backend, we usually need to disable the submit button, display a loading animation, and upon receiving the response, render the UI based on the results. Sometimes, an error screen might also be required. As can be seen, the states are interdependent and operate collectively in various scenarios.
+
+From the above discussion, you may discern that the crux of UI development challenges is how to devise an architecture that facilitates our understanding and testing of **state changes** with ease.
+
+# MVI architecture
+
+MVI, the most recent addition to the MV\* family, structures an application into three components.
+
+1. Model: Represents the states for the UI
+2. View: Represents the UI itself
+3. Intent: Represents actions triggering state updates
+
+The following diagram provides a comprehensive overview of the MVI architecture.
+
+![MVI pattern](https://raw.githubusercontent.com/ShroXd/img-hosting/main/blog/2023-06-26-WcJlpE.png)
+
+The term “someone” at the bottom of the diagram refers to any entity that could potentially alter the UI, such as user input, network requests, or asynchronous work.
+
+Under the MVI architecture, these entities are disallowed from directly modifying the state. Instead, they generate an intent. This intent essentially comprises logic designed to update several states based on the intent’s function, which is crucial to understanding the MVI architecture.
+
+Consider the following code as a typical intent function. Note that in actually development, we wouldn’t write code exactly like this; it’s purely to illustrate the function of intent.
+
+```swift
+func viewOnAppear() {
+  model.isLoading = true
+
+  networkService.fetch("https://www.example.com/api") { result in
+    switch result {
+    case .success(let data):
+			model.data = data
+      model.isLoading = false
+		case .failure(let error):
+			model.isError = true
+    }
+  }
+
+  // ...
+}
+```
+
+The code demonstrates a scenario where we wish to perform certain actions when the view appears. Consequently, we have a function named `viewOnAppear` to execute these tasks, which includes displaying a loading screen, fetching data from an API, and assigning data or showing an error screen depending on the network response.
+
+This function involves multiple UI updates. Reading through this function’s code makes the behavior abundantly clear. Using the same concept, we can encapsulate other actions into distinct intent functions like `submit`, `onTapListItem`, `onDeleteItem`.
+
+In essence, the function of an **intent** is to bundle **state changes** into various actions, thereby simplifying the understanding and testing of these logical processes.
+
+# Code example
+
+From the preceding discussion, we’ve underscored that the crux of the MVI architecture lies in managing **state changes**. Understanding this principle enables us to apply this architecture universally.
+
+In this section, we’ll demonstrate how to implement the MVI architecture in iOS development using Swift.
+
+To begin with, we’ll construct the _model_ for our sample app. The model’s role is to mange the data and state, providing various helper functions for easier using.
+
+```swift
+class ExmapleModel: ObservableObject {
+	@Published var contentState: ContentState = .loading
+}
+
+// MARK: - Helper function
+extension ExampleModel {
+	func update(rawData: [Item]) {
+		contentState = .content(data: rawData)
+	}
+
+	func displayLoading() {
+		contentState = .loading
+	}
+
+	func displayError(_ error: Error) {
+		contentState = .error(text: error.localizedDescription)
+  }
+}
+
+// MARK: - Helper enum
+extension ExampleModel {
+	case loading
+	case content(data: [Item])
+	case error(text: String)
+}
+```
+
+In this example model, we have a singular state: `contentState`. Leveraging the functionality of SwiftUI, any updates to `contentState` will trigger a UI re-render. In the first extension, we’ve introduced several helper functions, all of which manage intricate state manipulation logic, ensuring consistent and predictable state changes. These functions are purely functional and do not induce any side effects.
+
+Having completed the model code, it’s now time to create an intent class.
+
+```swift
+class ExampleIntent {
+	private weak var model: ExampleModelProtocol?
+	private weak var networkService: NetworkServiceProtocol?
+
+	// This is a series of Publishers
+	let routerSubject = Subjects()
+
+	init(...) {
+		// ...
+	}
+}
+
+// MARK: - Intents
+extension ExampleIntent {
+	func viewOnAppear() {
+		model?.displayLoading()
+
+		networkService.fetch(to: "https://example.com/api") { [weak self] result in
+			switch result {
+			case let .success(data):
+				self?.model?.update(rawData: data)
+			case let .failure(error):
+				self?.model?.displayError(error)
+			}
+		}
+	}
+
+	func onTapItem(id: String) {
+		// This code will go to another page
+		routerSubject.screen.send(.tapFollow)
+	}
+}
+```
+
+In the above code, we’ve re-implemented the `viewOnAppear` function. As can be observed, we’re updating several states and issuing a network request within this intent. Our state changing code is no longer dispersed but encapsulated within intent functions.
+
+At this point, we can proceed to implement the view.
+
+```swift
+struct ExampleView: View {
+	private var state: ExampleModelProtocol
+	private var intent: ExampleIntentProtocol
+
+	var body: some View {
+		VStack {
+			switch state.contentState {
+			case .loading:
+				LoadingContent(text: "loading...")
+			case .content(let items):
+				ListContent(items: items)
+			case .error(let text):
+				ErrorContent(text: text)
+			}
+		}
+		.onAppear(perform: intent.viewOnappear)
+	}
+}
+
+// MARK: - Views
+
+private extension ExampleView {
+	struct LoadingContent: View {
+		// ...
+	}
+
+	struct ErrorContent: View {
+		// ...
+	}
+
+	struct ListContent: View {
+		let items: [Item]
+		let intent: ExampleIntentProtocol
+
+		var body: some View {
+			List {
+				// render the items
+				Row()
+					.onTapGesture {
+						intent.onTapItem()
+					}
+				// ...
+			}
+		}
+	}
+}
+```
+
+Using the MVI architecture to structure our code makes state changes and view updates predictable. The view will transition between `loading`, `error`, and `list` based on the `contentState`. All actions potentially altering the state are enclosed within the intent functions, making them easier to comprehend.
+
+# Summary
+
+In this article, we’ve explored the MVI architecture.
+
+Before diving into any new architecture, it’s essential to identify the problems we’re facing and the crux of those issues.
+
+In UI development, the framework ensures synchronization between the state and view, which shifts our focus to managing state changes. In a large system, these state changes can become quite complex. Thus, we employ the MVI architecture to reduce system complexity. The linchpin of this architecture is the **Intent**, a discrete level solely focused on altering states through clear, identifiable actions.
