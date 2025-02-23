@@ -1,12 +1,19 @@
 import { BlogPosts } from 'app/components/posts'
 
+import BlurText from './components/BlurText/BlurText'
 import DecryptedText from './components/DecryptedText/DecryptedText'
 
 export default function Page() {
   return (
     <section>
-      <h1 className='mb-4 text-2xl font-semibold tracking-tighter'>
-        Hi, I'm Atriiy.
+      <h1>
+        <BlurText
+          text={`Hello, I'm Atriiy!`}
+          delay={150}
+          animateBy='words'
+          direction='top'
+          className='mb-2 text-2xl font-semibold'
+        />
       </h1>
       <div className='h-28 md:h-20 lg:h-20'>
         <DecryptedText
