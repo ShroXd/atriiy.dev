@@ -32,3 +32,73 @@ And I deployed the blog on the Github page, and I also applied for a new domain 
 I want to migrate to a new system, and I don't want to take much time on deployment stuff. So I tried to find a new system which can suit my requirements.
 
 So, what you see now, is my result.
+
+---
+
+By the way, I will use this page to test Mermaid and MathJax.
+
+```mermaid
+sequenceDiagram
+    participant Publisher
+    participant EventBus
+    participant BroadcastChannel
+    participant Handler
+    participant RetrySystem
+    participant WebSocketActor
+
+    %% Event Publishing Process
+    Publisher->>EventBus: publish(DomainEvent)
+    EventBus->>BroadcastChannel: tx.send(event)
+    par Broadcast to All Subscribers
+        BroadcastChannel-->>Handler: receive event
+        BroadcastChannel-->>WebSocketActor: receive event
+    end
+
+    %% Handler Processing
+    Handler->>Handler: match event
+    alt Event Matches Handler Criteria
+        Handler->>Handler: process event
+        opt Handling Failed
+            Handler->>RetrySystem: initiate retry
+            loop Until Success or Max Retries
+                RetrySystem->>Handler: retry with backoff
+            end
+        end
+    else No Match
+        Handler->>Handler: skip event
+    end
+
+    %% WebSocket Notification
+    WebSocketActor->>WebSocketActor: transform to notification
+    WebSocketActor->>Client: send notification
+
+    %% Error Handling
+    opt Event Processing Error
+        Handler-->>EventBus: report error
+        EventBus-->>Handler: handle error based on config
+    end
+
+    %% Timeout Handling
+    opt Handler Timeout
+        EventBus->>Handler: cancel processing
+        Handler-->>EventBus: timeout notification
+    end
+
+    %% Max Triggers Check
+    opt Max Triggers Reached
+        Handler->>Handler: stop processing
+        Handler-->>EventBus: max triggers notification
+    end
+```
+
+The famous formula is $E=mc^2$.
+
+Here are multiple lines:
+
+```math
+\begin{align*}
+\sum_{n=1}^{\infty} \frac{1}{n^2} &= \frac{\pi^2}{6} \\
+\int_{0}^{\infty} \frac{\sin(x)}{x} \, dx &= \frac{\pi}{2} \\
+\int_{-\infty}^{\infty} e^{-x^2} \, dx &= \sqrt{\pi}
+\end{align*}
+```
