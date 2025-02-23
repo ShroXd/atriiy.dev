@@ -11,7 +11,7 @@ export default function Page() {
       <div className='h-28 md:h-20 lg:h-20'>
         <DecryptedText
           text={`Dev, using TypeScript, Rust and Golang. Vim fans. Eighteen plus eleven years old now, still have hair, wanna learn many things. Writing, reading, playing video games.`}
-          animateOn='view'
+          animateOn='hover'
           speed={30}
           sequential
         />
