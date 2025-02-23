@@ -1,9 +1,9 @@
 ---
-title: "Algorithm Connect! Re: Dive - Priority queues"
-pubDatetime: 2022-8-9T09:42:51Z
-tags: ["algorithm", "sort"]
+title: 'Algorithm Connect! Re: Dive - Priority queues'
+publishedAt: 2022-08-09
+tags: ['algorithm', 'sort']
 draft: false
-description: "Priority Queue is an abstract data type that is similar to a queue, and every element has some priority value associated with it."
+description: 'Priority Queue is an abstract data type that is similar to a queue, and every element has some priority value associated with it.'
 ---
 
 # Overview
@@ -243,44 +243,44 @@ For the _Heapify the array_ step. For a $h$ height tree, we need to process $2^{
 
 So, for $2^h$ leaves, they don't fall any levels since they already are heap. For $2^{h-1}$, each node falls $1$ level and requires $1 \cdot 2^{h-1}$ exchange total. Similarly, for $2^{h-2}$, require $2 \cdot 2^{h-2}$. So we have:
 
-$$
+```math
 \begin{array}{c}
 C(n) &=& C(2^h - 1) \\ \\
 	 &=& 2^h \cdot 0 + 2^{h-1} \cdot 1 + 2^{h-2} \cdot 2 + \cdots + 2^{h-h} \cdot h	 \\ \\
 	 &=& \sum_{i=0}^{h}2^{h-i} \cdot i    \\ \\
 	 &=& 2^h \cdot \sum_{i=0}^{h}\frac{i}{2^i}    \\ \\
 \end{array}
-$$
+```
 
 We have:
 
-$$
+```math
 \sum_{i=0}^{+\infty}x^i = \frac{1}{1-x}
-$$
+```
 
 Taking a derivative of both sides with respect to $x$, we have:
 
-$$
+```math
 \sum_{i=0}^{+\infty}i \cdot x^{i-1} = \frac{1}{(1-x)^2}
-$$
+```
 
 And then multiplying by $x$:
 
-$$
+```math
 \sum_{i=0}^{+\infty} i \cdot x^i = \frac{x}{(1-x)^2}
-$$
+```
 
 If we suppose $x = \frac{1}{2}$, we have:
 
-$$
+```math
 \sum_{i=0}^{+\infty} \frac{i}{2^i} = \frac{1/2}{(1-(1/2))^2} = 2
-$$
+```
 
 And we replace the $i=0$ with $i=h$ since it will be smaller, so we have inequalities:
 
-$$
+```math
 C(n)< 2^h \cdot 2 = 2^{h+1}
-$$
+```
 
 Also, we have $n = 2^{h+1}-1$, so the **exchange** cost $C(n)$ in the worst case is approximately $n$. By the way, the **comparison** cost is $2n$.
 
