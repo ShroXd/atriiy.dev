@@ -1,11 +1,14 @@
 import React from 'react'
+
+import 'katex/dist/katex.min.css'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
 import Link from 'next/link'
-import { highlight } from 'sugar-high'
-import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-import 'katex/dist/katex.min.css'
+import remarkMath from 'remark-math'
+import { highlight } from 'sugar-high'
+
+import { Mermaid } from './Mermaid/Mermaid'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -90,27 +93,37 @@ let components = {
   h4: createHeading(4),
   h5: createHeading(5),
   h6: createHeading(6),
-  Image: RoundedImage,
   a: CustomLink,
-  code: Code,
-  Table,
+  Image: RoundedImage,
+  Table: Table,
+  pre: ({ children }) => {
+    // @ts-ignore
+    const childClassName = children?.props?.className || ''
+    if (childClassName === 'language-mermaid') {
+      // @ts-ignore
+      return <Mermaid>{children.props.children}</Mermaid>
+    }
+    return <Code>{children}</Code>
+  },
+  code: ({ children, className }) => {
+    if (className === 'language-mermaid') {
+      return <Mermaid>{children}</Mermaid>
+    }
+    return <code>{children}</code>
+  },
 }
 
 export function CustomMDX(props) {
-  const options = {
-    mdxOptions: {
-      remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex],
-      ...props.options?.mdxOptions
-    },
-    ...props.options
-  }
-
   return (
     <MDXRemote
       {...props}
-      options={options}
-      components={{ ...components, ...(props.components || {}) }}
+      components={components}
+      options={{
+        mdxOptions: {
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex],
+        },
+      }}
     />
   )
 }
