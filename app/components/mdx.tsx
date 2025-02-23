@@ -142,7 +142,15 @@ export function CustomMDX(props) {
       options={{
         mdxOptions: {
           remarkPlugins: [remarkMath, remarkGfm],
-          rehypePlugins: [rehypeKatex],
+          rehypePlugins: [
+            [
+              rehypeKatex,
+              {
+                strict: false,
+                trust: true,
+              },
+            ],
+          ],
         },
       }}
     />
