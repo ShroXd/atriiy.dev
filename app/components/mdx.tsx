@@ -99,17 +99,23 @@ let components = {
   pre: ({ children }) => {
     // @ts-ignore
     const childClassName = children?.props?.className || ''
+    const code = children?.props?.children || ''
+
     if (childClassName === 'language-mermaid') {
-      // @ts-ignore
-      return <Mermaid>{children.props.children}</Mermaid>
+      return <Mermaid>{code}</Mermaid>
     }
-    return <Code>{children}</Code>
+
+    return (
+      <pre>
+        <Code className={childClassName}>{code}</Code>
+      </pre>
+    )
   },
   code: ({ children, className }) => {
     if (className === 'language-mermaid') {
       return <Mermaid>{children}</Mermaid>
     }
-    return <code>{children}</code>
+    return <code className={className}>{children}</code>
   },
 }
 
