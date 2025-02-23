@@ -1,3 +1,5 @@
+import Magnet from './Magnet/Magnet'
+
 function ArrowIcon() {
   return (
     <svg
@@ -19,29 +21,34 @@ export default function Footer() {
   return (
     <footer className='mb-16'>
       <ul className='font-sm mt-8 flex flex-col space-y-2 space-x-0 text-neutral-600 md:flex-row md:space-y-0 md:space-x-4 dark:text-neutral-300'>
-        <li>
-          <a
-            className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
-            rel='noopener noreferrer'
-            target='_blank'
-            href='/rss'
-          >
-            <ArrowIcon />
-            <p className='ml-2 h-7'>rss</p>
-          </a>
-        </li>
-        <li>
-          <a
-            className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
-            rel='noopener noreferrer'
-            target='_blank'
-            href='https://github.com/ShroXd'
-          >
-            <ArrowIcon />
-            <p className='ml-2 h-7'>github</p>
-          </a>
-        </li>
+        <Magnet padding={100} disabled={false} magnetStrength={20}>
+          <li>
+            <a
+              className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
+              rel='noopener noreferrer'
+              target='_blank'
+              href='/rss'
+            >
+              <ArrowIcon />
+              <p className='ml-2 h-7'>rss</p>
+            </a>
+          </li>
+        </Magnet>
+        <Magnet padding={100} disabled={false} magnetStrength={20}>
+          <li>
+            <a
+              className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
+              rel='noopener noreferrer'
+              target='_blank'
+              href='https://github.com/ShroXd'
+            >
+              <ArrowIcon />
+              <p className='ml-2 h-7'>github</p>
+            </a>
+          </li>
+        </Magnet>
       </ul>
+
       <p className='mt-8 text-neutral-600 dark:text-neutral-300'>
         © {new Date().getFullYear()} Licensed under CC BY-NC 4.0
       </p>
