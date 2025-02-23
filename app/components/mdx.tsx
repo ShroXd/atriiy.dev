@@ -5,31 +5,11 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
 import Link from 'next/link'
 import rehypeKatex from 'rehype-katex'
+import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
 
 import { Mermaid } from './Mermaid/Mermaid'
-
-function Table({ data }) {
-  let headers = data.headers.map((header, index) => (
-    <th key={index}>{header}</th>
-  ))
-  let rows = data.rows.map((row, index) => (
-    <tr key={index}>
-      {row.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell}</td>
-      ))}
-    </tr>
-  ))
-  return (
-    <table>
-      <thead>
-        <tr>{headers}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
-  )
-}
 
 function CustomLink(props) {
   let href = props.href
@@ -86,6 +66,38 @@ function createHeading(level) {
   return Heading
 }
 
+function CustomTable({ children }) {
+  return (
+    <div className='my-6 w-full overflow-x-auto'>
+      <table className='w-full border-collapse text-sm'>{children}</table>
+    </div>
+  )
+}
+
+function CustomThead({ children }) {
+  return (
+    <thead className='border-b border-gray-200 dark:border-gray-800'>
+      {children}
+    </thead>
+  )
+}
+
+function CustomTh({ children }) {
+  return (
+    <th className='border border-gray-200 py-2 px-4 text-left font-semibold dark:border-gray-800'>
+      {children}
+    </th>
+  )
+}
+
+function CustomTd({ children }) {
+  return (
+    <td className='whitespace-normal break-words border border-gray-200 py-2 px-4 dark:border-gray-800'>
+      {children}
+    </td>
+  )
+}
+
 let components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -95,7 +107,10 @@ let components = {
   h6: createHeading(6),
   a: CustomLink,
   Image: RoundedImage,
-  Table: Table,
+  table: CustomTable,
+  thead: CustomThead,
+  th: CustomTh,
+  td: CustomTd,
   pre: ({ children }) => {
     // @ts-ignore
     const childClassName = children?.props?.className || ''
@@ -126,7 +141,7 @@ export function CustomMDX(props) {
       components={components}
       options={{
         mdxOptions: {
-          remarkPlugins: [remarkMath],
+          remarkPlugins: [remarkMath, remarkGfm],
           rehypePlugins: [rehypeKatex],
         },
       }}
