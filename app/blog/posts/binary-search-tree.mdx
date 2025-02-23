@@ -1,9 +1,9 @@
 ---
-title: "Algorithm Connect! Re: Dive - Binary Search Tree"
-pubDatetime: 2022-8-24T09:42:51Z
-tags: ["algorithm", "search"]
+title: 'Algorithm Connect! Re: Dive - Binary Search Tree'
+publishedAt: 2022-08-24
+tags: ['algorithm', 'search']
 draft: false
-description: "Binary Search Tree is a node-based binary tree data structure, smaller node in the left and larger node in the right"
+description: 'Binary Search Tree is a node-based binary tree data structure, smaller node in the left and larger node in the right'
 ---
 
 # Overview
@@ -71,27 +71,27 @@ If every node's key is both larger than all keys in its left sub-tree and smalle
 
 For a reasonably balanced tree of $n$ nodes, if we note its height is $m$, we have $1$ node of level $0$; $2$ nodes of level $1$, etc. Thus we have:
 
-$$
+```math
 n = 2^0 + 2^1 + 2^2 + 2^3 + \cdots + 2^m
-$$
+```
 
 Since we have a formula for finite geometric series:
 
-$$
+```math
 \sum_{i=0}^{n}{r^i} = \frac{r^{i+1}-1}{r-1}
-$$
+```
 
 Here, $r = 2$, we have:
 
-$$
+```math
 n = 2^{m+1} - 1
-$$
+```
 
 Solving in the above for $m$, we have:
 
-$$
+```math
 m = \lg{(n+1)} - 1
-$$
+```
 
 Thus we can say the height is $O(lg{n})$.
 
@@ -341,9 +341,9 @@ fun delete(node: Node<K, V>, key: K) {
 
 After we understand the mechanism of the binary search tree, for a perfectly balanced binary tree, the inserting procedure needs $\lfloor \lg{n} \rfloor$ times comparison to insert a new node. But worst case, if we insert a series of ordered numbers, each number must compare with all previous numbers. In general, we have:
 
-$$
+```math
 1 + 2 + 3 + 4 + \dots + (n + 1) = \frac{n(n-1)}{2}
-$$
+```
 
 Thus we can say the comparison required to insert $n$ elements in order is $O(n^2)$. To prevent this scenario, we can shuffle the order of elements _randomly_. You may notice it now at this point. Yep, same situation we encountered when we discussed the **quick sorting**!
 
