@@ -2,28 +2,42 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-let mermaid: any
-
 export function Mermaid({ children }: { children: string }) {
   const [loaded, setLoaded] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const [svg, setSvg] = useState<string>('')
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const mermaidRef = useRef<any>(null)
 
   useEffect(() => {
+    setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e: MediaQueryListEvent) => setIsDarkMode(e.matches)
+    mediaQuery.addEventListener('change', handler)
+    return () => mediaQuery.removeEventListener('change', handler)
+  }, [])
+
+  useEffect(() => {
+    setLoaded(false)
+    if (mermaidRef.current) {
+      mermaidRef.current = null
+    }
+
     import('mermaid').then(m => {
-      mermaid = m.default
-      mermaid.initialize({
+      mermaidRef.current = m.default
+      mermaidRef.current.initialize({
         startOnLoad: true,
-        theme: 'default',
+        theme: isDarkMode ? 'dark' : 'default',
         securityLevel: 'loose',
       })
       setLoaded(true)
     })
-  }, [])
+  }, [isDarkMode])
 
   useEffect(() => {
-    if (loaded && ref.current && children) {
-      mermaid
+    if (loaded && ref.current && children && mermaidRef.current) {
+      mermaidRef.current
         .render('mermaid-svg', children)
         .then(({ svg }: { svg: string }) => {
           setSvg(svg)
