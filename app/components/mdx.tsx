@@ -5,6 +5,8 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
 import Link from 'next/link'
 import rehypeKatex from 'rehype-katex'
+import rehypeSlug from 'rehype-slug'
+import rehypeToc from 'rehype-toc'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
@@ -148,6 +150,18 @@ export function CustomMDX(props) {
               {
                 strict: false,
                 trust: true,
+              },
+            ],
+            rehypeSlug,
+            [
+              rehypeToc,
+              {
+                headings: ['h1', 'h2', 'h3', 'h4'],
+                position: 'afterbegin',
+                customizeTOC: toc => {
+                  toc.properties.className = ['table-of-contents']
+                  return toc
+                },
               },
             ],
           ],
