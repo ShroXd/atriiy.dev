@@ -6,6 +6,9 @@ type Metadata = {
   publishedAt: string
   summary: string
   image?: string
+  draft?: boolean
+  description?: string
+  tags?: string[]
 }
 
 function parseFrontmatter(fileContent: string) {
@@ -14,16 +17,56 @@ function parseFrontmatter(fileContent: string) {
   let frontMatterBlock = match![1]
   let content = fileContent.replace(frontmatterRegex, '').trim()
   let frontMatterLines = frontMatterBlock.trim().split('\n')
-  let metadata: Partial<Metadata> = {}
-
+  let metadata: Record<string, any> = {}
+  
+  let currentKey: string | null = null;
+  let inArray = false;
+  
   frontMatterLines.forEach(line => {
-    let [key, ...valueArr] = line.split(': ')
-    let value = valueArr.join(': ').trim()
-    value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
+    // Check if this is an array item
+    if (line.trim().startsWith('- ')) {
+      if (currentKey && inArray) {
+        if (!metadata[currentKey]) {
+          metadata[currentKey] = [];
+        }
+        metadata[currentKey].push(line.trim().substring(2));
+      }
+      return;
+    }
+    
+    // Regular key-value pair
+    if (line.includes(': ')) {
+      let [key, ...valueArr] = line.split(': ')
+      let value = valueArr.join(': ').trim()
+      value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
+      
+      const trimmedKey = key.trim();
+      currentKey = trimmedKey;
+      
+      // Check if this is the start of an array
+      if (value === '') {
+        inArray = true;
+        metadata[trimmedKey] = [];
+      } else {
+        inArray = false;
+        
+        // Handle different types of values
+        if (value === 'true') {
+          metadata[trimmedKey] = true;
+        } else if (value === 'false') {
+          metadata[trimmedKey] = false;
+        } else {
+          metadata[trimmedKey] = value;
+        }
+      }
+    }
   })
 
-  return { metadata: metadata as Metadata, content }
+  // Type cast at the end
+  return { 
+    metadata: metadata as Metadata, 
+    content 
+  }
 }
 
 function getMDXFiles(dir) {

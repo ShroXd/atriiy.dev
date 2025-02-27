@@ -84,15 +84,24 @@ export default function Blog({ params }) {
       />
       <h1 className='title text-2xl font-semibold tracking-tighter'>
         {post.metadata.title}
+        {post.metadata.draft && (
+          <span className='ml-2' title='Work in Progress'>🚧</span>
+        )}
       </h1>
       <div className='mt-2 mb-8 flex items-center justify-between text-sm'>
         <p className='text-sm text-neutral-600 dark:text-neutral-400'>
           {formatDate(post.metadata.publishedAt)}
         </p>
       </div>
-      <article className='prose'>
-        <CustomMDX source={post.content} />
-      </article>
+      {post.metadata.draft ? (
+        <p className='prose'>
+          Work in progress, stay tuned!
+        </p>
+      ) : (
+        <article className='prose'>
+          <CustomMDX source={post.content} />
+        </article>
+      )}
     </section>
   )
 }
