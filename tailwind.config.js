@@ -1,6 +1,11 @@
 module.exports = {
   theme: {
     extend: {
+      fontFamily: {
+        'crimson': ['var(--font-crimson-text)', 'serif'],
+        'garamond': ['var(--font-eb-garamond)', 'serif'],
+        'baskerville': ['var(--font-libre-baskerville)', 'serif'],
+      },
       keyframes: {
         gradient: {
           '0%': { backgroundPosition: '0% 50%' },

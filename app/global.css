@@ -15,6 +15,9 @@
   --sh-jsxliterals: #6266d1;
   --sh-property: #e25a1c;
   --sh-entity: #e25a1c;
+  --font-crimson-text: 'Crimson Text', serif;
+  --font-eb-garamond: 'EB Garamond', serif;
+  --font-libre-baskerville: 'Libre Baskerville', serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -84,24 +87,27 @@ html {
   @apply m-0;
 }
 
+.prose {
+  @apply text-neutral-800 dark:text-neutral-200;
+  font-family: var(--font-crimson-text), serif;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  @apply font-bold text-black dark:text-white;
+  font-family: var(--font-eb-garamond), serif;
+}
+
+.prose blockquote {
+  font-family: var(--font-libre-baskerville), serif;
+}
+
 .prose p {
-  @apply my-4 text-neutral-800 dark:text-neutral-200;
-}
-
-.prose h1 {
-  @apply mt-6 mb-2 text-4xl font-medium tracking-tight;
-}
-
-.prose h2 {
-  @apply mt-6 mb-2 text-xl font-medium tracking-tight;
-}
-
-.prose h3 {
-  @apply mt-6 mb-2 text-xl font-medium tracking-tight;
-}
-
-.prose h4 {
-  @apply mt-6 mb-2 text-lg font-medium tracking-tight;
+  @apply my-4;
 }
 
 .prose strong {

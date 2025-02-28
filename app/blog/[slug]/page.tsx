@@ -98,7 +98,7 @@ export default function Blog({ params }) {
           Work in progress, stay tuned!
         </p>
       ) : (
-        <article className='prose'>
+        <article className='prose font-crimson'>
           <CustomMDX source={post.content} />
         </article>
       )}

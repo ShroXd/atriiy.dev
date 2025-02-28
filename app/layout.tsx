@@ -3,11 +3,34 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
+import { Crimson_Text, EB_Garamond, Libre_Baskerville } from 'next/font/google'
 
 import Footer from './components/footer'
 import { Navbar } from './components/nav'
 import './global.css'
 import { baseUrl } from './sitemap'
+
+const crimsonText = Crimson_Text({
+  weight: ['400', '600', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-crimson-text',
+})
+
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-eb-garamond',
+})
+
+const libreBaskerville = Libre_Baskerville({
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-libre-baskerville',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -50,7 +73,10 @@ export default function RootLayout({
       className={cx(
         'bg-white text-black dark:bg-black dark:text-white',
         GeistSans.variable,
-        GeistMono.variable
+        GeistMono.variable,
+        crimsonText.variable,
+        ebGaramond.variable,
+        libreBaskerville.variable
       )}
     >
       <body className='mx-4 mt-8 max-w-2xl antialiased lg:mx-auto'>
