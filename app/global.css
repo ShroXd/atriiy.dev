@@ -18,6 +18,8 @@
   --font-crimson-text: 'Crimson Text', serif;
   --font-eb-garamond: 'EB Garamond', serif;
   --font-libre-baskerville: 'Libre Baskerville', serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-open-sans: 'Open Sans', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +37,7 @@
 html {
   min-width: 360px;
   scroll-behavior: smooth;
+  font-family: var(--font-open-sans), sans-serif;
 }
 
 .prose .anchor {
@@ -99,7 +102,7 @@ html {
 .prose h5,
 .prose h6 {
   @apply font-bold text-black dark:text-white;
-  font-family: var(--font-eb-garamond), serif;
+  font-family: var(--font-montserrat), sans-serif;
 }
 
 .prose blockquote {

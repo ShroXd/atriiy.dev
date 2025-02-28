@@ -3,7 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
-import { Crimson_Text, EB_Garamond, Libre_Baskerville } from 'next/font/google'
+import { Crimson_Text, EB_Garamond, Libre_Baskerville, Montserrat, Open_Sans } from 'next/font/google'
 
 import Footer from './components/footer'
 import { Navbar } from './components/nav'
@@ -30,6 +30,18 @@ const libreBaskerville = Libre_Baskerville({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-libre-baskerville',
+})
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-montserrat',
+})
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-open-sans',
 })
 
 export const metadata: Metadata = {
@@ -76,10 +88,12 @@ export default function RootLayout({
         GeistMono.variable,
         crimsonText.variable,
         ebGaramond.variable,
-        libreBaskerville.variable
+        libreBaskerville.variable,
+        montserrat.variable,
+        openSans.variable
       )}
     >
-      <body className='mx-4 mt-8 max-w-2xl antialiased lg:mx-auto'>
+      <body className='mx-4 mt-8 max-w-2xl antialiased font-open-sans lg:mx-auto'>
         <main className='mt-6 flex min-w-0 flex-auto flex-col px-2 md:px-0'>
           <Navbar />
           {children}

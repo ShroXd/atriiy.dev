@@ -6,7 +6,7 @@ import DecryptedText from './components/DecryptedText/DecryptedText'
 export default function Page() {
   return (
     <section>
-      <h1>
+      <h1 className='font-montserrat'>
         <BlurText
           text={`Hello, I'm Atriiy!`}
           delay={150}

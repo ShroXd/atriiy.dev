@@ -82,7 +82,7 @@ export default function Blog({ params }) {
           }),
         }}
       />
-      <h1 className='title text-2xl font-semibold tracking-tighter'>
+      <h1 className='title text-2xl font-semibold tracking-tighter font-montserrat'>
         {post.metadata.title}
         {post.metadata.draft && (
           <span className='ml-2' title='Work in Progress'>🚧</span>
