@@ -2,6 +2,7 @@ import { formatDate, getBlogPosts } from 'app/blog/utils'
 import { CustomMDX } from 'app/components/mdx'
 import { baseUrl } from 'app/sitemap'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()
@@ -102,6 +103,14 @@ export default function Blog({ params }) {
           <CustomMDX source={post.content} />
         </article>
       )}
+      <div className="mt-8 mb-4">
+        <Link 
+          href="/blog"
+          className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+        >
+          cd ..
+        </Link>
+      </div>
     </section>
   )
 }
