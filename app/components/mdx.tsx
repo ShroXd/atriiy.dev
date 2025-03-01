@@ -29,7 +29,15 @@ function CustomLink(props) {
 }
 
 function RoundedImage(props) {
-  return <Image alt={props.alt} className='rounded-lg' {...props} />
+  return (
+    <div className="flex justify-center my-4">
+      <Image 
+        alt={props.alt} 
+        className='rounded-lg dark:brightness-90 transition-all' 
+        {...props} 
+      />
+    </div>
+  )
 }
 
 function Code({ children, ...props }) {
@@ -100,6 +108,14 @@ function CustomTd({ children }) {
   )
 }
 
+function CustomStrong({ children }) {
+  return (
+    <strong className="font-bold" style={{ fontWeight: 700 }}>
+      {children}
+    </strong>
+  )
+}
+
 let components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -113,6 +129,7 @@ let components = {
   thead: CustomThead,
   th: CustomTh,
   td: CustomTd,
+  strong: CustomStrong,
   pre: ({ children }) => {
     // @ts-ignore
     const childClassName = children?.props?.className || ''

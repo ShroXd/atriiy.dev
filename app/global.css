@@ -87,7 +87,8 @@ html {
 
 .prose img {
   /* Don't apply styles to next/image */
-  @apply m-0;
+  @apply m-0 mx-auto rounded-lg transition-all;
+  @apply dark:brightness-90;
 }
 
 .prose {
