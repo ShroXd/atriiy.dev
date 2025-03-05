@@ -3,19 +3,19 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
-import { Crimson_Text, EB_Garamond, Libre_Baskerville, Montserrat, Open_Sans } from 'next/font/google'
+import { EB_Garamond, Libre_Baskerville, Montserrat, Open_Sans, Spectral } from 'next/font/google'
 
 import Footer from './components/footer'
 import { Navbar } from './components/nav'
 import './global.css'
 import { baseUrl } from './sitemap'
 
-const crimsonText = Crimson_Text({
-  weight: ['400', '600', '700'],
+const spectral = Spectral({
+  weight: ['200', '300', '400', '500', '600', '700', '800'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-crimson-text',
+  variable: '--font-spectral',
 })
 
 const ebGaramond = EB_Garamond({
@@ -86,7 +86,7 @@ export default function RootLayout({
         'bg-[#f2f2e3] text-[rgb(80,80,65)]',
         GeistSans.variable,
         GeistMono.variable,
-        crimsonText.variable,
+        spectral.variable,
         ebGaramond.variable,
         libreBaskerville.variable,
         montserrat.variable,

@@ -15,7 +15,7 @@
   --sh-jsxliterals: #6266d1;
   --sh-property: #e25a1c;
   --sh-entity: #e25a1c;
-  --font-crimson-text: 'Crimson Text', serif;
+  --font-spectral: 'Spectral', serif;
   --font-eb-garamond: 'EB Garamond', serif;
   --font-libre-baskerville: 'Libre Baskerville', serif;
   --font-montserrat: 'Montserrat', sans-serif;
@@ -82,7 +82,7 @@ html {
 
 .prose {
   @apply text-[rgb(80,80,65)];
-  font-family: var(--font-crimson-text), serif;
+  font-family: var(--font-spectral), serif;
 }
 
 .prose h1,
