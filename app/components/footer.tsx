@@ -20,11 +20,11 @@ function ArrowIcon() {
 export default function Footer() {
   return (
     <footer className='mb-16'>
-      <ul className='font-sm mt-8 flex flex-col space-y-2 space-x-0 text-neutral-600 md:flex-row md:space-y-0 md:space-x-4 dark:text-neutral-300'>
+      <ul className='font-sm mt-8 flex flex-col space-y-2 space-x-0 text-neutral-600 md:flex-row md:space-y-0 md:space-x-4'>
         <Magnet padding={100} disabled={false} magnetStrength={20}>
           <li>
             <a
-              className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
+              className='flex items-center transition-all hover:text-neutral-800'
               rel='noopener noreferrer'
               target='_blank'
               href='/rss'
@@ -37,7 +37,7 @@ export default function Footer() {
         <Magnet padding={100} disabled={false} magnetStrength={20}>
           <li>
             <a
-              className='flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100'
+              className='flex items-center transition-all hover:text-neutral-800'
               rel='noopener noreferrer'
               target='_blank'
               href='https://github.com/ShroXd'
@@ -49,8 +49,8 @@ export default function Footer() {
         </Magnet>
       </ul>
 
-      <p className='mt-8 text-neutral-600 dark:text-neutral-300'>
-        © {new Date().getFullYear()} Licensed under CC BY-NC 4.0
+      <p className='mt-8 text-neutral-600'>
+        {new Date().getFullYear()} Licensed under CC BY-NC 4.0
       </p>
     </footer>
   )

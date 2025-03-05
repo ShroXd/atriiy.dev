@@ -28,7 +28,7 @@ export function Mermaid({ children }: { children: string }) {
       mermaidRef.current = m.default
       mermaidRef.current.initialize({
         startOnLoad: true,
-        theme: isDarkMode ? 'dark' : 'default',
+        theme: isDarkMode ? 'default' : 'default',
         securityLevel: 'loose',
       })
       setLoaded(true)

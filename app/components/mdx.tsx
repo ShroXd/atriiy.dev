@@ -33,7 +33,7 @@ function RoundedImage(props) {
     <div className="flex justify-center my-4">
       <Image 
         alt={props.alt} 
-        className='rounded-lg dark:brightness-90 transition-all' 
+        className='rounded-lg transition-all' 
         {...props} 
       />
     </div>
@@ -86,7 +86,7 @@ function CustomTable({ children }) {
 
 function CustomThead({ children }) {
   return (
-    <thead className='border-b border-gray-200 dark:border-gray-800'>
+    <thead className='border-b border-gray-200'>
       {children}
     </thead>
   )
@@ -94,7 +94,7 @@ function CustomThead({ children }) {
 
 function CustomTh({ children }) {
   return (
-    <th className='border border-gray-200 py-2 px-4 text-left font-semibold dark:border-gray-800'>
+    <th className='border border-gray-200 py-2 px-4 text-left font-semibold'>
       {children}
     </th>
   )
@@ -102,7 +102,7 @@ function CustomTh({ children }) {
 
 function CustomTd({ children }) {
   return (
-    <td className='whitespace-normal break-words border border-gray-200 py-2 px-4 dark:border-gray-800'>
+    <td className='whitespace-normal break-words border border-gray-200 py-2 px-4'>
       {children}
     </td>
   )

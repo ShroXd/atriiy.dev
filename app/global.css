@@ -22,17 +22,7 @@
   --font-open-sans: 'Open Sans', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sh-class: #4c97f8;
-    --sh-identifier: white;
-    --sh-keyword: #f47067;
-    --sh-string: #0fa295;
-  }
-  html {
-    color-scheme: dark;
-  }
-}
+/* Removed dark mode media query */
 
 html {
   min-width: 360px;
@@ -55,11 +45,11 @@ html {
 }
 
 .prose a {
-  @apply underline decoration-neutral-400 decoration-[0.1em] underline-offset-2 transition-all dark:decoration-neutral-600;
+  @apply underline decoration-neutral-400 decoration-[0.1em] underline-offset-2 transition-all;
 }
 
 .prose .anchor:after {
-  @apply text-neutral-300 dark:text-neutral-700;
+  @apply text-neutral-300;
   content: '#';
 }
 
@@ -68,7 +58,7 @@ html {
 }
 
 .prose pre {
-  @apply overflow-x-auto rounded-lg border border-neutral-200 bg-neutral-50 py-2 px-3 text-sm dark:border-neutral-900 dark:bg-neutral-900;
+  @apply overflow-x-auto rounded-lg border border-neutral-200 bg-neutral-50 py-2 px-3 text-sm;
 }
 
 .prose code {
@@ -88,11 +78,10 @@ html {
 .prose img {
   /* Don't apply styles to next/image */
   @apply m-0 mx-auto rounded-lg transition-all;
-  @apply dark:brightness-90;
 }
 
 .prose {
-  @apply text-neutral-800 dark:text-neutral-200;
+  @apply text-neutral-800;
   font-family: var(--font-crimson-text), serif;
 }
 
@@ -102,7 +91,7 @@ html {
 .prose h4,
 .prose h5,
 .prose h6 {
-  @apply font-bold text-black dark:text-white;
+  @apply font-bold text-black;
   font-family: var(--font-montserrat), sans-serif;
 }
 
@@ -170,7 +159,7 @@ table {
 
 .table-of-contents::before {
   content: 'Table of Contents';
-  @apply mb-3 block text-sm font-medium text-neutral-800 dark:text-neutral-200;
+  @apply mb-3 block text-sm font-medium text-neutral-800;
 }
 
 .table-of-contents ul {
@@ -178,17 +167,17 @@ table {
 }
 
 .table-of-contents ul ul {
-  @apply mt-1.5 ml-3 border-l border-neutral-200 dark:border-neutral-800;
+  @apply mt-1.5 ml-3 border-l border-neutral-200;
 }
 
 .table-of-contents li {
-  @apply leading-relaxed text-neutral-600 dark:text-neutral-400;
+  @apply leading-relaxed text-neutral-600;
 }
 
 .table-of-contents a {
-  @apply block py-0.5 px-2 text-neutral-600 no-underline transition-colors duration-200 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200;
+  @apply block py-0.5 px-2 text-neutral-600 no-underline transition-colors duration-200 hover:text-neutral-900;
 }
 
 .table-of-contents .active {
-  @apply text-neutral-900 dark:text-neutral-100;
+  @apply text-neutral-900;
 }
