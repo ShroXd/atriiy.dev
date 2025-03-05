@@ -28,6 +28,7 @@ html {
   min-width: 360px;
   scroll-behavior: smooth;
   font-family: var(--font-open-sans), sans-serif;
+  font-size: 18px;
 }
 
 .prose .anchor {
@@ -58,11 +59,13 @@ html {
 }
 
 .prose pre {
-  @apply overflow-x-auto rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] py-2 px-3 text-sm;
+  @apply overflow-x-auto rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] py-2 px-3;
+  font-size: 0.9rem;
 }
 
 .prose code {
   @apply rounded-lg py-0.5 px-1;
+  font-size: 0.9rem;
 }
 
 .prose pre code {
@@ -81,8 +84,9 @@ html {
 }
 
 .prose {
-  @apply text-[rgb(80,80,65)];
+  @apply text-[rgb(80,80,65)] text-xl;
   font-family: var(--font-spectral), serif;
+  font-size: 21px;
 }
 
 .prose h1,
@@ -93,6 +97,18 @@ html {
 .prose h6 {
   @apply font-bold text-[rgb(80,80,65)];
   font-family: var(--font-montserrat), sans-serif;
+}
+
+.prose h1 {
+  font-size: 2.25rem;
+}
+
+.prose h2 {
+  font-size: 1.875rem;
+}
+
+.prose h3 {
+  font-size: 1.5rem;
 }
 
 .prose blockquote {
@@ -150,10 +166,10 @@ table {
 }
 
 .table-of-contents {
-  @apply text-sm;
+  @apply text-base;
 
   @apply min-[1247px]:fixed min-[1247px]:top-24 min-[1247px]:right-6;
-  @apply min-[1247px]:max-w-[250px];
+  @apply min-[1247px]:max-w-[280px];
   @apply min-[1247px]:block;
 }
 

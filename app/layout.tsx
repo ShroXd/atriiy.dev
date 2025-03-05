@@ -93,7 +93,7 @@ export default function RootLayout({
         openSans.variable
       )}
     >
-      <body className='mx-4 mt-8 max-w-2xl antialiased font-open-sans lg:mx-auto'>
+      <body className='mx-4 mt-8 max-w-3xl antialiased font-open-sans lg:mx-auto'>
         <main className='mt-6 flex min-w-0 flex-auto flex-col px-2 md:px-0'>
           <Navbar />
           {children}
