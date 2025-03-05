@@ -58,7 +58,7 @@ html {
 }
 
 .prose pre {
-  @apply overflow-x-auto rounded-lg border border-neutral-200 bg-neutral-50 py-2 px-3 text-sm;
+  @apply overflow-x-auto rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] py-2 px-3 text-sm;
 }
 
 .prose code {
@@ -81,7 +81,7 @@ html {
 }
 
 .prose {
-  @apply text-neutral-800;
+  @apply text-[rgb(80,80,65)];
   font-family: var(--font-crimson-text), serif;
 }
 
@@ -91,7 +91,7 @@ html {
 .prose h4,
 .prose h5,
 .prose h6 {
-  @apply font-bold text-black;
+  @apply font-bold text-[rgb(80,80,65)];
   font-family: var(--font-montserrat), sans-serif;
 }
 
@@ -159,7 +159,7 @@ table {
 
 .table-of-contents::before {
   content: 'Table of Contents';
-  @apply mb-3 block text-sm font-medium text-neutral-800;
+  @apply mb-3 block text-sm font-medium text-[rgb(80,80,65)];
 }
 
 .table-of-contents ul {
@@ -171,13 +171,13 @@ table {
 }
 
 .table-of-contents li {
-  @apply leading-relaxed text-neutral-600;
+  @apply leading-relaxed text-[rgb(80,80,65)];
 }
 
 .table-of-contents a {
-  @apply block py-0.5 px-2 text-neutral-600 no-underline transition-colors duration-200 hover:text-neutral-900;
+  @apply block py-0.5 px-2 text-[rgb(80,80,65)] no-underline transition-colors duration-200 hover:text-[rgb(80,80,65)];
 }
 
 .table-of-contents .active {
-  @apply text-neutral-900;
+  @apply text-[rgb(80,80,65)];
 }
