@@ -85,7 +85,7 @@ As you work with GStreamer, you'll frequently encounter these core concepts, par
 
 ### Elements
 
-An **element** is the basic building block of GStreamer. Your primarly task in GStreamer development is to select and connect elements to create a pipeline suited to your sepecific needs. With over 1,600 elements distributed across approximately 230 plugins, GStreamer supports a broad range of functionalities, including codecs, filters, sources, sinks, and various processing tools. You can search the docs for keywords like “audio” or “video”.  Here are some commonly used elements:
+An **element** is the basic building block of GStreamer. Your primarly task in GStreamer development is to select and connect elements to create a pipeline suited to your sepecific needs. With over 2,600 elements distributed across approximately 230 plugins, GStreamer supports a broad range of functionalities, including codecs, filters, sources, sinks, and various processing tools. You can search the docs for keywords like “audio” or “video”.  Here are some commonly used elements:
 
 - `filesrc`: Reads media files
 - `videoconvert`: Converts video formats
@@ -93,7 +93,7 @@ An **element** is the basic building block of GStreamer. Your primarly task in G
 
 ### Pads
 
-**Pads** are the **input** and **output** points of an element, enabling connections to other elements. A pad type is defined by its **direction** and **availability**. Direction describe how the data flow goes. It's defined from the view of within the element: elements receive data on their sink pads and generate data on their source pads. Availability describe if the pad is existing. It may be always, sometimes and on request.   TODO: optimize
+**Pads** are the **input** and **output** points of an element, enabling connections to other elements. A pad type is defined by its **direction** and **availability**. Direction describe how the data flow goes. It's defined from the view of within the element: elements receive data on their sink pads and generate data on their source pads. Availability describe if the pad is existing. It may be always, sometimes and on request.
 
 Selecting the appropriate pad is essential, as each pad supports specific data types and restrits what it can process. Only pads with compatible data types can be linked.
 

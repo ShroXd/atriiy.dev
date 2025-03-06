@@ -101,22 +101,26 @@ html {
 
 .prose h1 {
   font-size: 2.25rem;
+  @apply mb-4;
 }
 
 .prose h2 {
   font-size: 1.875rem;
+  @apply mb-4;
 }
 
 .prose h3 {
   font-size: 1.5rem;
+  @apply mb-4;
 }
 
 .prose blockquote {
   font-family: var(--font-libre-baskerville), serif;
+  @apply mb-4;
 }
 
 .prose p {
-  @apply my-4;
+  @apply mb-4;
 }
 
 .prose strong {
@@ -124,7 +128,7 @@ html {
 }
 
 .prose ul {
-  @apply list-disc pl-6;
+  @apply list-disc pl-6 mb-4;
 }
 
 .prose ol {
@@ -144,6 +148,7 @@ pre::-webkit-scrollbar {
 pre {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  @apply mb-4;
 }
 
 /* Remove Safari input shadow on mobile */
@@ -167,10 +172,6 @@ table {
 
 .table-of-contents {
   @apply text-base;
-
-  @apply min-[1247px]:fixed min-[1247px]:top-24 min-[1247px]:right-6;
-  @apply min-[1247px]:max-w-[280px];
-  @apply min-[1247px]:block;
 }
 
 .table-of-contents::before {
