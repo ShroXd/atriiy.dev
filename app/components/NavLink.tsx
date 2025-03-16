@@ -14,32 +14,21 @@ export default function NavLink({ href, children }: NavLinkProps) {
   const isActive = pathname === href
 
   return (
-    <Link
-      href={href}
-      className='relative m-1 flex py-1 px-2 align-middle transition-all first:ml-0'
+    <motion.div
+      className='relative m-1 py-1 px-2'
+      whileHover={{ y: -1 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <motion.span
-        className={`relative z-10 ${
+      <Link
+        href={href}
+        className={`relative inline-block transition-colors duration-200 ${
           isActive
-            ? 'text-neutral-800 dark:text-neutral-200'
-            : 'text-neutral-600 dark:text-neutral-400'
+            ? 'border-b border-neutral-800 text-neutral-800'
+            : 'text-neutral-600 hover:text-neutral-800'
         }`}
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.2 }}
       >
         {children}
-      </motion.span>
-      {isActive && (
-        <motion.div
-          className='absolute inset-0 rounded-md bg-neutral-100 dark:bg-neutral-800'
-          layoutId='navbar-active'
-          transition={{
-            type: 'spring',
-            stiffness: 350,
-            damping: 30,
-          }}
-        />
-      )}
-    </Link>
+      </Link>
+    </motion.div>
   )
 }
