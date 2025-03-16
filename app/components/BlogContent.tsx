@@ -23,16 +23,67 @@ export default function BlogContent({
 }: BlogContentProps) {
   return (
     <section>
-      <FadeIn delay={0.1}>
-        <h1 className='title font-montserrat text-2xl font-semibold tracking-tighter'>
-          {title}
-          {isDraft && (
-            <span className='ml-2' title='Work in Progress'>
-              🚧
-            </span>
-          )}
-        </h1>
-      </FadeIn>
+      <div className='flex items-center'>
+        <FadeIn delay={0.1}>
+          <h1 className='title font-montserrat text-2xl font-semibold tracking-tighter'>
+            {isDraft ? (
+              <motion.span
+                className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text text-transparent'
+                animate={{
+                  opacity: [0.8, 1, 0.8],
+                  backgroundPosition: ['0%', '100%', '0%'],
+                }}
+                transition={{
+                  opacity: {
+                    repeat: Infinity,
+                    duration: 3,
+                    ease: 'easeInOut',
+                  },
+                  backgroundPosition: {
+                    repeat: Infinity,
+                    duration: 3,
+                    ease: 'linear',
+                  },
+                }}
+              >
+                {title}
+              </motion.span>
+            ) : (
+              <>{title}</>
+            )}
+          </h1>
+        </FadeIn>
+        {isDraft && (
+          <motion.span
+            className='ml-2 text-2xl'
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              y: [0, -3, 0],
+              rotate: [0, -5, 0, 5, 0],
+            }}
+            transition={{
+              opacity: {
+                duration: 0.3,
+                delay: 0.1,
+              },
+              y: {
+                repeat: Infinity,
+                duration: 1.5,
+                ease: 'easeInOut',
+              },
+              rotate: {
+                repeat: Infinity,
+                duration: 2,
+                ease: 'easeInOut',
+              },
+            }}
+            title='Work in Progress'
+          >
+            🚧
+          </motion.span>
+        )}
+      </div>
 
       <FadeIn delay={0.2}>
         <div className='mt-2 mb-8 flex items-center justify-between text-sm'>

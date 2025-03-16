@@ -66,28 +66,54 @@ export function BlogList({ posts }: BlogListProps) {
                 <div className='group space-x-0 md:flex-row md:space-x-2'>
                   <p className='font-montserrat tracking-tight text-neutral-600 transition-all duration-200 group-hover:text-neutral-800'>
                     {post.metadata.draft ? (
-                      <motion.span
-                        className='inline-block opacity-60'
-                        animate={{ opacity: [0.6, 0.8, 0.6] }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 2,
-                          ease: 'easeInOut',
-                        }}
-                      >
-                        {post.metadata.title}
-                      </motion.span>
+                      <motion.div className='inline-flex items-center'>
+                        <motion.span
+                          className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text font-medium text-transparent'
+                          animate={{
+                            opacity: [0.8, 1, 0.8],
+                            backgroundPosition: ['0%', '100%', '0%'],
+                          }}
+                          transition={{
+                            opacity: {
+                              repeat: Infinity,
+                              duration: 3,
+                              ease: 'easeInOut',
+                            },
+                            backgroundPosition: {
+                              repeat: Infinity,
+                              duration: 3,
+                              ease: 'linear',
+                            },
+                          }}
+                        >
+                          {post.metadata.title}
+                        </motion.span>
+                        <motion.span
+                          className='ml-2'
+                          animate={{
+                            y: [0, -3, 0],
+                            rotate: [0, -5, 0, 5, 0],
+                          }}
+                          transition={{
+                            y: {
+                              repeat: Infinity,
+                              duration: 1.5,
+                              ease: 'easeInOut',
+                            },
+                            rotate: {
+                              repeat: Infinity,
+                              duration: 2,
+                              ease: 'easeInOut',
+                            },
+                          }}
+                          title='Work in Progress'
+                        >
+                          🚧
+                        </motion.span>
+                      </motion.div>
                     ) : (
                       <span className='inline-block'>
                         {post.metadata.title}
-                      </span>
-                    )}
-                    {post.metadata.draft && (
-                      <span
-                        className='ml-2 opacity-60'
-                        title='Work in Progress'
-                      >
-                        🚧
                       </span>
                     )}
                     <span className='ml-6 text-xs tabular-nums text-neutral-500 transition-colors duration-200 group-hover:text-neutral-600'>
