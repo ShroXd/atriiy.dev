@@ -87,9 +87,9 @@ export default function BlogContent({
 
       <FadeIn delay={0.2}>
         <div className='mt-2 mb-8 flex items-center justify-between text-sm'>
-          <p className='text-sm text-neutral-600 dark:text-neutral-400'>
+          <span className='text-sm text-neutral-600 dark:text-neutral-400'>
             {formatDate(publishedAt)}
-          </p>
+          </span>
         </div>
       </FadeIn>
 

@@ -64,7 +64,7 @@ export function BlogList({ posts }: BlogListProps) {
                 href={`/blog/${post.slug}`}
               >
                 <div className='group space-x-0 md:flex-row md:space-x-2'>
-                  <p className='font-montserrat tracking-tight text-neutral-600 transition-all duration-200 group-hover:text-neutral-800'>
+                  <span className='font-montserrat tracking-tight text-neutral-600 transition-all duration-200 group-hover:text-neutral-800'>
                     {post.metadata.draft ? (
                       <motion.div className='inline-flex items-center'>
                         <motion.span
@@ -119,7 +119,7 @@ export function BlogList({ posts }: BlogListProps) {
                     <span className='ml-6 text-xs tabular-nums text-neutral-500 transition-colors duration-200 group-hover:text-neutral-600'>
                       {formatDate(post.metadata.publishedAt)}
                     </span>
-                  </p>
+                  </span>
                 </div>
               </Link>
             </motion.div>
