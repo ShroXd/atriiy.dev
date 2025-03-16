@@ -4,8 +4,8 @@ import { ReactNode } from 'react'
 
 import { formatDate } from 'app/lib/date'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 
+import BackLink from './BackLink'
 import FadeIn from './FadeIn'
 
 interface BlogContentProps {
@@ -52,12 +52,7 @@ export default function BlogContent({
 
       <FadeIn delay={0.4}>
         <div className='mt-8 mb-4'>
-          <Link
-            href='/blog'
-            className='text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
-          >
-            cd ..
-          </Link>
+          <BackLink />
         </div>
       </FadeIn>
     </section>
