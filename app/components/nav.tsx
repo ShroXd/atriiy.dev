@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import NavLink from './NavLink'
 
 const navItems = {
   '/': {
@@ -20,13 +20,9 @@ export function Navbar() {
           <div className='flex flex-row space-x-0 pr-10'>
             {Object.entries(navItems).map(([path, { name }]) => {
               return (
-                <Link
-                  key={path}
-                  href={path}
-                  className='relative m-1 flex py-1 px-2 align-middle transition-all first:ml-0 hover:text-neutral-800'
-                >
+                <NavLink key={path} href={path}>
                   {name}
-                </Link>
+                </NavLink>
               )
             })}
           </div>
