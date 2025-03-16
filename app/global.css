@@ -45,10 +45,6 @@ html {
   @apply visible;
 }
 
-.prose a {
-  @apply underline decoration-neutral-400 decoration-[0.1em] underline-offset-2 transition-all;
-}
-
 .prose .anchor:after {
   @apply text-neutral-300;
   content: '#';
@@ -84,7 +80,7 @@ html {
 }
 
 .prose {
-  @apply text-[rgb(80,80,65)] text-xl;
+  @apply text-xl text-[rgb(80,80,65)];
   font-family: var(--font-spectral), serif;
   font-size: 21px;
 }
@@ -128,7 +124,7 @@ html {
 }
 
 .prose ul {
-  @apply list-disc pl-6 mb-4;
+  @apply mb-4 list-disc pl-6;
 }
 
 .prose ol {

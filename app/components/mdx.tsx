@@ -11,31 +11,17 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
 
+import AnimatedLink from './AnimatedLink'
 import { Mermaid } from './Mermaid/Mermaid'
 
 function CustomLink(props) {
-  let href = props.href
-  if (href.startsWith('/')) {
-    return (
-      <Link href={href} {...props}>
-        {props.children}
-      </Link>
-    )
-  }
-  if (href.startsWith('#')) {
-    return <a {...props} />
-  }
-  return <a target='_blank' rel='noopener noreferrer' {...props} />
+  return <AnimatedLink {...props} />
 }
 
 function RoundedImage(props) {
   return (
-    <div className="flex justify-center my-4">
-      <Image
-        alt={props.alt}
-        className='rounded-lg transition-all'
-        {...props}
-      />
+    <div className='my-4 flex justify-center'>
+      <Image alt={props.alt} className='rounded-lg transition-all' {...props} />
     </div>
   )
 }
@@ -85,11 +71,7 @@ function CustomTable({ children }) {
 }
 
 function CustomThead({ children }) {
-  return (
-    <thead className='border-b border-gray-200'>
-      {children}
-    </thead>
-  )
+  return <thead className='border-b border-gray-200'>{children}</thead>
 }
 
 function CustomTh({ children }) {
@@ -110,71 +92,75 @@ function CustomTd({ children }) {
 
 function CustomStrong({ children }) {
   return (
-    <strong className="font-bold" style={{ fontWeight: 700 }}>
+    <strong className='font-bold' style={{ fontWeight: 700 }}>
       {children}
     </strong>
   )
 }
 
 // Use a flag to track if the first paragraph has been processed
-let isFirstParagraphProcessed = false;
+let isFirstParagraphProcessed = false
 
 function CustomParagraph({ children, ...props }) {
   if (!isFirstParagraphProcessed) {
-    isFirstParagraphProcessed = true;
+    isFirstParagraphProcessed = true
 
     if (children) {
-      let firstChar = '';
-      let foundFirstChar = false;
+      let firstChar = ''
+      let foundFirstChar = false
 
-      const modifiedChildren = React.Children.map(children, (child) => {
+      const modifiedChildren = React.Children.map(children, child => {
         if (foundFirstChar) {
-          return child;
+          return child
         }
 
         if (typeof child === 'string' && child.length > 0) {
-          firstChar = child.charAt(0);
-          foundFirstChar = true;
-          return child.slice(1);
+          firstChar = child.charAt(0)
+          foundFirstChar = true
+          return child.slice(1)
         }
 
         if (React.isValidElement(child)) {
-          const childProps = child.props as Record<string, any>;
-          const childChildren = childProps.children;
+          const childProps = child.props as Record<string, any>
+          const childChildren = childProps.children
 
           if (!childChildren) {
-            return child;
+            return child
           }
 
           if (typeof childChildren === 'string' && childChildren.length > 0) {
-            firstChar = childChildren.charAt(0);
-            foundFirstChar = true;
-            return React.cloneElement(child, {}, childChildren.slice(1));
+            firstChar = childChildren.charAt(0)
+            foundFirstChar = true
+            return React.cloneElement(child, {}, childChildren.slice(1))
           }
 
-          return child;
+          return child
         }
 
-        return child;
-      });
+        return child
+      })
 
       if (foundFirstChar) {
         return (
-          <p className="mb-4" {...props}>
+          <p className='mb-4' {...props}>
             <span
-              className="float-left text-6xl mr-2 mt-1 font-bold"
+              className='float-left mt-1 mr-2 text-6xl font-bold'
               style={{ color: '#47a3f3', lineHeight: '0.8' }}
             >
               {firstChar}
             </span>
             {modifiedChildren}
           </p>
-        );
+        )
       }
     }
   }
 
-  return <p className="mb-4" {...props}>{children}</p>;
+  return (
+    <p className='mb-4' {...props}>
+      {children}
+    </p>
+  )
 }
 
 let components = {
@@ -217,7 +203,7 @@ let components = {
 
 export function CustomMDX(props) {
   // Reset flag for each new MDX document
-  isFirstParagraphProcessed = false;
+  isFirstParagraphProcessed = false
   return (
     <MDXRemote
       {...props}
