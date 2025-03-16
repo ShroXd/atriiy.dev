@@ -1,8 +1,9 @@
 import { formatDate, getBlogPosts } from 'app/blog/utils'
+import BlogContent from 'app/components/BlogContent'
 import { CustomMDX } from 'app/components/mdx'
 import { baseUrl } from 'app/sitemap'
-import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()
@@ -60,7 +61,7 @@ export default function Blog({ params }) {
   }
 
   return (
-    <section>
+    <>
       <script
         type='application/ld+json'
         suppressHydrationWarning
@@ -83,34 +84,13 @@ export default function Blog({ params }) {
           }),
         }}
       />
-      <h1 className='title text-2xl font-semibold tracking-tighter font-montserrat'>
-        {post.metadata.title}
-        {post.metadata.draft && (
-          <span className='ml-2' title='Work in Progress'>🚧</span>
-        )}
-      </h1>
-      <div className='mt-2 mb-8 flex items-center justify-between text-sm'>
-        <p className='text-sm text-neutral-600 dark:text-neutral-400'>
-          {formatDate(post.metadata.publishedAt)}
-        </p>
-      </div>
-      {post.metadata.draft ? (
-        <p className='prose'>
-          Work in progress, stay tuned!
-        </p>
-      ) : (
-        <article className='prose font-crimson'>
-          <CustomMDX source={post.content} />
-        </article>
-      )}
-      <div className="mt-8 mb-4">
-        <Link 
-          href="/blog"
-          className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-        >
-          cd ..
-        </Link>
-      </div>
-    </section>
+      <BlogContent
+        title={post.metadata.title}
+        publishedAt={post.metadata.publishedAt}
+        isDraft={post.metadata.draft}
+      >
+        <CustomMDX source={post.content} />
+      </BlogContent>
+    </>
   )
 }
