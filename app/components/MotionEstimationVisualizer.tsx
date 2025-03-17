@@ -120,7 +120,18 @@ export const MotionEstimationVisualizer = ({
         }
         return null
       })
-      .filter(v => v !== null)
+      .filter(
+        (
+          v
+        ): v is {
+          fromX: number
+          fromY: number
+          toX: number
+          toY: number
+          vecX: number
+          vecY: number
+        } => v !== null
+      )
   }
 
   // Handle mouse movement
