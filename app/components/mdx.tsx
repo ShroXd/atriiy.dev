@@ -146,7 +146,7 @@ function CustomParagraph({ children, ...props }) {
           <p className='mb-4' {...props}>
             <span
               className='float-left mt-1 mr-2 text-6xl font-bold'
-              style={{ color: '#47a3f3', lineHeight: '0.8' }}
+              style={{ color: '#a51c30', lineHeight: '0.8' }}
             >
               {firstChar}
             </span>
