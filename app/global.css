@@ -29,6 +29,7 @@ html {
   scroll-behavior: smooth;
   font-family: var(--font-open-sans), sans-serif;
   font-size: 18px;
+  letter-spacing: -0.01em;
 }
 
 .prose .anchor {
@@ -62,6 +63,7 @@ html {
 .prose code {
   @apply rounded-lg py-0.5 px-1;
   font-size: 0.9rem;
+  letter-spacing: 0;
 }
 
 .prose pre code {
@@ -83,6 +85,7 @@ html {
   @apply text-xl text-[rgb(80,80,65)];
   font-family: var(--font-spectral), serif;
   font-size: 21px;
+  letter-spacing: 0.01em;
 }
 
 .prose h1,
@@ -93,6 +96,7 @@ html {
 .prose h6 {
   @apply font-bold text-[rgb(80,80,65)];
   font-family: var(--font-montserrat), sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .prose h1 {
@@ -113,6 +117,7 @@ html {
 .prose blockquote {
   font-family: var(--font-libre-baskerville), serif;
   @apply mb-4;
+  letter-spacing: 0.015em; /* Libre Baskerville benefits from slightly looser spacing */
 }
 
 .prose p {
@@ -168,6 +173,7 @@ table {
 
 .table-of-contents {
   @apply text-base;
+  letter-spacing: -0.01em; /* Match the base HTML spacing */
 }
 
 .table-of-contents::before {
@@ -193,4 +199,32 @@ table {
 
 .table-of-contents .active {
   @apply text-[rgb(80,80,65)];
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+    letter-spacing: -0.005em; /* Slightly looser on mobile for better readability */
+  }
+
+  .prose {
+    font-size: 18px;
+    letter-spacing: 0.005em;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    letter-spacing: -0.015em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .prose {
+    letter-spacing: 0.015em;
+  }
 }
