@@ -13,6 +13,7 @@ import { highlight } from 'sugar-high'
 
 import AnimatedLink from './AnimatedLink'
 import { Mermaid } from './Mermaid/Mermaid'
+import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 
 function CustomLink(props) {
   return <AnimatedLink {...props} />
@@ -178,6 +179,7 @@ let components = {
   td: CustomTd,
   strong: CustomStrong,
   p: CustomParagraph,
+  MotionEstimationVisualizer,
   pre: ({ children }) => {
     // @ts-ignore
     const childClassName = children?.props?.className || ''
