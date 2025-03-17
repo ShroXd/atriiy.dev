@@ -101,17 +101,32 @@ html {
 
 .prose h1 {
   font-size: 2.25rem;
-  @apply mb-4;
+  @apply mt-10 mb-4;
 }
 
 .prose h2 {
   font-size: 1.875rem;
-  @apply mb-4;
+  @apply mt-8 mb-4;
 }
 
 .prose h3 {
   font-size: 1.5rem;
-  @apply mb-4;
+  @apply mt-6 mb-4;
+}
+
+.prose h4 {
+  font-size: 1.25rem;
+  @apply mt-4 mb-4;
+}
+
+.prose h5 {
+  font-size: 1.125rem;
+  @apply mt-3 mb-4;
+}
+
+.prose h6 {
+  font-size: 1rem;
+  @apply mt-2 mb-4;
 }
 
 .prose blockquote {
