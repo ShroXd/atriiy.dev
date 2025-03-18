@@ -3,7 +3,6 @@ import React from 'react'
 import 'katex/dist/katex.min.css'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
-import Link from 'next/link'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
 import rehypeToc from 'rehype-toc'
@@ -12,8 +11,10 @@ import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
 
 import AnimatedLink from './AnimatedLink'
+import DCTVisualization from './DCTVisualization'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
+import VectorDecomposition from './VectorDecomposition'
 
 function CustomLink(props) {
   return <AnimatedLink {...props} />
@@ -180,6 +181,8 @@ let components = {
   strong: CustomStrong,
   p: CustomParagraph,
   MotionEstimationVisualizer,
+  VectorDecomposition,
+  DCTVisualization,
   pre: ({ children }) => {
     // @ts-ignore
     const childClassName = children?.props?.className || ''

@@ -1,11 +1,13 @@
+import { DCTVisualization } from '../../components/DCTVisualization'
 import { MotionEstimationVisualizer } from '../../components/MotionEstimationVisualizer'
+import { VectorDecomposition } from '../../components/VectorDecomposition'
 
 ---
 
 title: 'Stream Platinum: GStreamer x Rust - Encoding and Decoding'
 publishedAt: 2025-03-07
 tags: ['gstreamer', 'rust', 'encoding', 'decoding']
-draft: true
+draft: false
 description: ''
 
 ---
@@ -74,7 +76,7 @@ While encoding involves complex algorithems we can’t fully explore in one arti
 
 In a nutshell, video encoding reduces file sizes by removing redundancy, and the techniques used depend on whether the redundancy is within a frame (spatial) or between frames (temporal).
 
-### **Motion estimation and compensation**
+### Motion estimation and compensation
 
 Motion estimation and compensation are methods that predict how objects move between consecutive frames. Imaging you’re making a flipbook. Each page is a frame of your video.
 
@@ -93,3 +95,35 @@ In the real implementation, motion estimation and compensation enable video enco
 - B-frame (bidirectional frame). A frame encoded using motion estimation and compensation to predict differences from both the previous and next I-frame or P-frame, requiring both for decoding.
 
 These frame types are organized into Group of Pictures (GOP), a sequence of frames that begins with an I-frame followed by a mix of P-frames and B-frames. The GOP structure organize frames to optimize compression efficiency and enable random access.
+
+### Transform coding and quantization
+
+Transform coding and quantization are fundamental techniques for spatial compression, designed to reduce data size by selectively discarding information that is less percetually significant. The idea behind this is the characteristics of human vision, which is less sensitive to high-frequency details. Therefore, the controlled loss of these details doesn’t affect the media-watching experience.
+
+The process consists of two primary stages: transform coding and quantization. First, transform coding converts the raw data into a frequency-based representation. Following this, quantization reduces the precision of these frequency coefficients, discarding less significant details to achieve compression. Finally, the quantized coefficients are encoded for future storage or transmission.
+
+#### Discrete Cosine Transform
+
+The transform coding stage is often accomplished using mathematical transforms, such as **Discrete Cosine Transform (DCT)**. While other transforms exist, we will focus on the DCT in this article. The core idea of the DCT is to concentrate the signal’s energy into a relatively small number of coefficients. And them we can compress the data through discarding some high-frequency components.
+
+To understand the concept, consider a simplified analogy from geometry. In a 2D Cartensian corrdinate system, any vector can be decomposed into its horizontal and vertical components. If we reduce the bigness of the horizontal component, we effectively reduce the information content of the vector along that axis. Feel free to explore the interactive demo below to better grasp this concepts.
+
+<VectorDecomposition className='mb-4' />
+
+Similarly, the DCT decomposes a signal into its consituent components. We can reducing the percision of high-frequency coefficients, which represent fine details in the image or audio. As the demo shown below, the original signal can be decomposes into difference frequency components.
+
+#### Quantization
+
+**Quantization** is a process that simplifying the list of frequency components we get from the previous stage. As we discussed, some frequency components are more important than others. Therefore, we can make the less important components smaller, or even discard them. This is like rounding the numbers. If you have 10.99, you might round it to 11. In quantization, we round the _frequency_ components. We make the weak ones even weaker, and the strong ones stay mostly the same. This process can reduce the information we need to store the picture or video, make it smaller.
+
+However, if we simplify too much, the picture or video maight look blurry or blocky, because we’ve lost some of the finer details. Again, there are no fixed, directly usable parameters, the art of encoding is to find a good **balance** between file size and perceptual quality.
+
+You can try the interactive demo below to see quantization in action. Here’s what it demonstrates: In image and audio compression (e.g., JPEG and MP3), the DCT transform separates a signal into frequency components, and quantization selectively reduces their precision.
+
+<DCTVisualization className='mb-4' />
+
+## What next?
+
+In this article, we discussed the fundamental concepts of encoding and decoding, including raw file formats, motion estimation and compensation, and transform coding and quantization. We also explored the Discrete Cosine Transform (DCT) and its application in image and audio compression.
+
+I hope this article has provided you with a solid understanding of the principles behind encoding and decoding. Building on this foundation, we will introduce the encoding and decoding elements of GStreamer in the next article.
