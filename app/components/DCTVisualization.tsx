@@ -619,12 +619,7 @@ const DCTVisualization = () => {
           ref={canvasRef}
           width={width}
           height={height}
-          className='w-full rounded-md bg-white shadow-sm'
-          style={{
-            maxWidth: '100%',
-            height: 'auto',
-            aspectRatio: `${width}/${height}`,
-          }}
+          className='w-full rounded-lg bg-white'
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
@@ -635,19 +630,19 @@ const DCTVisualization = () => {
       <div className='mt-6 flex flex-wrap justify-center gap-3'>
         <button
           onClick={resetAllSettings}
-          className='rounded-lg bg-gray-100 py-2 px-4 text-gray-800 shadow transition hover:bg-gray-200'
+          className='rounded-md border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50'
         >
           Reset All
         </button>
         <button
           onClick={setReduceHighFreqPreset}
-          className='rounded-lg bg-indigo-100 py-2 px-4 text-indigo-800 shadow transition hover:bg-indigo-200'
+          className='rounded-md border border-indigo-200 bg-white py-2 px-4 text-sm font-medium text-indigo-600 shadow-sm transition hover:bg-indigo-50'
         >
           Reduce High Frequencies
         </button>
         <button
           onClick={setReduceLowFreqPreset}
-          className='rounded-lg bg-pink-100 py-2 px-4 text-pink-800 shadow transition hover:bg-pink-200'
+          className='rounded-md border border-pink-200 bg-white py-2 px-4 text-sm font-medium text-pink-600 shadow-sm transition hover:bg-pink-50'
         >
           Reduce Low Frequencies
         </button>
@@ -655,7 +650,7 @@ const DCTVisualization = () => {
 
       {/* DCT components and quantization controls */}
       <div className='mt-6 mb-2 w-full max-w-4xl'>
-        <div className='mb-4 text-center font-medium text-gray-800'>
+        <div className='mb-4 text-center text-sm font-medium text-gray-700'>
           Toggle components and adjust quantization values to see the effect on
           reconstruction
         </div>
@@ -669,10 +664,10 @@ const DCTVisualization = () => {
           ].map((label, index) => (
             <div
               key={index}
-              className={`rounded-lg border p-3 ${
+              className={`rounded-md border p-3 ${
                 componentToggles[index]
-                  ? 'border-indigo-300 bg-indigo-50'
-                  : 'border-gray-300 bg-gray-50'
+                  ? 'border-gray-200 bg-white'
+                  : 'border-gray-200 bg-gray-50'
               } transition`}
             >
               <div className='mb-2 flex items-center justify-between'>
@@ -681,7 +676,7 @@ const DCTVisualization = () => {
                     type='checkbox'
                     checked={componentToggles[index]}
                     onChange={() => toggleComponent(index)}
-                    className='h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500'
+                    className='h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'
                   />
                   <span
                     style={{
@@ -689,12 +684,12 @@ const DCTVisualization = () => {
                         ? ['#F87171', '#34D399', '#FBBF24', '#A78BFA'][index]
                         : '#999',
                     }}
-                    className='font-medium'
+                    className='text-sm font-medium'
                   >
                     {label}
                   </span>
                 </label>
-                <span className='text-sm text-gray-600'>
+                <span className='text-xs text-gray-500'>
                   {quantizationValues[index]}%
                 </span>
               </div>
@@ -709,33 +704,13 @@ const DCTVisualization = () => {
                 onChange={e =>
                   updateQuantization(index, parseInt(e.target.value))
                 }
-                className='h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200'
+                className='h-1.5 w-full cursor-pointer appearance-none rounded-md bg-gray-200 accent-indigo-600'
                 disabled={!componentToggles[index]}
               />
             </div>
           ))}
         </div>
       </div>
-      {/* 
-      <div className='mt-4 mb-6 max-w-3xl text-center text-sm text-gray-600'>
-        <p className='mb-2'>
-          <strong>What this demonstrates:</strong> In image and audio
-          compression (like JPEG and MP3), the DCT transform lets us separate a
-          signal into frequency components. Then quantization selectively
-          reduces precision in these components.
-        </p>
-        <p className='mb-2'>
-          <strong>Key insight:</strong> Human perception is less sensitive to
-          high-frequency details. Reducing high frequencies (using the "Reduce
-          High Frequencies" button) preserves most of the visual quality while
-          saving data.
-        </p>
-        <p>
-          Compare this to reducing low frequencies, which severely degrades the
-          signal. This principle is why compression can achieve high ratios with
-          minimal perceptual loss.
-        </p>
-      </div> */}
     </div>
   )
 }
