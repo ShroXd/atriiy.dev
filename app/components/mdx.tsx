@@ -2,6 +2,7 @@ import React from 'react'
 
 import 'katex/dist/katex.min.css'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
@@ -15,6 +16,11 @@ import DCTVisualization from './DCTVisualization'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 import VectorDecomposition from './VectorDecomposition'
+
+// Dynamic import for AudioPlayer
+const AudioPlayer = dynamic(() => import('./Audio'), {
+  ssr: false,
+})
 
 function CustomLink(props) {
   return <AnimatedLink {...props} />
@@ -212,39 +218,60 @@ let components = {
   },
 }
 
-export function CustomMDX(props) {
+interface Frontmatter {
+  audioLink?: string
+  [key: string]: any
+}
+
+export function CustomMDX({
+  frontmatter = {} as Frontmatter,
+  source,
+  ...props
+}) {
   // Reset flag for each new MDX document
   isFirstParagraphProcessed = false
+
   return (
-    <MDXRemote
-      {...props}
-      components={components}
-      options={{
-        mdxOptions: {
-          remarkPlugins: [remarkMath, remarkGfm],
-          rehypePlugins: [
-            [
-              rehypeKatex,
-              {
-                strict: false,
-                trust: true,
-              },
-            ],
-            rehypeSlug,
-            [
-              rehypeToc,
-              {
-                headings: ['h1', 'h2', 'h3', 'h4'],
-                position: 'afterbegin',
-                customizeTOC: toc => {
-                  toc.properties.className = ['table-of-contents']
-                  return toc
+    <>
+      {frontmatter?.audioLink && (
+        <div className='mb-8'>
+          <AudioPlayer src={frontmatter.audioLink} />
+        </div>
+      )}
+      <MDXRemote
+        source={source}
+        {...props}
+        components={{
+          ...components,
+          Audio: AudioPlayer,
+        }}
+        options={{
+          mdxOptions: {
+            remarkPlugins: [remarkMath, remarkGfm],
+            rehypePlugins: [
+              [
+                rehypeKatex,
+                {
+                  strict: false,
+                  trust: true,
                 },
-              },
+              ],
+              rehypeSlug,
+              [
+                rehypeToc,
+                {
+                  headings: ['h1', 'h2', 'h3', 'h4'],
+                  position: 'afterbegin',
+                  customizeTOC: toc => {
+                    toc.properties.className = ['table-of-contents']
+                    return toc
+                  },
+                },
+              ],
             ],
-          ],
-        },
-      }}
-    />
+          },
+        }}
+      />
+    </>
   )
 }

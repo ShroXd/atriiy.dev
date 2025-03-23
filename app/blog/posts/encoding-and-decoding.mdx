@@ -9,6 +9,7 @@ publishedAt: 2025-03-18
 tags: ['gstreamer', 'rust', 'encoding', 'decoding']
 draft: false
 description: 'A deep dive into the world of encoding and decoding'
+audioLink: 'https://audio.atriiy.me/GStreamer%20x%20Rust_%20Encoding%20and%20Decoding%20Fundamentals.mp3'
 
 ---
 
@@ -72,13 +73,13 @@ There are numerous encoding formats available for both audio and video. **H.264*
 
 To make this easier to grasp, think of encoding like summarizing a book: it keeps the main storyline (the essential data) but skips over minor details to save space. In video encoding, this is achieved by leveraging spatial redundancy, resuing similar data across consecutive frames. Techniques like motion estimation and compensation further exploit temporal redundancy by predicting movement between frames.
 
-While encoding involves complex algorithems we can’t fully explore in one article, this section convers the basic concepts to give you a clear starting point. Understanding these fundamentals might spark ideas for optimizing video streaming quality in your future projects.
+While encoding involves complex algorithems we can't fully explore in one article, this section convers the basic concepts to give you a clear starting point. Understanding these fundamentals might spark ideas for optimizing video streaming quality in your future projects.
 
 In a nutshell, video encoding reduces file sizes by removing redundancy, and the techniques used depend on whether the redundancy is within a frame (spatial) or between frames (temporal).
 
 ### Motion estimation and compensation
 
-Motion estimation and compensation are methods that predict how objects move between consecutive frames. Imaging you’re making a flipbook. Each page is a frame of your video.
+Motion estimation and compensation are methods that predict how objects move between consecutive frames. Imaging you're making a flipbook. Each page is a frame of your video.
 
 **Motion estimation** is like figuring out how much the drawing on one page moved to the next. You look at a part of the drawing (a block of pixels) and find where it moved to on the next page, noting the direction and distance of that movement (the motion vector).
 
@@ -90,7 +91,7 @@ The interactive demonstration illustrates the core concepts of motion estimation
 
 In the real implementation, motion estimation and compensation enable video encoders to categorize frames into three types — I-frames, P-frames, or B-frames — based on how they use these predictions. Each types plays a distinct role in balancing compression efficiency and video quality, determining how frames depend on one another.
 
-- I-frame (intra-coded frame). A complete frame encoded independently, containing all the information to display and can be a reference for other frames. It doesn’t rely on motion estimation or compensation.
+- I-frame (intra-coded frame). A complete frame encoded independently, containing all the information to display and can be a reference for other frames. It doesn't rely on motion estimation or compensation.
 - P-frame (predictive frame). A frame encoded based on the differences from the previous I or P frame using motion estimation and compensation, it requires the earlier frame to be decoded first.
 - B-frame (bidirectional frame). A frame encoded using motion estimation and compensation to predict differences from both the previous and next I-frame or P-frame, requiring both for decoding.
 
@@ -98,13 +99,13 @@ These frame types are organized into Group of Pictures (GOP), a sequence of fram
 
 ### Transform coding and quantization
 
-Transform coding and quantization are fundamental techniques for spatial compression, designed to reduce data size by selectively discarding information that is less percetually significant. The idea behind this is the characteristics of human vision, which is less sensitive to high-frequency details. Therefore, the controlled loss of these details doesn’t affect the media-watching experience.
+Transform coding and quantization are fundamental techniques for spatial compression, designed to reduce data size by selectively discarding information that is less percetually significant. The idea behind this is the characteristics of human vision, which is less sensitive to high-frequency details. Therefore, the controlled loss of these details doesn't affect the media-watching experience.
 
 The process consists of two primary stages: transform coding and quantization. First, transform coding converts the raw data into a frequency-based representation. Following this, quantization reduces the precision of these frequency coefficients, discarding less significant details to achieve compression. Finally, the quantized coefficients are encoded for future storage or transmission.
 
 #### Discrete Cosine Transform
 
-The transform coding stage is often accomplished using mathematical transforms, such as **Discrete Cosine Transform (DCT)**. While other transforms exist, we will focus on the DCT in this article. The core idea of the DCT is to concentrate the signal’s energy into a relatively small number of coefficients. And them we can compress the data through discarding some high-frequency components.
+The transform coding stage is often accomplished using mathematical transforms, such as **Discrete Cosine Transform (DCT)**. While other transforms exist, we will focus on the DCT in this article. The core idea of the DCT is to concentrate the signal's energy into a relatively small number of coefficients. And them we can compress the data through discarding some high-frequency components.
 
 To understand the concept, consider a simplified analogy from geometry. In a 2D Cartensian corrdinate system, any vector can be decomposed into its horizontal and vertical components. If we reduce the bigness of the horizontal component, we effectively reduce the information content of the vector along that axis. Feel free to explore the interactive demo below to better grasp this concepts.
 
@@ -116,9 +117,9 @@ Similarly, the DCT decomposes a signal into its consituent components. We can re
 
 **Quantization** is a process that simplifying the list of frequency components we get from the previous stage. As we discussed, some frequency components are more important than others. Therefore, we can make the less important components smaller, or even discard them. This is like rounding the numbers. If you have 10.99, you might round it to 11. In quantization, we round the _frequency_ components. We make the weak ones even weaker, and the strong ones stay mostly the same. This process can reduce the information we need to store the picture or video, make it smaller.
 
-However, if we simplify too much, the picture or video maight look blurry or blocky, because we’ve lost some of the finer details. Again, there are no fixed, directly usable parameters, the art of encoding is to find a good **balance** between file size and perceptual quality.
+However, if we simplify too much, the picture or video maight look blurry or blocky, because we've lost some of the finer details. Again, there are no fixed, directly usable parameters, the art of encoding is to find a good **balance** between file size and perceptual quality.
 
-You can try the interactive demo below to see quantization in action. Here’s what it demonstrates: In image and audio compression (e.g., JPEG and MP3), the DCT transform separates a signal into frequency components, and quantization selectively reduces their precision.
+You can try the interactive demo below to see quantization in action. Here's what it demonstrates: In image and audio compression (e.g., JPEG and MP3), the DCT transform separates a signal into frequency components, and quantization selectively reduces their precision.
 
 <DCTVisualization className='mb-4' />
 
