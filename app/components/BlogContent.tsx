@@ -6,6 +6,7 @@ import { formatDate } from 'app/lib/date'
 import { motion } from 'framer-motion'
 
 import BackLink from './BackLink'
+import Comments from './Comments'
 import FadeIn from './FadeIn'
 
 interface BlogContentProps {
@@ -101,7 +102,15 @@ export default function BlogContent({
         )}
       </FadeIn>
 
+      <FadeIn delay={0.35}>
+        <hr className='my-12 border-t border-neutral-200 dark:border-neutral-700' />
+      </FadeIn>
+
       <FadeIn delay={0.4}>
+        <Comments />
+      </FadeIn>
+
+      <FadeIn delay={0.5}>
         <div className='mt-8 mb-4'>
           <BackLink />
         </div>
