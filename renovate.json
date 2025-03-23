@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "packageRules": [
     {
@@ -12,7 +12,6 @@
   ],
   "dependencyDashboard": true,
   "schedule": ["every weekend"],
-  "prCreation": "immediate",
   "prHourlyLimit": 5,
   "rangeStrategy": "auto",
   "semanticCommits": "enabled",
