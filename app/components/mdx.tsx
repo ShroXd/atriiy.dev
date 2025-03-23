@@ -233,11 +233,6 @@ export function CustomMDX({
 
   return (
     <>
-      {frontmatter?.audioLink && (
-        <div className='mb-8'>
-          <AudioPlayer src={frontmatter.audioLink} />
-        </div>
-      )}
       <MDXRemote
         source={source}
         {...props}
@@ -264,10 +259,80 @@ export function CustomMDX({
                   position: 'afterbegin',
                   customizeTOC: toc => {
                     toc.properties.className = ['table-of-contents']
+                    // Return the TOC unmodified, we'll add the audio player as a separate element
                     return toc
                   },
                 },
               ],
+              // Add a rehype plugin to insert the audio player after TOC
+              () => tree => {
+                if (!frontmatter?.audioLink) return tree
+
+                // Function to process nodes
+                const processNode = node => {
+                  // If we found the TOC
+                  if (
+                    node.properties &&
+                    node.properties.className &&
+                    Array.isArray(node.properties.className) &&
+                    node.properties.className.includes('table-of-contents')
+                  ) {
+                    // Insert audio player immediately after the TOC
+                    const parentChildren = node.parent?.children
+                    if (parentChildren) {
+                      const tocIndex = parentChildren.indexOf(node)
+                      if (tocIndex !== -1) {
+                        // Create audio player element
+                        const audioElement = {
+                          type: 'element',
+                          tagName: 'div',
+                          properties: { className: ['mt-4', 'mb-8'] },
+                          children: [
+                            {
+                              type: 'mdxJsxFlowElement',
+                              name: 'Audio',
+                              attributes: [
+                                {
+                                  type: 'mdxJsxAttribute',
+                                  name: 'src',
+                                  value: frontmatter.audioLink as string,
+                                },
+                              ],
+                              children: [],
+                            },
+                          ],
+                          parent: node.parent,
+                        }
+                        // Insert after TOC
+                        parentChildren.splice(tocIndex + 1, 0, audioElement)
+                      }
+                    }
+                    return true // Stop traversal once we've found and processed the TOC
+                  }
+
+                  // Process children recursively
+                  if (node.children && node.children.length) {
+                    // Add parent reference to help with insertion
+                    node.children.forEach(child => {
+                      child.parent = node
+                    })
+
+                    // Process each child
+                    for (const child of node.children) {
+                      if (processNode(child)) {
+                        return true // Stop if we've found and processed the TOC
+                      }
+                    }
+                  }
+
+                  return false // Continue traversal
+                }
+
+                // Start processing from the root
+                processNode(tree)
+
+                return tree
+              },
             ],
           },
         }}
