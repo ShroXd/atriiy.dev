@@ -4,6 +4,7 @@ publishedAt: 2025-02-27
 tags: ['gstreamer', 'rust']
 draft: false
 description: 'GStreamer is a free and open-source multimedia framework for handling media and other stream-based data in real-time. It provides a set of libraries and plugins for various tasks such as video encoding, video decoding, audio processing, and more.'
+audioLink: 'https://audio.atriiy.me/GStreamer%20and%20Rust_%20Awakening%20the%20Multimedia%20Pipeline.mp3'
 ---
 
 ## Introduction
@@ -24,13 +25,13 @@ The GStreamer team officially maintains a project [**gstreamer-rs**](https://git
 
 In this article, we'll start by demostrating a simple GStreamer-based media processing pipeline to help you understand the library's core concepts. Next, we’ll explore essential GStreamer concepts that you'll encounter repeatedly when building multimedia applications, makes them valuable to grasp early on. We'll also cover advanced topic like **Bins** and **Message Bus**, which are key to creating robust systems.
 
-Based on the understanding of the core concepts, we'll then reimplement the initial pipeline in Rust, breaking down each step in detail. While real-world system might involve more complex abstractions or integration with external components, but the *thought* behind it always *works*. 😉
+Based on the understanding of the core concepts, we'll then reimplement the initial pipeline in Rust, breaking down each step in detail. While real-world system might involve more complex abstractions or integration with external components, but the _thought_ behind it always _works_. 😉
 
 ## Setup
 
 Before delving into the main topic, you'll need to prepare the development environment. Both Rust and GStreamer are cross-platform, allowing you to develop your multimedia system on your perferred operating system.
 
-I recommend using **Linux** as your primary OS since GStreamer offers excellent support for it, simplifying the installation of components and plugins. A standout option is [Pop!_OS](https://pop.system76.com/) , which provides out-of-box driver for Intel/AMD and NVIDIA graphic card. Built on Ubuntu, it also excels in supporting machine learning and NVIDIA CUDA — perfect if you're interested in tools like DeepStream.
+I recommend using **Linux** as your primary OS since GStreamer offers excellent support for it, simplifying the installation of components and plugins. A standout option is [Pop!\_OS](https://pop.system76.com/) , which provides out-of-box driver for Intel/AMD and NVIDIA graphic card. Built on Ubuntu, it also excels in supporting machine learning and NVIDIA CUDA — perfect if you're interested in tools like DeepStream.
 
 For **macOS** users, another widely used Unix-like OS, refer to the [**download**](https://gstreamer.freedesktop.org/download/#macos) page for detailed installation instructions. For development, you need to install both runtime and development packages. GStreamer is also aviliable on [Homebrew](https://formulae.brew.sh/formula/gstreamer), but it lacks some plugins, you need to install them by yourself.
 
@@ -52,14 +53,14 @@ Let's begin with a straightforward example: a pipeline featuring a source elemen
 ```mermaid
 flowchart LR
     A[videotestsrc pattern=smpte] --> C[autovideosink]
-    
+
     subgraph Pipeline
         A
         C
     end
 ```
 
-The pipeline starts with a **source** element `videotestsrc`, configured with the *SMPTE* pattern. This element generates test video data, and you can adjust the video's apperance using `pattern` property. You can find more information in the [documentation](https://gstreamer.freedesktop.org/documentation/videotestsrc/index.html?gi-language=c#GstVideoTestSrcPattern).
+The pipeline starts with a **source** element `videotestsrc`, configured with the _SMPTE_ pattern. This element generates test video data, and you can adjust the video's apperance using `pattern` property. You can find more information in the [documentation](https://gstreamer.freedesktop.org/documentation/videotestsrc/index.html?gi-language=c#GstVideoTestSrcPattern).
 
 It concludes with a **sink** element, `autovideosink`, which automatically selects a suitable video sink based on your system when the pipeline is building.
 
@@ -85,7 +86,7 @@ As you work with GStreamer, you'll frequently encounter these core concepts, par
 
 ### Elements
 
-An **element** is the basic building block of GStreamer. Your primarly task in GStreamer development is to select and connect elements to create a pipeline suited to your sepecific needs. With over 2,600 elements distributed across approximately 230 plugins, GStreamer supports a broad range of functionalities, including codecs, filters, sources, sinks, and various processing tools. You can search the docs for keywords like “audio” or “video”.  Here are some commonly used elements:
+An **element** is the basic building block of GStreamer. Your primarly task in GStreamer development is to select and connect elements to create a pipeline suited to your sepecific needs. With over 2,600 elements distributed across approximately 230 plugins, GStreamer supports a broad range of functionalities, including codecs, filters, sources, sinks, and various processing tools. You can search the docs for keywords like “audio” or “video”. Here are some commonly used elements:
 
 - `filesrc`: Reads media files
 - `videoconvert`: Converts video formats
