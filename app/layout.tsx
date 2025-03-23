@@ -1,9 +1,12 @@
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
-import { EB_Garamond, Libre_Baskerville, Montserrat, Open_Sans, Spectral } from 'next/font/google'
+import {
+  Libre_Baskerville,
+  Montserrat,
+  Open_Sans,
+  Spectral,
+} from 'next/font/google'
 
 import Footer from './components/footer'
 import { Navbar } from './components/nav'
@@ -16,12 +19,6 @@ const spectral = Spectral({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-spectral',
-})
-
-const ebGaramond = EB_Garamond({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-eb-garamond',
 })
 
 const libreBaskerville = Libre_Baskerville({
@@ -50,10 +47,12 @@ export const metadata: Metadata = {
     default: 'Atriiy',
     template: '%s | Atriiy',
   },
-  description: 'Dev, using TypeScript, Rust and Golang. Writing, reading, and playing video games.',
+  description:
+    'Dev, using TypeScript, Rust and Golang. Writing, reading, and playing video games.',
   openGraph: {
     title: 'Atriiy',
-    description: 'Dev, using TypeScript, Rust and Golang. Writing, reading, and playing video games.',
+    description:
+      'Dev, using TypeScript, Rust and Golang. Writing, reading, and playing video games.',
     url: baseUrl,
     siteName: 'Atriiy',
     locale: 'en_US',
@@ -84,16 +83,13 @@ export default function RootLayout({
       lang='en'
       className={cx(
         'bg-[#f2f2e3] text-[rgb(80,80,65)]',
-        GeistSans.variable,
-        GeistMono.variable,
         spectral.variable,
-        ebGaramond.variable,
         libreBaskerville.variable,
         montserrat.variable,
         openSans.variable
       )}
     >
-      <body className='mx-4 mt-8 max-w-3xl antialiased font-open-sans lg:mx-auto'>
+      <body className='font-open-sans mx-4 mt-8 max-w-3xl antialiased lg:mx-auto'>
         <main className='mt-6 flex min-w-0 flex-auto flex-col px-2 md:px-0'>
           <Navbar />
           {children}

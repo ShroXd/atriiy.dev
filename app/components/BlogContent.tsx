@@ -97,7 +97,7 @@ export default function BlogContent({
         {isDraft ? (
           <p className='prose'>Work in progress, stay tuned!</p>
         ) : (
-          <article className='prose font-crimson'>{children}</article>
+          <article className='prose'>{children}</article>
         )}
       </FadeIn>
 
