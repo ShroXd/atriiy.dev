@@ -30,7 +30,13 @@ function RoundedImage(props) {
 
 function Code({ children, ...props }) {
   let codeHTML = highlight(children)
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
+  return (
+    <code
+      dangerouslySetInnerHTML={{ __html: codeHTML }}
+      className='font-maple-mono font-medium'
+      {...props}
+    />
+  )
 }
 
 function slugify(str) {
@@ -193,7 +199,7 @@ let components = {
     }
 
     return (
-      <pre>
+      <pre className='font-maple-mono'>
         <Code className={childClassName}>{code}</Code>
       </pre>
     )
@@ -202,7 +208,7 @@ let components = {
     if (className === 'language-mermaid') {
       return <Mermaid>{children}</Mermaid>
     }
-    return <code className={className}>{children}</code>
+    return <code className={`${className} font-maple-mono`}>{children}</code>
   },
 }
 
