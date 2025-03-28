@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -11,8 +11,22 @@ interface ColorProps {
 const Color: React.FC<ColorProps> = ({ children }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const colorCode = children.trim()
+
+  // Sync the expanded state with hover and copied states
+  useEffect(() => {
+    if (isHovered || isCopied) {
+      setIsExpanded(true)
+    } else {
+      // Delay collapsing to ensure animations complete
+      const timer = setTimeout(() => {
+        setIsExpanded(false)
+      }, 300) // Match transition duration
+      return () => clearTimeout(timer)
+    }
+  }, [isHovered, isCopied])
 
   // Determine text color based on background color brightness
   const getBrightness = (hexColor: string): number => {
@@ -50,19 +64,23 @@ const Color: React.FC<ColorProps> = ({ children }) => {
         onClick={copyToClipboard}
       >
         <motion.span
+          animate={{
+            width: isExpanded ? '5rem' : '2rem',
+          }}
+          transition={{
+            width: { duration: 0.3, ease: 'easeInOut' },
+          }}
           style={{
             backgroundColor: colorCode,
-            width: isHovered || isCopied ? '5rem' : '2rem',
             height: '2rem',
             borderRadius: '0.375rem',
             display: 'inline-block',
-            transition: 'width 0.3s ease-in-out',
             border: '1px solid rgba(0,0,0,0.1)',
             overflow: 'hidden',
           }}
         >
           <AnimatePresence mode='wait'>
-            {isHovered || isCopied ? (
+            {isExpanded ? (
               <motion.div
                 className='absolute inset-0 flex items-center justify-center'
                 key='expanded'
@@ -127,8 +145,6 @@ const Color: React.FC<ColorProps> = ({ children }) => {
           </AnimatePresence>
         </motion.span>
       </motion.span>
-
-      <span className='text-sm'>{colorCode}</span>
     </span>
   )
 }
