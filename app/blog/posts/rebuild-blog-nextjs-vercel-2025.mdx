@@ -1,0 +1,115 @@
+import {
+  MontserratWrapper,
+  NunitoSansWrapper,
+  SpectralWrapper,
+} from '../../components/Fonts'
+
+---
+
+title: 'How I Rebuilt My Blog in 2025 Using Next.js and Vercel'
+publishedAt: 2025-03-28
+tags:
+[
+'nextjs',
+'vercel',
+'personal blog',
+'mdx',
+'frontend',
+'tailwindcss',
+'blogging',
+]
+draft: true
+description: 'How I rebuilt my blog in 2025 with Next.js and Vercel—from my early days with Hexo to using modern tools like MDX and Tailwind. A personal story about tech, design, and everything in between.'
+
+---
+
+6 years ago, I start learning programming. The first thing I built is a personal blog, because I heared from other people that a good programmer should have a personal website. Although I only have a few knowledge of HTML/CSS/JavaScript, I still tried to search on google about how to build a website via some existing tools.
+
+I tried a lot of tools and choose [Hexo](https://hexo.io/) + GitHub page as the final choice. Hexo has a big community, people developed a lot of great theme based on it. And GitHub page is a service provided by GitHub allowing people deploy their static page without any costs.
+
+Everything works well, Hexo & theme code has good documention to describe how to tweak the title, introduction, footer information, seo, color, background image, etc. I also tried to write some [stylus](https://stylus-lang.com/) code to tweak the UI details. I spent almost 5 days to make everything works, though 5 days includes the time I spent on video games :D.
+
+Today, tech stack we use in the frontend domain has changed totally -- classic -- and there are a lot of great tools compare several years before. Altough I rebuilt the website several times, let's pretend that is doesn't exist.
+
+Basically, the blog website you're reading now is my latest stable version, hopefully. I use several framework and library to build it, and it would be interesting to share the things I used. I don't if this website can existing to next 6 year, but it would be interesting to look back at that moment.
+
+## Server & Basic Frameworks
+
+Basically, for a personal blog website, I have several key requirements:
+
+1. Basic support for SEO and Markdown
+2. Fast & easy to used pipeline (who want to deploy website manually in 2025?)
+3. FREE!
+
+After some comparing, I choose [next.js](https://nextjs.org/) and [Vercel](https://vercel.com/). The most boring tech stack at the moment. Because I'm lazy, I use the template provided by Vercel, [Portfolio Starter Kit](https://vercel.com/new/shroxds-projects/templates/next.js/portfolio-starter-kit).
+
+Vercel is a widly used cloud plateform, and has good integration with GitHub. I can create the website and deploy it to production via on click. For the pure frontend project, this plateform is almost best place to put. I believe no one want to use AWS and receive an expensive bill at the end of the month after a whole bunch of fancy operations.
+
+[Next.js](https://nextjs.org/) is the most discussed full-stack framework in the frontend developer community, although most of them are complaining. The template based on Next.js, provides some good feature which can save my time to setup:
+
+- MDX support
+- Optimized for SEO
+- Out-of-box RSS feed support
+- Tailwind v4
+
+MDX is supported via [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote), it works like magic, has ability to load MDX file from any place, like another repo, database, etc. The template use React Server Component mode by default. You can read the source code of this library to understand the implementation, but basically, it treats the MDX as data. Compile it at server, pass the result to frontend, and apply custom render component during client hydration stage.
+
+With this library, the article is not just a tons of boring text. I can utilize it to build some amazing interactive component to explain the complex concepts. With some cool technology like Canvas, WebGL, wasm, nothing is impossible.
+
+Of course, I also add some plugins from community to support:
+
+- [Mermaid](https://mermaid.js.org/). Use simple text-based syntax to create flowcharts, diagrams, and other visualizations
+- [KaTeX](https://katex.org/). For rendering mathematical expressions and equations on web using LaTeX syntax
+- [Giscus](https://giscus.app/). Comments system based on GitHub Discussions
+
+## Design
+
+I think the most interesting thing about the personal blog webiste is the wide range of design. People always have different prepective about _good_ design.
+
+In my pointof view, for a blog website, the reading experience should be the first class of website design. A good color pattern and font family combination can affect the reading experience significantly. Especially the blog website, a paper-like reading experience should be a good direction.
+
+After some investigation and tweaks, here is the final version. I didn't design the dark mode, it's much more difficult than I expected. Maybe I (my AI team) will do it in the future.
+
+| Role             | Description                                      | Color                  |
+| ---------------- | ------------------------------------------------ | ---------------------- |
+| Background       | Main background of the site                      | <Color>#f2f2e3</Color> |
+| Text Color       | Primary font color for body text                 | <Color>#3a3a33</Color> |
+| Primary Accent   | Decorative color for first letters or highlights | <Color>#a51c30</Color> |
+| Secondary Accent | Used for quotes, icons, subtle highlights        | <Color>#6e7554</Color> |
+
+And the typography.
+
+| Font Sample                                                                        | Name & Usage                             |
+| ---------------------------------------------------------------------------------- | ---------------------------------------- |
+| <NunitoSansWrapper>The quick brown fox jumps over the lazy dog</NunitoSansWrapper> | UI elements — buttons, navigation, links |
+| <MontserratWrapper>The quick brown fox jumps over the lazy dog</MontserratWrapper> | Section & chapter titles — for structure |
+| <SpectralWrapper>The quick brown fox jumps over the lazy dog</SpectralWrapper>     | Body text for comfortable reading        |
+
+Basically, the whole webiste use the warm color scheme and mix of two sans-serifs (Nunito Sans and Montserrat) and a serif font (Spectral). Make sure the main color pattern match the [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) pattern. Maybe you want to ask why just the _main color pattern_? Because some third party components is hard to tweaks the color. 😣 Maybe I will find a time to tweaks them together.
+
+In addition to fonts and color pattern, the transition animations are also an important part of a website. Especially I'm a frontend developer, Nowadays, in the React community, there are many great libraries and tools to do it easily.
+
+- [Motion](https://motion.dev/). Animation library, built on native browser APIs.
+- [reactbits](https://www.reactbits.dev/). A collection of animated, interactive, and fully customizable React components.
+- [animate.style](https://animate.style/). A collection of out-of-box, cross-browser animations.
+- [Easing Wizard](https://easingwizard.com/). Great tool to generate and customize CSS easing functions.
+
+I didn't learn the UX design systematically at school (although I also didn't learn programming systematically at school 😅). But with the help of AI and coffee, at least I made something.
+
+## AI Audio
+
+NotebookLM is an AI-powered research and note-taking tool developed by Google. It can process many difference resources like Website, YouTube, Google Docs, Google Slides. Based on these input, NotebookLM is able to generate summarized notes for you. You can ask questions about the provides resources and NotebookLM can answer based on these resources. In addition to these powerful features, NotebookLM also provides a great feature: Audio Overview. It is a series of lively "deep dive" discussions that summarize the key topics in provided resources. Of course, since we build the blog website via Next.js, it supports SSR automatically. We can utilize NotebookLM to generate the podcast like audio overview to introduce the article content and put it in the article.
+
+### NotebookLM
+
+### Cloudflare R2 Bucket
+
+### plyr
+
+## Interactive component
+
+### SVG
+
+### Canvas
+
+### WebGL
