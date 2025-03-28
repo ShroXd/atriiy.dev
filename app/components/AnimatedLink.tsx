@@ -33,7 +33,7 @@ export default function AnimatedLink({
     >
       <Component
         href={href}
-        className={`relative inline-block border-b border-neutral-500 pb-[0.5px] text-neutral-800 transition-all hover:border-neutral-800 [.table-of-contents_&]:border-0 ${className}`}
+        className={`relative inline-block border-b border-[#6e7554] pb-[0.5px] text-[#6e7554] transition-all hover:border-[#6e7554] [.table-of-contents_&]:border-0 ${className}`}
         {...linkProps}
       >
         {children}

@@ -109,7 +109,7 @@ html {
 }
 
 .prose {
-  @apply text-xl text-[rgb(80,80,65)];
+  @apply text-xl text-[rgb(74,74,64)];
   font-family: var(--font-spectral), serif;
   font-size: 21px;
   letter-spacing: 0.01em;
