@@ -96,7 +96,9 @@ export default function BlogContent({
 
       <FadeIn delay={0.3}>
         {isDraft ? (
-          <p className='prose'>Work in progress, stay tuned!</p>
+          <p className='prose'>
+            Stay tuned. I promise I'm working on it... eventually.
+          </p>
         ) : (
           <article className='prose'>{children}</article>
         )}
@@ -106,9 +108,7 @@ export default function BlogContent({
         <hr className='my-12 border-t border-neutral-200 dark:border-neutral-700' />
       </FadeIn>
 
-      <FadeIn delay={0.4}>
-        <Comments />
-      </FadeIn>
+      <FadeIn delay={0.4}>{!isDraft && <Comments />}</FadeIn>
 
       <FadeIn delay={0.5}>
         <div className='mt-8 mb-4'>

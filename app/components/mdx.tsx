@@ -12,6 +12,7 @@ import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
 
 import AnimatedLink from './AnimatedLink'
+import Color from './Color'
 import DCTVisualization from './DCTVisualization'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
@@ -192,6 +193,7 @@ let components = {
   td: CustomTd,
   strong: CustomStrong,
   p: CustomParagraph,
+  Color: Color,
   MotionEstimationVisualizer,
   VectorDecomposition,
   DCTVisualization,
