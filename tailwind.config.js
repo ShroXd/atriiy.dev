@@ -5,7 +5,7 @@ module.exports = {
       fontFamily: {
         baskerville: ['var(--font-libre-baskerville)', 'serif'],
         montserrat: ['var(--font-montserrat)', 'sans-serif'],
-        'open-sans': ['var(--font-open-sans)', 'sans-serif'],
+        'nunito-sans': ['var(--font-nunito-sans)', 'sans-serif'],
         'maple-mono': ['Maple Mono', 'monospace'],
       },
       keyframes: {

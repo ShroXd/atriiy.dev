@@ -44,7 +44,7 @@
   --font-spectral: 'Spectral', serif;
   --font-libre-baskerville: 'Libre Baskerville', serif;
   --font-montserrat: 'Montserrat', sans-serif;
-  --font-open-sans: 'Open Sans', sans-serif;
+  --font-nunito-sans: 'Nunito Sans', sans-serif;
 }
 
 /* Removed dark mode media query */
@@ -52,7 +52,7 @@
 html {
   min-width: 360px;
   scroll-behavior: smooth;
-  font-family: var(--font-open-sans), sans-serif;
+  font-family: var(--font-nunito-sans), sans-serif;
   font-size: 18px;
   letter-spacing: -0.01em;
 }

@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import {
   Libre_Baskerville,
   Montserrat,
-  Open_Sans,
+  Nunito_Sans,
   Spectral,
 } from 'next/font/google'
 
@@ -35,10 +35,10 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 })
 
-const openSans = Open_Sans({
+const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-open-sans',
+  variable: '--font-nunito-sans',
 })
 
 export const metadata: Metadata = {
@@ -86,10 +86,10 @@ export default function RootLayout({
         spectral.variable,
         libreBaskerville.variable,
         montserrat.variable,
-        openSans.variable
+        nunitoSans.variable
       )}
     >
-      <body className='font-open-sans mx-4 mt-8 max-w-3xl antialiased lg:mx-auto'>
+      <body className='font-nunito-sans mx-4 mt-8 max-w-3xl antialiased lg:mx-auto'>
         <main className='mt-6 flex min-w-0 flex-auto flex-col px-2 md:px-0'>
           <Navbar />
           {children}
