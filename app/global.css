@@ -45,6 +45,7 @@
   --font-libre-baskerville: 'Libre Baskerville', serif;
   --font-montserrat: 'Montserrat', sans-serif;
   --font-nunito-sans: 'Nunito Sans', sans-serif;
+  --font-maple-mono: 'Maple Mono', monospace;
 }
 
 /* Removed dark mode media query */

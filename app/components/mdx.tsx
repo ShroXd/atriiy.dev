@@ -14,7 +14,12 @@ import { highlight } from 'sugar-high'
 import AnimatedLink from './AnimatedLink'
 import Color from './Color'
 import DCTVisualization from './DCTVisualization'
-import { MontserratWrapper, NunitoSansWrapper, SpectralWrapper } from './Fonts'
+import {
+  MapleMonoWrapper,
+  MontserratWrapper,
+  NunitoSansWrapper,
+  SpectralWrapper,
+} from './Fonts'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 import VectorDecomposition from './VectorDecomposition'
@@ -198,6 +203,7 @@ let components = {
   MontserratWrapper: MontserratWrapper,
   NunitoSansWrapper: NunitoSansWrapper,
   SpectralWrapper: SpectralWrapper,
+  MapleMonoWrapper: MapleMonoWrapper,
   MotionEstimationVisualizer,
   VectorDecomposition,
   DCTVisualization,

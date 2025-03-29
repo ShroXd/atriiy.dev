@@ -1,4 +1,5 @@
 import {
+  MapleMonoWrapper,
   MontserratWrapper,
   NunitoSansWrapper,
   SpectralWrapper,
@@ -37,9 +38,9 @@ Basically, the blog website you're reading now is my latest stable version, hope
 
 Basically, for a personal blog website, I have several key requirements:
 
-1. Basic support for SEO and Markdown
-2. Fast & easy to used pipeline (who want to deploy website manually in 2025?)
-3. FREE!
+- Basic support for SEO and Markdown
+- Fast & easy to used pipeline (who want to deploy website manually in 2025?)
+- FREE!
 
 After some comparing, I choose [next.js](https://nextjs.org/) and [Vercel](https://vercel.com/). The most boring tech stack at the moment. Because I'm lazy, I use the template provided by Vercel, [Portfolio Starter Kit](https://vercel.com/new/shroxds-projects/templates/next.js/portfolio-starter-kit).
 
@@ -64,7 +65,7 @@ Of course, I also add some plugins from community to support:
 
 ## Design
 
-I think the most interesting thing about the personal blog webiste is the wide range of design. People always have different prepective about _good_ design.
+I think the most interesting thing about the personal blog website is the wide range of design. People always have different prepective about _good_ design.
 
 In my pointof view, for a blog website, the reading experience should be the first class of website design. A good color pattern and font family combination can affect the reading experience significantly. Especially the blog website, a paper-like reading experience should be a good direction.
 
@@ -84,8 +85,9 @@ And the typography.
 | <NunitoSansWrapper>The quick brown fox jumps over the lazy dog</NunitoSansWrapper> | UI elements — buttons, navigation, links |
 | <MontserratWrapper>The quick brown fox jumps over the lazy dog</MontserratWrapper> | Section & chapter titles — for structure |
 | <SpectralWrapper>The quick brown fox jumps over the lazy dog</SpectralWrapper>     | Body text for comfortable reading        |
+| <MapleMonoWrapper>The quick brown fox jumps over the lazy dog</MapleMonoWrapper>   | Programming code                         |
 
-Basically, the whole webiste use the warm color scheme and mix of two sans-serifs (Nunito Sans and Montserrat) and a serif font (Spectral). Make sure the main color pattern match the [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) pattern. Maybe you want to ask why just the _main color pattern_? Because some third party components is hard to tweaks the color. 😣 Maybe I will find a time to tweaks them together.
+Basically, the whole website use the warm color scheme and mix of two sans-serifs (Nunito Sans and Montserrat) and a serif font (Spectral). Make sure the main color pattern match the [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) pattern. Maybe you want to ask why just the _main color pattern_? Because some third party components is hard to tweaks the color. 😣 Maybe I will find a time to tweaks them together.
 
 In addition to fonts and color pattern, the transition animations are also an important part of a website. Especially I'm a frontend developer, Nowadays, in the React community, there are many great libraries and tools to do it easily.
 
@@ -98,18 +100,30 @@ I didn't learn the UX design systematically at school (although I also didn't le
 
 ## AI Audio
 
-NotebookLM is an AI-powered research and note-taking tool developed by Google. It can process many difference resources like Website, YouTube, Google Docs, Google Slides. Based on these input, NotebookLM is able to generate summarized notes for you. You can ask questions about the provides resources and NotebookLM can answer based on these resources. In addition to these powerful features, NotebookLM also provides a great feature: Audio Overview. It is a series of lively "deep dive" discussions that summarize the key topics in provided resources. Of course, since we build the blog website via Next.js, it supports SSR automatically. We can utilize NotebookLM to generate the podcast like audio overview to introduce the article content and put it in the article.
+I learn Material Science and Technology at school. Material science research is keen to add Graphene to various material and then claimed to have discovered a new generation of super material. If you haven't touched Graphene, you're embarrassed to say hello to others. Now for programming domain, AI is that Graphene, so of course I have add it.
 
-### NotebookLM
+Google has a super powerful AI product -- [NotebookLM](https://notebooklm.google.com/). It's an AI-powered research assistant designed to help people summarize, analyze, and generate insights from document, notes, website, and YouTube. My favorite feature of it is the Audio Overview. It can generate a podcast-like audio, it's a male and female voice taking in a chat-like manner about the resource you give. It was not a mechanical retelling, the voices of both parties were full of emotion, and they took turns to guide the conversation.
 
-### Cloudflare R2 Bucket
+But Google doesn't provide official API to generate the audio in real-time. So I use manually way to add it in my website -- post the article to NotebookLM, generate the audio and download it, load the audio on the website.
 
-### plyr
+There are many resources hosting website, after some investigation and budget review, I choose [Cloudflare R2](https://www.cloudflare.com/developer-platform/products/r2/). It's a AWS S3-compatible object storage service, but with zero egress fees. It means R2 bucket does not charge users for the data transferred out of the storage service to the internet or other destinations.
+
+For the audio player, I use [Plyr](https://plyr.io/). It's a beautiful player based on [Vidstack](https://vidstack.io/), support both video and audio. There is a React binding [plyr-react](https://www.npmjs.com/package/plyr-react) I can directly use it to integrate. The user experience is very smooth.
 
 ## Interactive component
 
-### SVG
+When I was writing the article about video encoding and decoding, I need to explain a complex concept: Discrete Cosine Transform (DCT) and quantization. To be honest, it's hard enough for me to pronounce these words, let alone explain them. So I asked my AI team, ChatGPT says you can build a interactive component to explain it, Gemini help me to gather the resources from internet, Grok optimized the plan, DeepSeek reviewed the plan, and Claude finished code implementation. Finally, I input `pnpm run dev` to run the website. 😉
 
-### Canvas
+Benefit from perfect teamwork, we use pure [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) to build [an interactive component](https://www.atriiy.dev/blog/encoding-and-decoding#quantization) to explain DCT and quantization, you can check the source code at [here](https://github.com/ShroXd/atriiy.dev/blob/main/app/components/DCTVisualization.tsx).
 
-### WebGL
+Because it includes many mathematical calculation, therefore it's a perfect domain to do vibe coding. But I still learnt basic Canvas API before starting it. Basically, what we did in this component is create a Canvas Context via `const ctx = canvas.getContext('2D')`, and call the API of the context to draw path, circle, rectangle; fill the area; setup the styles of each elements; handle mouse events; and run all of these via `useEffect` to integrate with React. You can find the document on the internet.
+
+But as you can see, use pure API to develop such component is painful, although Claude doesn't complain this to me, but I can still get it from frequent prompts to use a new convo to avoid the current convo from being too long.
+
+[Konva](https://konvajs.org/) would be the best choice for React & TS user. Me and Claude don't have plan to rewrite the existing DCT visualization component based on Konva, but maybe I will try it in the future.
+
+## What's next
+
+Well, it's hard to say what will happen for my personal blog website. Steve Jobs used to say a sentence on stanford commencement address: Stay hungry, Stay foolish. Although I'm writing this article on Arch Linux, I still hope I can do it and record my journey at here.
+
+And it would be better to remember to pay the $20 per year domain fee.
