@@ -26,7 +26,8 @@ export default function BlogContent({
     <section>
       <div className='flex items-center'>
         <FadeIn delay={0.1}>
-          <h1 className='title font-montserrat text-2xl font-semibold tracking-tighter'>
+          {/* Can we try better shiny animation from Twitter? */}
+          <h1 className='font-montserrat text-2xl font-semibold tracking-tighter whitespace-pre-wrap break-words'>
             {isDraft ? (
               <motion.span
                 className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text text-transparent'
