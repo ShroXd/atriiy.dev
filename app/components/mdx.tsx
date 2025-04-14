@@ -10,6 +10,8 @@ import rehypeToc from 'rehype-toc'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
+// @ts-ignore
+import { visit, EXIT } from 'unist-util-visit'
 
 import AnimatedLink from './AnimatedLink'
 import Color from './Color'
@@ -119,66 +121,86 @@ function CustomStrong({ children }) {
   )
 }
 
-// Use a flag to track if the first paragraph has been processed
-let isFirstParagraphProcessed = false
+function CustomParagraph({ children, className, ...props }) {
+  // Check for the 'first-paragraph' class added by the rehype plugin
+  const isFirst = className?.includes('first-paragraph')
 
-function CustomParagraph({ children, ...props }) {
-  if (!isFirstParagraphProcessed) {
-    isFirstParagraphProcessed = true
+  if (isFirst) {
+    let firstChar = ''
+    let foundFirstChar = false
 
-    if (children) {
-      let firstChar = ''
-      let foundFirstChar = false
+    // Recursive helper function to find the first character and modify children
+    const processNode = (node) => {
+      if (foundFirstChar) return node // Stop processing if found
 
-      const modifiedChildren = React.Children.map(children, child => {
-        if (foundFirstChar) {
-          return child
-        }
-
-        if (typeof child === 'string' && child.length > 0) {
-          firstChar = child.charAt(0)
-          foundFirstChar = true
-          return child.slice(1)
-        }
-
-        if (React.isValidElement(child)) {
-          const childProps = child.props as Record<string, any>
-          const childChildren = childProps.children
-
-          if (!childChildren) {
-            return child
-          }
-
-          if (typeof childChildren === 'string' && childChildren.length > 0) {
-            firstChar = childChildren.charAt(0)
-            foundFirstChar = true
-            return React.cloneElement(child, {}, childChildren.slice(1))
-          }
-
-          return child
-        }
-
-        return child
-      })
-
-      if (foundFirstChar) {
-        return (
-          <p className='mb-4' {...props}>
-            <span
-              className='float-left mt-1 mr-2 text-6xl font-bold'
-              style={{ color: '#a51c30', lineHeight: '0.8' }}
-            >
-              {firstChar}
-            </span>
-            {modifiedChildren}
-          </p>
-        )
+      if (typeof node === 'string' && node.trim().length > 0) {
+        firstChar = node.trimStart().charAt(0)
+        foundFirstChar = true
+        // Return the rest of the string, preserving leading/trailing spaces relative to the character
+        const charIndex = node.indexOf(firstChar)
+        return node.slice(charIndex + 1)
       }
+
+      if (React.isValidElement<{ children?: React.ReactNode }>(node) && node.props.children) {
+        const originalChildren = node.props.children
+        let processedChildren = null
+
+        // Use React.Children.map for robust iteration
+        processedChildren = React.Children.map(originalChildren, processNode)
+
+        // If the first char was found within this element's children,
+        // clone the element with the modified children.
+        // Filter out null/empty string results from slicing
+        const validProcessedChildren = React.Children.toArray(processedChildren).filter(child => child !== null && child !== '');
+
+        if (foundFirstChar) {
+          return React.cloneElement(
+            node,
+            node.props,
+            validProcessedChildren.length > 0 ? validProcessedChildren : null
+          )
+        }
+      }
+
+      // Return node unmodified if it's not a string or element we can process
+      return node
+    }
+
+    // Use React.Children.map to process top-level children
+    const modifiedChildren = React.Children.map(children, processNode)
+
+    // Filter out null results at the top level as well
+     const validModifiedChildren = React.Children.toArray(modifiedChildren).filter(child => child !== null && child !== '');
+
+
+    if (foundFirstChar) {
+      return (
+        // Ensure the className prop is correctly passed and includes 'mb-4'
+        <p className={`${className || ''} mb-4`} {...props}>
+          <span
+            className='float-left mt-1 mr-2 text-6xl font-bold'
+            style={{ color: '#a51c30', lineHeight: '0.8' }}
+          >
+            {firstChar}
+          </span>
+          {validModifiedChildren.length > 0 ? validModifiedChildren : null}
+        </p>
+      )
+    } else {
+      // Fallback: Render as a normal paragraph if no character found (e.g., starts with image/component)
+      // Ensure className prop is correctly passed and includes 'mb-4'
+      return (
+        <p className={`${className || ''} mb-4`} {...props}>
+          {children}
+        </p>
+      )
     }
   }
 
+  // Render normal paragraph if not the first
+  // Ensure className prop is correctly passed and includes 'mb-4'
   return (
-    <p className='mb-4' {...props}>
+    <p className={`${className || ''} mb-4`} {...props}>
       {children}
     </p>
   )
@@ -243,14 +265,37 @@ interface Frontmatter {
   [key: string]: any
 }
 
+// Rehype plugin to mark the first paragraph
+const rehypeMarkFirstParagraph = () => (tree) => {
+  visit(tree, 'element', (node, index, parent) => {
+    // Check if it's a paragraph element and seems to be a direct child of the main flow
+    // This simple check assumes the first <p> encountered in the main flow is the target.
+    // You might need more complex logic depending on your exact MDX structure.
+    if (node.tagName === 'p') {
+      node.properties = node.properties || {}
+      node.properties.className = node.properties.className || []
+      if (Array.isArray(node.properties.className)) {
+        // Ensure we don't add the class multiple times
+        if (!node.properties.className.includes('first-paragraph')) {
+          node.properties.className.push('first-paragraph')
+        }
+      }
+      // Stop traversal after finding and marking the first paragraph
+      return EXIT
+    }
+    // Optional: Prevent traversal into certain elements if they shouldn't contain the 'first' paragraph
+    if (['blockquote', 'figure', 'table', 'ul', 'ol', 'pre', 'details'].includes(node.tagName)) {
+      return 'skip' // Skip children of these elements
+    }
+  })
+  return tree
+}
+
 export function CustomMDX({
   frontmatter = {} as Frontmatter,
   source,
   ...props
 }) {
-  // Reset flag for each new MDX document
-  isFirstParagraphProcessed = false
-
   return (
     <>
       <MDXRemote
@@ -272,6 +317,7 @@ export function CustomMDX({
                 },
               ],
               rehypeSlug,
+              rehypeMarkFirstParagraph,
               [
                 rehypeToc,
                 {

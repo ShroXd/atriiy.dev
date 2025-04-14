@@ -89,7 +89,7 @@ export default function RootLayout({
         nunitoSans.variable
       )}
     >
-      <body className='font-nunito-sans mx-4 mt-8 max-w-3xl antialiased lg:mx-auto'>
+      <body className='font-nunito-sans mx-4 mt-8 max-w-4xl antialiased lg:mx-auto'>
         <main className='mt-6 flex min-w-0 flex-auto flex-col px-2 md:px-0'>
           <Navbar />
           {children}
