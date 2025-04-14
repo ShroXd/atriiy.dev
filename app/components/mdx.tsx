@@ -213,7 +213,11 @@ let components = {
     const code = children?.props?.children || ''
 
     if (childClassName === 'language-mermaid') {
-      return <Mermaid>{code}</Mermaid>
+      return (
+        <div className='mb-4'>
+          <Mermaid>{code}</Mermaid>
+        </div>
+      )
     }
 
     return (
@@ -224,7 +228,11 @@ let components = {
   },
   code: ({ children, className }) => {
     if (className === 'language-mermaid') {
-      return <Mermaid>{children}</Mermaid>
+      return (
+        <div className='mb-4'>  
+          <Mermaid>{children}</Mermaid>
+        </div>
+      )
     }
     return <code className={`${className} font-maple-mono`}>{children}</code>
   },
