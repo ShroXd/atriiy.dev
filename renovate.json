@@ -11,7 +11,6 @@
     }
   ],
   "dependencyDashboard": true,
-  "schedule": ["every day"],
   "prCreation": "immediate",
   "prHourlyLimit": 5,
   "rangeStrategy": "auto",
