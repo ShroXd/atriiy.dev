@@ -27,20 +27,27 @@
 }
 
 ::selection {
-  background-color: #47a3f3;
-  color: #fefefe;
+  /* Light mode selection */
+  background-color: #88c0d0; /* nord8 */
+  color: #2e3440; /* nord0 */
+}
+
+.dark ::selection {
+  background-color: #88c0d0; /* nord8 */
+  color: #2e3440; /* nord0 */
 }
 
 :root {
-  --sh-class: #2d5e9d;
-  --sh-identifier: #354150;
-  --sh-sign: #8996a3;
-  --sh-string: #007f7a;
-  --sh-keyword: #e02518;
-  --sh-comment: #a19595;
-  --sh-jsxliterals: #6266d1;
-  --sh-property: #e25a1c;
-  --sh-entity: #e25a1c;
+  --sh-class: #2d5e9d; /* Original light mode */
+  --sh-identifier: #354150; /* Original light mode */
+  --sh-sign: #8996a3; /* Original light mode */
+  --sh-string: #007f7a; /* Original light mode */
+  --sh-keyword: #e02518; /* Original light mode */
+  --sh-comment: #a19595; /* Original light mode */
+  --sh-jsxliterals: #6266d1; /* Original light mode */
+  --sh-property: #e25a1c; /* Original light mode */
+  --sh-entity: #e25a1c; /* Original light mode */
+
   --font-spectral: 'Spectral', serif;
   --font-libre-baskerville: 'Libre Baskerville', serif;
   --font-montserrat: 'Montserrat', sans-serif;
@@ -48,7 +55,17 @@
   --font-maple-mono: 'Maple Mono', monospace;
 }
 
-/* Removed dark mode media query */
+.dark:root {
+  --sh-class: #88c0d0; /* nord8 */
+  --sh-identifier: #d8dee9; /* nord4 */
+  --sh-sign: #81a1c1; /* nord9 */
+  --sh-string: #a3be8c; /* nord14 */
+  --sh-keyword: #bf616a; /* nord11 */
+  --sh-comment: #4c566a; /* nord3 */
+  --sh-jsxliterals: #b48ead; /* nord15 */
+  --sh-property: #d08770; /* nord12 */
+  --sh-entity: #ebcb8b; /* nord13 */
+}
 
 html {
   min-width: 360px;
@@ -73,7 +90,7 @@ html {
 }
 
 .prose .anchor:after {
-  @apply text-neutral-300;
+  @apply text-nord3 dark:text-nord3;
   content: '#';
 }
 
@@ -82,12 +99,12 @@ html {
 }
 
 .prose pre {
-  @apply overflow-x-auto rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] py-2 px-3;
+  @apply overflow-x-auto rounded-lg border-2 border-nord5 bg-nord6 dark:border-nord3 dark:bg-nord1 py-2 px-3;
   font-size: 0.9rem;
 }
 
 .prose code {
-  @apply rounded-lg py-0.5 px-1;
+  @apply rounded-lg bg-nord5 text-nord1 dark:bg-nord2 dark:text-nord6 py-0.5 px-1;
   font-size: 0.9rem;
   letter-spacing: 0;
 }
@@ -110,7 +127,7 @@ html {
 }
 
 .prose {
-  @apply text-xl text-[rgb(74,74,64)];
+  @apply text-xl text-nord1 dark:text-nord5;
   font-family: var(--font-spectral), serif;
   font-size: 21px;
   letter-spacing: 0.01em;
@@ -122,7 +139,7 @@ html {
 .prose h4,
 .prose h5,
 .prose h6 {
-  @apply font-bold text-[rgb(80,80,65)];
+  @apply font-bold text-nord0 dark:text-nord6;
   font-family: var(--font-montserrat), sans-serif;
   letter-spacing: -0.02em;
 }
@@ -221,7 +238,7 @@ table {
 
 .table-of-contents::before {
   content: 'Table of Contents';
-  @apply mb-3 block text-sm font-medium text-[rgb(80,80,65)];
+  @apply mb-3 block text-sm font-medium text-nord1 dark:text-nord5;
 }
 
 .table-of-contents ul {
@@ -229,19 +246,19 @@ table {
 }
 
 .table-of-contents ul ul {
-  @apply mt-1.5 ml-3 border-l border-neutral-200;
+  @apply mt-1.5 ml-3 border-l border-nord3 dark:border-nord2;
 }
 
 .table-of-contents li {
-  @apply leading-relaxed text-[rgb(80,80,65)];
+  @apply leading-relaxed text-nord1 dark:text-nord5;
 }
 
 .table-of-contents a {
-  @apply block py-0.5 px-2 text-[rgb(80,80,65)] no-underline transition-colors duration-200 hover:text-[rgb(80,80,65)];
+  @apply block py-0.5 px-2 text-nord1 no-underline transition-colors duration-200 hover:text-nord0 dark:text-nord5 dark:hover:text-nord6;
 }
 
 .table-of-contents .active {
-  @apply text-[rgb(80,80,65)];
+  @apply text-nord0 dark:text-nord6;
 }
 
 /* Responsive adjustments */

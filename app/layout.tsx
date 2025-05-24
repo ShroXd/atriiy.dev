@@ -82,7 +82,7 @@ export default function RootLayout({
     <html
       lang='en'
       className={cx(
-        'bg-[#f2f2e3] text-[rgb(80,80,65)]',
+        'bg-nord6 text-nord1 dark:bg-nord0 dark:text-nord6',
         spectral.variable,
         libreBaskerville.variable,
         montserrat.variable,

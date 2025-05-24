@@ -1,4 +1,5 @@
 import NavLink from './NavLink'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const navItems = {
   '/': {
@@ -26,6 +27,7 @@ export function Navbar() {
               )
             })}
           </div>
+          <ThemeSwitcher />
         </nav>
       </div>
     </aside>
