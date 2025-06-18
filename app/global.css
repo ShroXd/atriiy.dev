@@ -55,7 +55,7 @@ html {
   scroll-behavior: smooth;
   font-family: var(--font-nunito-sans), sans-serif;
   font-size: 18px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
 }
 
 .prose .anchor {
