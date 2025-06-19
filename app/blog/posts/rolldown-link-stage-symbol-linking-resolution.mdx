@@ -508,7 +508,7 @@ Since `'react'` is an external module, Rolldown updates the `external_import_bin
 ```mermaid
 flowchart TD
     merger["external_import_binding_merger (FxHashMap)"]
-    hashmap["FxHashMapᐸCompactStr, IndexSetᐸSymbolRefᐳ"]
+    hashmap["FxHashMapᐸCompactStr, IndexSetᐸSymbolRefᐳᐳ"]
     UseStateSet["IndexSetᐸSymbolRefᐳ: {sym_useState_main}"]
 
     merger -- "key: react_module_idx" --> hashmap
