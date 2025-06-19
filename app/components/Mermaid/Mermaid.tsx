@@ -9,6 +9,9 @@ export function Mermaid({ children }: { children: string }) {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const mermaidRef = useRef<any>(null)
 
+  // Generate a unique ID for this Mermaid instance to prevent conflicts during hot reloads
+  const uniqueId = useRef(`mermaid-${Math.random().toString(36).substring(2, 15)}`)
+
   useEffect(() => {
     setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
 
@@ -38,7 +41,7 @@ export function Mermaid({ children }: { children: string }) {
   useEffect(() => {
     if (loaded && ref.current && children && mermaidRef.current) {
       mermaidRef.current
-        .render('mermaid-svg', children)
+        .render(uniqueId.current, children)
         .then(({ svg }: { svg: string }) => {
           setSvg(svg)
         })
@@ -50,6 +53,7 @@ export function Mermaid({ children }: { children: string }) {
     <div
       ref={ref}
       className='flex justify-center'
+      key={uniqueId.current}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   )
