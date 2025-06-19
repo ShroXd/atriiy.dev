@@ -84,16 +84,16 @@ classDiagram
 
     class Module {
       <<enumeration>>
-      +Normal: Box&lt;NormalModule&gt
-      +External: Box&lt;ExternalModule&gt
+      +Normal: Box&lt;NormalModule&gt;
+      +External: Box&lt;ExternalModule&gt;
 
       +idx(): ModuleIdx
-      +import_records(): IndexVec&lt;ImportRecordIdx, ResolvedImportRecord&gt
+      +import_records(): IndexVec&lt;ImportRecordIdx, ResolvedImportRecord&gt;
     }
 
     class ExternalModule {
         +idx: ModuleIdx
-        +import_records: IndexVec&lt;..&gt
+        +import_records: IndexVec&lt;..&gt;
     }
 
     class NormalModule {
@@ -102,7 +102,7 @@ classDiagram
     }
 
     class EcmaView {
-        import_records: IndexVec&lt;ImportRecordIdx, ResolvedImportRecord&gt
+        import_records: IndexVec&lt;ImportRecordIdx, ResolvedImportRecord&gt;
     }
 
     class ImportRecordIdx {
@@ -167,7 +167,7 @@ classDiagram
     note for ModuleIdx "Typed Index of Module"
 
     class LinkStage {
-      +metas: IndexVec&lt;ModuleIdx, LinkingMetadata&gt
+      +metas: IndexVec&lt;ModuleIdx, LinkingMetadata&gt;
     }
 
     class LinkingMetadata {
@@ -358,7 +358,7 @@ classDiagram
     note for ModuleIdx "Typed Index of Module"
 
     class SymbolRefDb {
-      +inner: IndexVec&lt;ModuleIdx, Option&lt;SymbolRefDbForModule&gt&gt
+      +inner: IndexVec&lt;ModuleIdx, Option&lt;SymbolRefDbForModule&gt;&gt;
 
       link(&mut self, base: SymbolRef, target: SymbolRef)
       find_mut(&mut self, target: SymbolRef) SymbolRef
@@ -368,17 +368,17 @@ classDiagram
         owner_idx: ModuleIdx
         root_scope_id: ScopeId
         +ast_scopes: AstScopes
-        +flags: FxHashMap&lt;SymbolId, SymbolRefFlags&gt
-        +classic_data: IndexVec&lt;SymbolId, SymbolRefDataClassic&gt
+        +flags: FxHashMap&lt;SymbolId, SymbolRefFlags&gt;
+        +classic_data: IndexVec&lt;SymbolId, SymbolRefDataClassic&gt;
 
         create_facade_root_symbol_ref(&mut self, name: &str) SymbolRef
         get_classic_data(&self, symbol_id: SymbolId) &SymbolRefDataClassic
     }
 
     class SymbolRefDataClassic {
-        +namespace_alias: Option&lt;NamespaceAlias&gt
-        +link: Option&lt;SymbolRef&gt
-        +chunk_id: Option&lt;ChunkIdx&gt
+        +namespace_alias: Option&lt;NamespaceAlias&gt;
+        +link: Option&lt;SymbolRef&gt;
+        +chunk_id: Option&lt;ChunkIdx&gt;
     }
 
     ModuleIdx -- SymbolRefDb : used_as_index_for
