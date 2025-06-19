@@ -3,7 +3,7 @@ title: 'How Rolldown Works: Symbol Linking, CJS/ESM Resolution, and Export Analy
 publishedAt: 2025-06-20
 tags:
   ['rolldown', 'vite', 'rust', 'bundler', 'symbol linking', 'module resolution']
-draft: ture
+draft: false
 description: "A deep dive into Rolldown's link stage, the engine that will power Vite's future. Discover how it resolves symbols, handles CJS/ESM modules, and untangles complex dependencies."
 ---
 
@@ -467,7 +467,7 @@ struct BindImportsAndExportsContext<'a> {
 
 The ultimate goal here is to populate the `symbol_db`, using the Disjoint Set Union logic to link each imported symbol to its true origin. The process iterates through each `NormalModule` and runs a matching function on its named imports (each represented by a `NamedImport` struct, like `import { foo } from 'foo'`).
 
-However, before internal symbols are linked, **external imports receive special, priliminary handling**. When an imports is from an external module (e.g., `'react'`), it isn;t resolved immediately. Instead, it is collected and grouped within the `external_import_binding_merger`.
+However, before internal symbols are linked, **external imports receive special, priliminary handling**. When an imports is from an external module (e.g., `'react'`), it isn't resolved immediately. Instead, it is collected and grouped within the `external_import_binding_merger`.
 
 The data structure is a nested hash map designed to aggregate all imports that refer to the same named export from the same external module.
 
@@ -505,29 +505,19 @@ import { useState } from 'react'
 
 Since `'react'` is an external module, Rolldown updates the `external_import_binding_merger`. Assuming the `ModuleIdx` for `'react'` is `react_module_idx`, the resulting structure looks like this:
 
-// TODO: fix this
-
 ```mermaid
-graph TD
-    subgraph react_module_idx ["ModuleIdx for 'react' (react_module_idx)"]
-        direction LR
-        ReactMapKey["FxHashMapᐸCompactStr, IndexSetᐸSymbolRefᐳ"]
-    end
+flowchart TD
+    merger["external_import_binding_merger (FxHashMap)"]
+    hashmap["FxHashMapᐸCompactStr, IndexSetᐸSymbolRefᐳ"]
+    UseStateSet["IndexSetᐸSymbolRefᐳ: {sym_useState_main}"]
 
-    EIBM -- "key: react_module_idx" --> ReactMapKey
-
-    ReactMapKey -- "key: 'useState' (CompactStr)" --> UseStateSet["IndexSetᐸSymbolRefᐳ: {sym_useState_main}"]
-
-    class EIBM map;
-    class ReactMapKey map;
-    class UseStateSet set;
+    merger -- "key: react_module_idx" --> hashmap
+    hashmap -- "key: 'useState' (CompactStr)" --> UseStateSet
 ```
 
 If another file, say `featureB.js`, also imports `useState` from `'react'`, its corresponding `SymbolRef` would be added to the very same `IndexSet`. This is why the structure is aptly named a **merger**: it collects all local references to the same external symbol (`'react.useState'`) into one place. This aggregation allows for subsequent unified processing, ensuring that all uses of `useState` ultimately point to a single, consistent external symbol.
 
 After all modules and their imports have been visited, Rolldown will iterate over this fully populated merger map to finalize the bindings for all external symbols.
-
-TODO: check the following
 
 ### Tracing an import to its origin
 
@@ -544,28 +534,51 @@ struct ImportTracker {
 
 The function's return value, `MatchImportKind`, encapsulates the result of this trace. This entire resolution process can be broken down into three phases:
 
-#### Phase 1: initial status check
+#### Phase 1: Cycle detection and initial status
 
-First, a helper function (`advance_import_tracker`) performs a quick, non-recursive analysis of the direct importee. It checks for simple cases and returns an initial status:
+The function uses a recursive depth-first search with cycle detection. The `MatchingContext` maintains a tracker stack to detect when the same `importer` module tries to solve the same `imported_as` symbol reference that's already being processed. If it is, there is no need to continue, just return `MatchImportKind::Cycle`.
+
+Next, a helper function (`advance_import_tracker`) performs a quick, non-recursive analysis of the direct importee. It checks for simple cases and returns an initial status:
 
 - If the importee is an external module, it returns `ImportStatus::External`.
 - If the importee is a CommonJS module, it returns `ImportStatus::CommonJS`.
 - If the import is a star import (`import * as ns`), it's considered `ImportStatus::Found`.
 - For a named import from an ESM module, it checks the resolved exports of the direct importee. If found, it returns `ImportStatus::Found`; otherwise, it returns `ImportStatus::NoMatch` or `ImportStatus::DynamicFallback`.
 
-#### Phase 2: deep recursive search
+#### Phase 2: Re-export chain traversal
 
-This initial status is often just the beginning. The real challenge is to trace the _entire_ re-export chain. The `mathc_import_with_export` function performs a recursive depth-first search to follow the symbol through any number of re-exports. The context for this search contains a stack to detect and handle import cycles, returning `MatchImportKind::Cycle` if one is found.
+The real complexity lies in following re-export chains. When `ImportStatus::Found` is returned, the function checks if the found symbol is itself an import from another module:
 
-#### Phase 3: post-processing and finalization
+```rust
+let owner = &index_modules[symbol.owner];
+if let Some(another_named_import) = owner.as_normal().unwrap().named_imports.get(&symbol) {
+  // This symbol is re-exported from another module
+  // Update tracker and continue the loop to follow the chain
+  tracker.importee = importee.idx;
+  tracker.importer = owner.idx();
+  tracker.imported = another_named_import.imported.clone();
+  tracker.imported_as = another_named_import.imported_as;
+  reexports.push(another_named_import.imported_as);
+  continue;
+}
+```
 
-After the main recursive search completes, two final checks are performed:
+This process continues iteratively, building up a `reexports` chain for side-effect dependency tracking, until it reaches the original definition.
 
-- **Ambiguity resolution**: the search might have collected several potentially ambiguous paths for a symbol (e.g., from multiple `export *` statements). Rolldown now checks if all these paths ultimately resovle to the **same** root symbol using the DSU `find` operation. If they lead to different original definitions, the impor is marked as truly ambiguous.
+#### Phase 3: ambiguity resolution and post-processing
 
-- **Shimming missing exports**: If the search results in `NoMatch`, Rolldown checks for a user-configured _shim_ to provide a fallback implementation. This is often used to ensure compatibility with older code that might rely on non-standard behavior.
+During Phase 2, when an export has `potentially_ambiguous_export_star_refs` (caused by `export *` statements), the function recursively resolves each ambiguous path. After collecting all `ambiguous_results`, the function compares them with the main result. If any differs, it returns `MatchImportKind::Ambiguous`.
 
-Finally, the `MatchImportKind` result from this entire process is used to `link` the symbols in the `symbol_db`, creating the definitive connection.
+And for `NoMatch` result, the function checks if shimming is enabled (`options.shim_missing_exports` or empty modules). Shims provide compatibility fallbacks for legacy code:
+
+```rust
+let shimmed_symbol_ref = self.metas[tracker.importee]
+  .shimmed_missing_exports
+  .entry(imported.clone())
+  .or_insert_with(|| {
+    self.symbol_db.create_facade_root_symbol_ref(tracker.importee, imported.as_str())
+  });
+```
 
 ### Finalizing bindings
 
