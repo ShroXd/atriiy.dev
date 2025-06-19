@@ -3,7 +3,7 @@ title: 'How Rolldown Works: Symbol Linking, CJS/ESM Resolution, and Export Analy
 publishedAt: 2025-06-20
 tags:
   ['rolldown', 'vite', 'rust', 'bundler', 'symbol linking', 'module resolution']
-draft: true
+draft: ture
 description: "A deep dive into Rolldown's link stage, the engine that will power Vite's future. Discover how it resolves symbols, handles CJS/ESM modules, and untangles complex dependencies."
 ---
 
@@ -594,3 +594,32 @@ export * from './moduleB'; // Also exports a `foo`
 Rolldown's strategy is conservative: if an export name refers to multiple, different original definitions, that name is effectively ignored and will not be part of module's public API. This prevents unstable or unpredictable runtime behavior.
 
 However, not all potential conflicts result in true ambiguity. In our example project, `main.js`'s import of `source` from `helpers.js` follows a re-export chain (`export * from './api.js'`), but since there is only one unique origin for `source`, the `mathc_import_with_export` function resolves it cleanly without conflict.
+
+## Result of the link stage
+
+The link stage transform the rudimentary, file-level dependency graph from the scan stage into a rich, deeply understood structure. The final output is encapsulated in the `LinkStageOutput` struct:
+
+```rust
+pub struct LinkStageOutput {
+  pub module_table: ModuleTable,
+  pub metas: LinkingMetadataVec,
+  pub symbol_db: SymbolRefDb,
+  // ... fields omitted for clarity
+}
+```
+
+This structure contains both the original `ModuleTable` and, more importantly, the new artifacts generated during linking. The two key artifacts are:
+
+- `LinkingMetadataVec`. A vector holding `LinkingMetadata` for each module, indexed by `ModuleIdx`. It contains resolved, module-level information, such as the final export maps (`resolved_exports`) and graph-traversal results like the `is_tla_or_contains_tla_dependency` flag. It provides the next stages with a semantic understanding of each module's properties and relationships.
+
+- `SymbolRefDb`. The _database_ of symbol relationships. It uses the Disjoint Set Union structure to maintain the equivalence classes of all internal symbols. With this database, any imported symbol can be traced to its unique, original definition using the `find_mut` method.
+
+In essence, the link stage is a powerful optimization and resolution phase for the module graph. By its conclusion, all modules and symbols are fully resolved, and all ambiguity has been eliminated. This creates a stable and predictable foundation, which is critical for the subsequent stages of code generation, tree shaking, and code spliting to operate correctly and efficiently.
+
+## Summary
+
+The link stage is a sophisticated process that transforms the rudimentary dependency graph from the scan stage into a fully resolved, unambiguous symbol map. We've seen how it systematically traverses the graph to propagate properties like TLA and side effects, and how it standardizes different module formats to ensure interoperability. At its heart, this process relies on a series of efficient data structures, like `IndexVec` and `FxHashMap`, and powerful algorithms, namely deep-first search and the Disjoint Set Union. This combination of carefully chosen data structures and algorithms is what underpins Rolldown's exceptional performance.
+
+I hope this deep dive has given you a solid understanding of the link stage and helped you build a durable mental model of its inner workings. If you spot an error or have any suggestions, please drop a comment below -- your feedback is invaluable!
+
+In the next article, we'll explore the final phase of the bundling process: **code generation**. See you then!
