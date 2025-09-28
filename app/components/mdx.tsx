@@ -2,7 +2,6 @@ import React from 'react'
 
 import 'katex/dist/katex.min.css'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
@@ -25,11 +24,7 @@ import {
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 import VectorDecomposition from './VectorDecomposition'
-
-// Dynamic import for AudioPlayer
-const AudioPlayer = dynamic(() => import('./Audio'), {
-  ssr: false,
-})
+import AudioPlayer from './Audio'
 
 function CustomLink(props) {
   return <AnimatedLink {...props} />
