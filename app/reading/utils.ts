@@ -11,6 +11,7 @@ export type ReadingMetadata = {
   status: ReadingStatus
   publishedAt: string
   tags?: string[]
+  cover?: string
 }
 
 export type ReadingEntry = MDXEntry<ReadingMetadata>

@@ -286,11 +286,101 @@ const rehypeMarkFirstParagraph = () => (tree) => {
   return tree
 }
 
+interface CustomMDXProps {
+  frontmatter?: Frontmatter
+  source: string
+  markFirstParagraph?: boolean
+  [key: string]: any
+}
+
 export function CustomMDX({
   frontmatter = {} as Frontmatter,
   source,
+  markFirstParagraph = true,
   ...props
-}) {
+}: CustomMDXProps) {
+  const rehypePlugins = [
+    [
+      rehypeKatex,
+      {
+        strict: false,
+        trust: true,
+      },
+    ],
+    rehypeSlug,
+    markFirstParagraph ? rehypeMarkFirstParagraph : null,
+    [
+      rehypeToc,
+      {
+        headings: ['h1', 'h2', 'h3', 'h4'],
+        position: 'afterbegin',
+        customizeTOC: toc => {
+          toc.properties.className = ['table-of-contents']
+          return toc
+        },
+      },
+    ],
+    () => tree => {
+      if (!frontmatter?.audioLink) return tree
+
+      const processNode = node => {
+        if (
+          node.properties &&
+          node.properties.className &&
+          Array.isArray(node.properties.className) &&
+          node.properties.className.includes('table-of-contents')
+        ) {
+          const parentChildren = node.parent?.children
+          if (parentChildren) {
+            const tocIndex = parentChildren.indexOf(node)
+            if (tocIndex !== -1) {
+              const audioElement = {
+                type: 'element',
+                tagName: 'div',
+                properties: { className: ['mt-4', 'mb-8'] },
+                children: [
+                  {
+                    type: 'mdxJsxFlowElement',
+                    name: 'Audio',
+                    attributes: [
+                      {
+                        type: 'mdxJsxAttribute',
+                        name: 'src',
+                        value: frontmatter.audioLink as string,
+                      },
+                    ],
+                    children: [],
+                  },
+                ],
+                parent: node.parent,
+              }
+              parentChildren.splice(tocIndex + 1, 0, audioElement)
+            }
+          }
+          return true
+        }
+
+        if (node.children && node.children.length) {
+          node.children.forEach(child => {
+            child.parent = node
+          })
+
+          for (const child of node.children) {
+            if (processNode(child)) {
+              return true
+            }
+          }
+        }
+
+        return false
+      }
+
+      processNode(tree)
+
+      return tree
+    },
+  ].filter(Boolean)
+
   return (
     <>
       <MDXRemote
@@ -303,98 +393,7 @@ export function CustomMDX({
         options={{
           mdxOptions: {
             remarkPlugins: [remarkMath, remarkGfm],
-            rehypePlugins: [
-              [
-                rehypeKatex,
-                {
-                  strict: false,
-                  trust: true,
-                },
-              ],
-              rehypeSlug,
-              rehypeMarkFirstParagraph,
-              [
-                rehypeToc,
-                {
-                  headings: ['h1', 'h2', 'h3', 'h4'],
-                  position: 'afterbegin',
-                  customizeTOC: toc => {
-                    toc.properties.className = ['table-of-contents']
-                    // Return the TOC unmodified, we'll add the audio player as a separate element
-                    return toc
-                  },
-                },
-              ],
-              // Add a rehype plugin to insert the audio player after TOC
-              () => tree => {
-                if (!frontmatter?.audioLink) return tree
-
-                // Function to process nodes
-                const processNode = node => {
-                  // If we found the TOC
-                  if (
-                    node.properties &&
-                    node.properties.className &&
-                    Array.isArray(node.properties.className) &&
-                    node.properties.className.includes('table-of-contents')
-                  ) {
-                    // Insert audio player immediately after the TOC
-                    const parentChildren = node.parent?.children
-                    if (parentChildren) {
-                      const tocIndex = parentChildren.indexOf(node)
-                      if (tocIndex !== -1) {
-                        // Create audio player element
-                        const audioElement = {
-                          type: 'element',
-                          tagName: 'div',
-                          properties: { className: ['mt-4', 'mb-8'] },
-                          children: [
-                            {
-                              type: 'mdxJsxFlowElement',
-                              name: 'Audio',
-                              attributes: [
-                                {
-                                  type: 'mdxJsxAttribute',
-                                  name: 'src',
-                                  value: frontmatter.audioLink as string,
-                                },
-                              ],
-                              children: [],
-                            },
-                          ],
-                          parent: node.parent,
-                        }
-                        // Insert after TOC
-                        parentChildren.splice(tocIndex + 1, 0, audioElement)
-                      }
-                    }
-                    return true // Stop traversal once we've found and processed the TOC
-                  }
-
-                  // Process children recursively
-                  if (node.children && node.children.length) {
-                    // Add parent reference to help with insertion
-                    node.children.forEach(child => {
-                      child.parent = node
-                    })
-
-                    // Process each child
-                    for (const child of node.children) {
-                      if (processNode(child)) {
-                        return true // Stop if we've found and processed the TOC
-                      }
-                    }
-                  }
-
-                  return false // Continue traversal
-                }
-
-                // Start processing from the root
-                processNode(tree)
-
-                return tree
-              },
-            ],
+            rehypePlugins,
           },
         }}
       />
