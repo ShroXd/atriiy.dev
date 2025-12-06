@@ -3,28 +3,20 @@ import type { ReadingEntry, ReadingStatus } from 'app/reading/utils'
 import { CustomMDX } from './mdx'
 
 const statusTone: Record<ReadingStatus, string> = {
-  Reading: 'text-[#1f3b63]',
-  Finished: 'text-[#2f5b34]',
-  Revisiting: 'text-[#553d73]',
-  Queued: 'text-[#7b5322]',
+  Reading: 'bg-[#e4ddcc] text-[#3f3b34]',
+  Finished: 'bg-[#dcd6c8] text-[#3a352d]',
+  Revisiting: 'bg-[#e7e1d2] text-[#3f3a32]',
+  Queued: 'bg-[#ece6d7] text-[#413c34]',
 }
 
-const statusPin: Record<ReadingStatus, string> = {
-  Reading: '#2f6fc2',
-  Finished: '#4c8b4e',
-  Revisiting: '#7b5fa4',
-  Queued: '#c27a2f',
-}
-
-const notePalette = ['#fdf7e3', '#f6f0ff', '#eef7ff', '#f5f7ec']
-const rotationOffsets = ['-0.4deg', '0.2deg', '-0.15deg', '0.35deg']
+const cardPalette = ['#f7f4ec', '#f5f2ea', '#f8f5ee', '#f4f1e9']
 
 interface ReadingListProps {
   entries: ReadingEntry[]
 }
 
 const fallbackCover =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640" fill="none"><rect width="480" height="640" rx="22" fill="%23e9e3d4"/><rect x="40" y="80" width="400" height="200" rx="16" fill="%23d0c8b6"/><rect x="40" y="308" width="260" height="16" rx="8" fill="%23c1b8a3"/><rect x="40" y="336" width="220" height="16" rx="8" fill="%23c1b8a3"/><rect x="40" y="372" width="320" height="12" rx="6" fill="%23b2a995"/><rect x="40" y="392" width="280" height="12" rx="6" fill="%23b2a995"/><rect x="40" y="412" width="210" height="12" rx="6" fill="%23b2a995"/></svg>'
+  'https://cdnagesdb.com/images/fictionimages/2DFA9C457C196E87E61A84B547510CEF.webp'
 
 export function ReadingList({ entries }: ReadingListProps) {
   return (
@@ -39,76 +31,67 @@ export function ReadingList({ entries }: ReadingListProps) {
           return 1
         })
         .map((entry, idx) => {
-          const bg = notePalette[idx % notePalette.length]
-          const rotation = rotationOffsets[idx % rotationOffsets.length]
+          const bg = cardPalette[idx % cardPalette.length]
           const coverSrc = entry.metadata.cover || fallbackCover
           return (
             <article
               key={entry.slug}
-              className='group relative mb-8 inline-block w-full rounded-3xl px-5 pb-6 pt-7 shadow-[0_18px_36px_rgba(0,0,0,0.06)] ring-1 ring-[#e6e1d4] transition-transform duration-200 hover:-translate-y-1'
-              // pinterest-like offset and soft paper feel
-              // eslint-disable-next-line react/forbid-dom-props
+              className='group relative mb-10 inline-block w-full overflow-hidden rounded-3xl border border-[#d9d1c2] bg-[#f8f5ee] shadow-[0_14px_28px_rgba(0,0,0,0.05)] transition-transform duration-200 hover:-translate-y-1'
               style={{
                 breakInside: 'avoid',
                 backgroundColor: bg,
-                transform: `rotate(${rotation})`,
               }}
             >
-              <span
-                className='absolute left-5 top-3 h-2.5 w-2.5 rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.18)]'
-                style={{ backgroundColor: statusPin[entry.metadata.status] }}
-                aria-hidden
-              />
-              <span
-                className='absolute left-4 right-4 top-2 block h-3 rounded-full bg-white/50 opacity-70 blur-[1px]'
-                aria-hidden
-              />
-
-              <div className='mb-4 overflow-hidden rounded-2xl border border-[#ddd6c5] shadow-[0_6px_18px_rgba(0,0,0,0.08)]'>
+              <div className='relative overflow-hidden'>
                 <div
-                  className='h-48 w-full bg-cover bg-center'
+                  className='h-[290px] w-full bg-cover bg-center'
                   style={{
-                    backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0.2), rgba(0,0,0,0.06)), url(${coverSrc})`,
+                    backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
                   }}
                 />
+                <div className='absolute left-5 top-5'>
+                  <span
+                    className={`${statusTone[entry.metadata.status]} inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]`}
+                    aria-label={`${entry.metadata.status} status`}
+                  >
+                    {entry.metadata.status}
+                  </span>
+                </div>
+                <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(247,245,236,0.85)]' />
               </div>
 
-              <header className='mb-3 space-y-2'>
-                <div className='flex items-baseline justify-between gap-3'>
-                  <div className='space-y-1'>
-                    <p className='text-xs uppercase tracking-[0.18em] text-neutral-500'>
-                      {entry.metadata.status}
-                    </p>
-                    <h2 className='font-montserrat text-lg font-semibold tracking-tight text-neutral-800'>
-                      {entry.metadata.title}
-                    </h2>
-                    <p className='text-sm text-neutral-600'>
-                      {entry.metadata.author} · {entry.metadata.year}
-                    </p>
-                  </div>
-                </div>
-              </header>
+              <div className='px-5 pb-6 pt-5'>
+                <header className='mb-3 space-y-1.5'>
+                  <h2 className='font-montserrat text-lg font-semibold tracking-tight text-neutral-900'>
+                    {entry.metadata.title}
+                  </h2>
+                  <p className='text-sm text-neutral-600'>
+                    {entry.metadata.author} · {entry.metadata.year}
+                  </p>
+                </header>
 
-              <div className='space-y-3'>
-                <div className='prose prose-sm max-w-none text-[rgb(74,74,64)]'>
-                  <CustomMDX
-                    source={entry.content}
-                    frontmatter={entry.metadata}
-                    markFirstParagraph={false}
-                  />
-                </div>
-                {entry.metadata.tags && entry.metadata.tags.length > 0 && (
-                  <div className='flex flex-wrap gap-2 text-xs text-neutral-600'>
-                    {entry.metadata.tags.map(tag => (
-                      <span
-                        key={`${entry.slug}-${tag}`}
-                        className='rounded-full bg-neutral-200/60 px-2 py-1 font-semibold tracking-tight'
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                <div className='space-y-3'>
+                  <div className='prose prose-sm max-w-none text-[rgb(74,74,64)]'>
+                    <CustomMDX
+                      source={entry.content}
+                      frontmatter={entry.metadata}
+                      markFirstParagraph={false}
+                      showTOC={false}
+                    />
                   </div>
-                )}
+                  {entry.metadata.tags && entry.metadata.tags.length > 0 && (
+                    <div className='flex flex-wrap gap-2 text-xs text-neutral-600'>
+                      {entry.metadata.tags.map(tag => (
+                        <span
+                          key={`${entry.slug}-${tag}`}
+                          className='rounded-full bg-neutral-200/60 px-2 py-1 font-semibold tracking-tight'
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </article>
           )
