@@ -21,6 +21,26 @@ export default function Page() {
   const queuedEntries = allEntries.filter(
     entry => entry.metadata.status === 'Queued'
   )
+  const sections = [
+    {
+      title: 'Currently reading',
+      entries: readingEntries,
+      showThought: false,
+      forceGrid: true,
+    },
+    {
+      title: 'Queued up',
+      entries: queuedEntries,
+      showThought: false,
+      forceGrid: true,
+    },
+    {
+      title: 'Finished with notes',
+      entries: finishedEntries,
+      showThought: true,
+      forceGrid: false,
+    },
+  ]
 
   return (
     <PageTransition>
@@ -36,30 +56,20 @@ export default function Page() {
         </FadeIn>
 
         <FadeIn delay={0.35} className='mt-6 space-y-12'>
-          <div className='space-y-4'>
-            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
-              Currently reading
-            </h2>
-            <ReadingList
-              entries={readingEntries}
-              showThought={false}
-              forceGrid
-            />
-          </div>
-
-          <div className='space-y-4'>
-            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
-              Queued up
-            </h2>
-            <ReadingList entries={queuedEntries} showThought={false} forceGrid />
-          </div>
-
-          <div className='space-y-4'>
-            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
-              Finished with notes
-            </h2>
-            <ReadingList entries={finishedEntries} showThought />
-          </div>
+          {sections
+            .filter(section => section.entries.length > 0)
+            .map(section => (
+              <div key={section.title} className='space-y-4'>
+                <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
+                  {section.title}
+                </h2>
+                <ReadingList
+                  entries={section.entries}
+                  showThought={section.showThought}
+                  forceGrid={section.forceGrid}
+                />
+              </div>
+            ))}
         </FadeIn>
       </section>
     </PageTransition>
