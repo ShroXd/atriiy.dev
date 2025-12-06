@@ -18,6 +18,6 @@ export type ReadingEntry = MDXEntry<ReadingMetadata>
 
 export function getReadingEntries(): ReadingEntry[] {
   return getMDXData<ReadingMetadata>(
-    path.join(process.cwd(), 'app', 'reading', 'posts')
+    path.join(process.cwd(), 'app', 'reading', 'books')
   )
 }
