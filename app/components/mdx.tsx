@@ -290,6 +290,7 @@ interface CustomMDXProps {
   frontmatter?: Frontmatter
   source: string
   markFirstParagraph?: boolean
+  showTOC?: boolean
   [key: string]: any
 }
 
@@ -297,6 +298,7 @@ export function CustomMDX({
   frontmatter = {} as Frontmatter,
   source,
   markFirstParagraph = true,
+  showTOC = true,
   ...props
 }: CustomMDXProps) {
   const rehypePlugins = [
@@ -309,18 +311,21 @@ export function CustomMDX({
     ],
     rehypeSlug,
     markFirstParagraph ? rehypeMarkFirstParagraph : null,
-    [
-      rehypeToc,
-      {
-        headings: ['h1', 'h2', 'h3', 'h4'],
-        position: 'afterbegin',
-        customizeTOC: toc => {
-          toc.properties.className = ['table-of-contents']
-          return toc
-        },
-      },
-    ],
-    () => tree => {
+    showTOC
+      ? [
+          rehypeToc,
+          {
+            headings: ['h1', 'h2', 'h3', 'h4'],
+            position: 'afterbegin',
+            customizeTOC: toc => {
+              toc.properties.className = ['table-of-contents']
+              return toc
+            },
+          },
+        ]
+      : null,
+    showTOC
+      ? () => tree => {
       if (!frontmatter?.audioLink) return tree
 
       const processNode = node => {
@@ -378,7 +383,8 @@ export function CustomMDX({
       processNode(tree)
 
       return tree
-    },
+    }
+      : null,
   ].filter(Boolean)
 
   return (
