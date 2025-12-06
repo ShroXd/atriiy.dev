@@ -2,25 +2,43 @@ import type { ReadingEntry, ReadingStatus } from 'app/reading/utils'
 
 import { CustomMDX } from './mdx'
 
-const statusTone: Record<ReadingStatus, string> = {
-  Reading: 'bg-[#e4ddcc] text-[#3f3b34]',
-  Finished: 'bg-[#dcd6c8] text-[#3a352d]',
-  Revisiting: 'bg-[#e7e1d2] text-[#3f3a32]',
-  Queued: 'bg-[#ece6d7] text-[#413c34]',
+const statusTone: Record<
+  ReadingStatus,
+  {
+    bg: string
+    color: string
+  }
+> = {
+  Reading: { bg: '#e7d5b8', color: '#2f2413' },
+  Finished: { bg: '#d6e1d5', color: '#1f2c1f' },
+  Queued: { bg: '#f0e0c7', color: '#352715' },
 }
 
 const cardPalette = ['#f7f4ec', '#f5f2ea', '#f8f5ee', '#f4f1e9']
 
 interface ReadingListProps {
   entries: ReadingEntry[]
+  showThought?: boolean
+  forceGrid?: boolean
 }
 
 const fallbackCover =
   'https://cdnagesdb.com/images/fictionimages/2DFA9C457C196E87E61A84B547510CEF.webp'
 
-export function ReadingList({ entries }: ReadingListProps) {
+export function ReadingList({
+  entries,
+  showThought = true,
+  forceGrid = false,
+}: ReadingListProps) {
   return (
-    <div className='columns-1 md:columns-3' style={{ columnGap: '1.75rem' }}>
+    <div
+      className={
+        forceGrid
+          ? 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3'
+          : 'columns-1 md:columns-3'
+      }
+      style={forceGrid ? undefined : { columnGap: '1.75rem' }}
+    >
       {[...entries]
         .sort((a, b) => {
           if (
@@ -42,17 +60,21 @@ export function ReadingList({ entries }: ReadingListProps) {
                 backgroundColor: bg,
               }}
             >
-              <div className='relative overflow-hidden'>
-                <div
-                  className='h-[290px] w-full bg-cover bg-center'
-                  style={{
-                    backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
-                  }}
-                />
-                <div className='absolute left-5 top-5'>
-                  <span
-                    className={`${statusTone[entry.metadata.status]} inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]`}
+                <div className='relative overflow-hidden'>
+                  <div
+                    className='h-[290px] w-full bg-cover bg-center'
+                    style={{
+                      backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
+                    }}
+                  />
+                  <div className='absolute left-5 top-5'>
+                    <span
+                    className='inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]'
                     aria-label={`${entry.metadata.status} status`}
+                    style={{
+                      backgroundColor: statusTone[entry.metadata.status].bg,
+                      color: statusTone[entry.metadata.status].color,
+                    }}
                   >
                     {entry.metadata.status}
                   </span>
@@ -71,14 +93,16 @@ export function ReadingList({ entries }: ReadingListProps) {
                 </header>
 
                 <div className='space-y-3'>
-                  <div className='prose prose-sm max-w-none text-[rgb(74,74,64)]'>
-                    <CustomMDX
-                      source={entry.content}
-                      frontmatter={entry.metadata}
-                      markFirstParagraph={false}
-                      showTOC={false}
-                    />
-                  </div>
+                  {showThought && (
+                    <div className='prose prose-sm max-w-none text-[rgb(74,74,64)]'>
+                      <CustomMDX
+                        source={entry.content}
+                        frontmatter={entry.metadata}
+                        markFirstParagraph={false}
+                        showTOC={false}
+                      />
+                    </div>
+                  )}
                   {entry.metadata.tags && entry.metadata.tags.length > 0 && (
                     <div className='flex flex-wrap gap-2 text-xs text-neutral-600'>
                       {entry.metadata.tags.map(tag => (

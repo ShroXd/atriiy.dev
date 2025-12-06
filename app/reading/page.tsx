@@ -11,7 +11,16 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  const readingEntries = getReadingEntries()
+  const allEntries = getReadingEntries()
+  const readingEntries = allEntries.filter(
+    entry => entry.metadata.status === 'Reading'
+  )
+  const finishedEntries = allEntries.filter(
+    entry => entry.metadata.status === 'Finished'
+  )
+  const queuedEntries = allEntries.filter(
+    entry => entry.metadata.status === 'Queued'
+  )
 
   return (
     <PageTransition>
@@ -21,13 +30,36 @@ export default function Page() {
             Reading Log
           </h1>
           <p className='max-w-2xl text-neutral-700'>
-            Books I am spending time with or keeping within reach, captured as
-            short reading notes.
+            Books I am spending time with or keeping within reach, plus finished
+            reads and notes.
           </p>
         </FadeIn>
 
-        <FadeIn delay={0.35} className='mt-6'>
-          <ReadingList entries={readingEntries} />
+        <FadeIn delay={0.35} className='mt-6 space-y-12'>
+          <div className='space-y-4'>
+            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
+              Currently reading
+            </h2>
+            <ReadingList
+              entries={readingEntries}
+              showThought={false}
+              forceGrid
+            />
+          </div>
+
+          <div className='space-y-4'>
+            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
+              Queued up
+            </h2>
+            <ReadingList entries={queuedEntries} showThought={false} forceGrid />
+          </div>
+
+          <div className='space-y-4'>
+            <h2 className='font-montserrat text-xl font-semibold tracking-tight text-neutral-900'>
+              Finished with notes
+            </h2>
+            <ReadingList entries={finishedEntries} showThought />
+          </div>
         </FadeIn>
       </section>
     </PageTransition>
