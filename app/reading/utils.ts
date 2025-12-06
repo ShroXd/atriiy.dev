@@ -2,7 +2,7 @@ import path from 'path'
 
 import { getMDXData, type MDXEntry } from 'app/lib/mdx'
 
-export type ReadingStatus = 'Reading' | 'Finished' | 'Revisiting' | 'Queued'
+export type ReadingStatus = 'Reading' | 'Finished' | 'Queued'
 
 export type ReadingMetadata = {
   title: string
