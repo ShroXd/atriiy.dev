@@ -2,18 +2,6 @@ import type { ReadingEntry, ReadingStatus } from 'app/reading/utils'
 
 import { CustomMDX } from './mdx'
 
-const statusTone: Record<
-  ReadingStatus,
-  {
-    bg: string
-    color: string
-  }
-> = {
-  Reading: { bg: '#e7d5b8', color: '#2f2413' },
-  Finished: { bg: '#d6e1d5', color: '#1f2c1f' },
-  Queued: { bg: '#f0e0c7', color: '#352715' },
-}
-
 const cardPalette = ['#f7f4ec', '#f5f2ea', '#f8f5ee', '#f4f1e9']
 
 interface ReadingListProps {
@@ -67,18 +55,6 @@ export function ReadingList({
                       backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
                     }}
                   />
-                  <div className='absolute left-5 top-5'>
-                    <span
-                    className='inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]'
-                    aria-label={`${entry.metadata.status} status`}
-                    style={{
-                      backgroundColor: statusTone[entry.metadata.status].bg,
-                      color: statusTone[entry.metadata.status].color,
-                    }}
-                  >
-                    {entry.metadata.status}
-                  </span>
-                </div>
                 <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(247,245,236,0.85)]' />
               </div>
 
