@@ -9,11 +9,11 @@ import rehypeToc from 'rehype-toc'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
-import type { Pluggable } from 'unified'
 // @ts-ignore
-import { visit, EXIT } from 'unist-util-visit'
+import { EXIT, visit } from 'unist-util-visit'
 
 import AnimatedLink from './AnimatedLink'
+import AudioPlayer from './Audio'
 import Color from './Color'
 import DCTVisualization from './DCTVisualization'
 import {
@@ -25,7 +25,6 @@ import {
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 import VectorDecomposition from './VectorDecomposition'
-import AudioPlayer from './Audio'
 
 function CustomLink(props) {
   return <AnimatedLink {...props} />
@@ -126,7 +125,7 @@ function CustomParagraph({ children, className, ...props }) {
     let foundFirstChar = false
 
     // Recursive helper function to find the first character and modify children
-    const processNode = (node) => {
+    const processNode = node => {
       if (foundFirstChar) return node // Stop processing if found
 
       if (typeof node === 'string' && node.trim().length > 0) {
@@ -137,7 +136,10 @@ function CustomParagraph({ children, className, ...props }) {
         return node.slice(charIndex + 1)
       }
 
-      if (React.isValidElement<{ children?: React.ReactNode }>(node) && node.props.children) {
+      if (
+        React.isValidElement<{ children?: React.ReactNode }>(node) &&
+        node.props.children
+      ) {
         const originalChildren = node.props.children
         let processedChildren = null
 
@@ -147,7 +149,9 @@ function CustomParagraph({ children, className, ...props }) {
         // If the first char was found within this element's children,
         // clone the element with the modified children.
         // Filter out null/empty string results from slicing
-        const validProcessedChildren = React.Children.toArray(processedChildren).filter(child => child !== null && child !== '');
+        const validProcessedChildren = React.Children.toArray(
+          processedChildren
+        ).filter(child => child !== null && child !== '')
 
         if (foundFirstChar) {
           return React.cloneElement(
@@ -166,8 +170,9 @@ function CustomParagraph({ children, className, ...props }) {
     const modifiedChildren = React.Children.map(children, processNode)
 
     // Filter out null results at the top level as well
-     const validModifiedChildren = React.Children.toArray(modifiedChildren).filter(child => child !== null && child !== '');
-
+    const validModifiedChildren = React.Children.toArray(
+      modifiedChildren
+    ).filter(child => child !== null && child !== '')
 
     if (foundFirstChar) {
       return (
@@ -247,7 +252,7 @@ let components = {
   code: ({ children, className }) => {
     if (className === 'language-mermaid') {
       return (
-        <div className='mb-4'>  
+        <div className='mb-4'>
           <Mermaid>{children}</Mermaid>
         </div>
       )
@@ -262,7 +267,7 @@ interface Frontmatter {
 }
 
 // Rehype plugin to mark the first paragraph
-const rehypeMarkFirstParagraph = () => (tree) => {
+const rehypeMarkFirstParagraph = () => tree => {
   visit(tree, 'element', (node, index, parent) => {
     // Check if it's a paragraph element and seems to be a direct child of the main flow
     // This simple check assumes the first <p> encountered in the main flow is the target.
@@ -280,7 +285,11 @@ const rehypeMarkFirstParagraph = () => (tree) => {
       return EXIT
     }
     // Optional: Prevent traversal into certain elements if they shouldn't contain the 'first' paragraph
-    if (['blockquote', 'figure', 'table', 'ul', 'ol', 'pre', 'details'].includes(node.tagName)) {
+    if (
+      ['blockquote', 'figure', 'table', 'ul', 'ol', 'pre', 'details'].includes(
+        node.tagName
+      )
+    ) {
       return 'skip' // Skip children of these elements
     }
   })
@@ -302,7 +311,7 @@ export function CustomMDX({
   showTOC = true,
   ...props
 }: CustomMDXProps) {
-  const rehypePlugins: Pluggable[] = [
+  const rehypePlugins: any = [
     [
       rehypeKatex,
       {
@@ -327,66 +336,66 @@ export function CustomMDX({
       : null,
     showTOC
       ? () => tree => {
-      if (!frontmatter?.audioLink) return tree
+          if (!frontmatter?.audioLink) return tree
 
-      const processNode = node => {
-        if (
-          node.properties &&
-          node.properties.className &&
-          Array.isArray(node.properties.className) &&
-          node.properties.className.includes('table-of-contents')
-        ) {
-          const parentChildren = node.parent?.children
-          if (parentChildren) {
-            const tocIndex = parentChildren.indexOf(node)
-            if (tocIndex !== -1) {
-              const audioElement = {
-                type: 'element',
-                tagName: 'div',
-                properties: { className: ['mt-4', 'mb-8'] },
-                children: [
-                  {
-                    type: 'mdxJsxFlowElement',
-                    name: 'Audio',
-                    attributes: [
+          const processNode = node => {
+            if (
+              node.properties &&
+              node.properties.className &&
+              Array.isArray(node.properties.className) &&
+              node.properties.className.includes('table-of-contents')
+            ) {
+              const parentChildren = node.parent?.children
+              if (parentChildren) {
+                const tocIndex = parentChildren.indexOf(node)
+                if (tocIndex !== -1) {
+                  const audioElement = {
+                    type: 'element',
+                    tagName: 'div',
+                    properties: { className: ['mt-4', 'mb-8'] },
+                    children: [
                       {
-                        type: 'mdxJsxAttribute',
-                        name: 'src',
-                        value: frontmatter.audioLink as string,
+                        type: 'mdxJsxFlowElement',
+                        name: 'Audio',
+                        attributes: [
+                          {
+                            type: 'mdxJsxAttribute',
+                            name: 'src',
+                            value: frontmatter.audioLink as string,
+                          },
+                        ],
+                        children: [],
                       },
                     ],
-                    children: [],
-                  },
-                ],
-                parent: node.parent,
+                    parent: node.parent,
+                  }
+                  parentChildren.splice(tocIndex + 1, 0, audioElement)
+                }
               }
-              parentChildren.splice(tocIndex + 1, 0, audioElement)
-            }
-          }
-          return true
-        }
-
-        if (node.children && node.children.length) {
-          node.children.forEach(child => {
-            child.parent = node
-          })
-
-          for (const child of node.children) {
-            if (processNode(child)) {
               return true
             }
+
+            if (node.children && node.children.length) {
+              node.children.forEach(child => {
+                child.parent = node
+              })
+
+              for (const child of node.children) {
+                if (processNode(child)) {
+                  return true
+                }
+              }
+            }
+
+            return false
           }
+
+          processNode(tree)
+
+          return tree
         }
-
-        return false
-      }
-
-      processNode(tree)
-
-      return tree
-    }
       : null,
-  ].filter((plugin): plugin is Pluggable => Boolean(plugin))
+  ]
 
   return (
     <>
