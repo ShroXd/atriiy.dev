@@ -1,5 +1,6 @@
-import fs from 'fs'
 import path from 'path'
+
+import { getMDXData, type MDXEntry } from 'app/lib/mdx'
 
 type Metadata = {
   title: string
@@ -11,89 +12,10 @@ type Metadata = {
   tags?: string[]
 }
 
-function parseFrontmatter(fileContent: string) {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/
-  let match = frontmatterRegex.exec(fileContent)
-  let frontMatterBlock = match![1]
-  let content = fileContent.replace(frontmatterRegex, '').trim()
-  let frontMatterLines = frontMatterBlock.trim().split('\n')
-  let metadata: Record<string, any> = {}
-  
-  let currentKey: string | null = null;
-  let inArray = false;
-  
-  frontMatterLines.forEach(line => {
-    // Check if this is an array item
-    if (line.trim().startsWith('- ')) {
-      if (currentKey && inArray) {
-        if (!metadata[currentKey]) {
-          metadata[currentKey] = [];
-        }
-        metadata[currentKey].push(line.trim().substring(2));
-      }
-      return;
-    }
-    
-    // Regular key-value pair
-    if (line.includes(': ')) {
-      let [key, ...valueArr] = line.split(': ')
-      let value = valueArr.join(': ').trim()
-      value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-      
-      const trimmedKey = key.trim();
-      currentKey = trimmedKey;
-      
-      // Check if this is the start of an array
-      if (value === '') {
-        inArray = true;
-        metadata[trimmedKey] = [];
-      } else {
-        inArray = false;
-        
-        // Handle different types of values
-        if (value === 'true') {
-          metadata[trimmedKey] = true;
-        } else if (value === 'false') {
-          metadata[trimmedKey] = false;
-        } else {
-          metadata[trimmedKey] = value;
-        }
-      }
-    }
-  })
-
-  // Type cast at the end
-  return { 
-    metadata: metadata as Metadata, 
-    content 
-  }
-}
-
-function getMDXFiles(dir) {
-  return fs.readdirSync(dir).filter(file => path.extname(file) === '.mdx')
-}
-
-function readMDXFile(filePath) {
-  let rawContent = fs.readFileSync(filePath, 'utf-8')
-  return parseFrontmatter(rawContent)
-}
-
-function getMDXData(dir) {
-  let mdxFiles = getMDXFiles(dir)
-  return mdxFiles.map(file => {
-    let { metadata, content } = readMDXFile(path.join(dir, file))
-    let slug = path.basename(file, path.extname(file))
-
-    return {
-      metadata,
-      slug,
-      content,
-    }
-  })
-}
-
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+  return getMDXData<Metadata>(
+    path.join(process.cwd(), 'app', 'blog', 'posts')
+  ) as MDXEntry<Metadata>[]
 }
 
 export function formatDate(date: string, includeRelative = false) {
