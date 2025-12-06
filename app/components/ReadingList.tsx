@@ -11,7 +11,7 @@ interface ReadingListProps {
 }
 
 const fallbackCover =
-  'https://cdnagesdb.com/images/fictionimages/2DFA9C457C196E87E61A84B547510CEF.webp'
+  'https://placehold.co/400x600/e2e8f0/475569?text=NO+COVER&font=roboto'
 
 export function ReadingList({
   entries,
@@ -48,17 +48,17 @@ export function ReadingList({
                 backgroundColor: bg,
               }}
             >
-                <div className='relative overflow-hidden'>
-                  <div
-                    className='h-[290px] w-full bg-cover bg-center'
-                    style={{
-                      backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
-                    }}
-                  />
+              <div className='relative overflow-hidden'>
+                <div
+                  className='h-[290px] w-full bg-cover bg-center'
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, rgba(247,245,236,0.15), rgba(20,17,12,0.08)), url(${coverSrc})`,
+                  }}
+                />
                 <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(247,245,236,0.85)]' />
               </div>
 
-              <div className='px-5 pb-6 pt-5'>
+              <div className='pt-5 px-5 pb-6'>
                 <header className='mb-3 space-y-1.5'>
                   <h2 className='font-montserrat text-lg font-semibold tracking-tight text-neutral-900'>
                     {entry.metadata.title}
@@ -84,7 +84,7 @@ export function ReadingList({
                       {entry.metadata.tags.map(tag => (
                         <span
                           key={`${entry.slug}-${tag}`}
-                          className='rounded-full bg-neutral-200/60 px-2 py-1 font-semibold tracking-tight'
+                          className='rounded-full bg-neutral-200/60 py-1 px-2 font-semibold tracking-tight'
                         >
                           {tag}
                         </span>
