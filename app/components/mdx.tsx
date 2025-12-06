@@ -9,6 +9,7 @@ import rehypeToc from 'rehype-toc'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { highlight } from 'sugar-high'
+import type { Pluggable } from 'unified'
 // @ts-ignore
 import { visit, EXIT } from 'unist-util-visit'
 
@@ -301,7 +302,7 @@ export function CustomMDX({
   showTOC = true,
   ...props
 }: CustomMDXProps) {
-  const rehypePlugins = [
+  const rehypePlugins: Pluggable[] = [
     [
       rehypeKatex,
       {
@@ -385,7 +386,7 @@ export function CustomMDX({
       return tree
     }
       : null,
-  ].filter(Boolean)
+  ].filter((plugin): plugin is Pluggable => Boolean(plugin))
 
   return (
     <>
