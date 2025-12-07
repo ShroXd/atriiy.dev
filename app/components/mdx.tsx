@@ -311,6 +311,7 @@ export function CustomMDX({
   showTOC = true,
   ...props
 }: CustomMDXProps) {
+  // Build plugin list and drop any disabled entries to avoid nulls in MDX config
   const rehypePlugins: any = [
     [
       rehypeKatex,
@@ -396,6 +397,7 @@ export function CustomMDX({
         }
       : null,
   ]
+  const filteredRehypePlugins = rehypePlugins.filter(Boolean)
 
   return (
     <>
@@ -409,7 +411,7 @@ export function CustomMDX({
         options={{
           mdxOptions: {
             remarkPlugins: [remarkMath, remarkGfm],
-            rehypePlugins,
+            rehypePlugins: filteredRehypePlugins,
           },
         }}
       />
