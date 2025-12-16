@@ -13,13 +13,13 @@ Rolldown is a high-performance JavaScript bundler written in Rust. While offerin
 
 In a modern front-end project, hundreds or even thousands of modules form an intricate dependency graph. A bundler's understanding cannot be limited to simple file-level imports; it must go deeper to determine if the `useState` imported in `featureA.js` is the very same entity as the one in `featureB.js`. This crucial resolution process is known as **linking**.
 
-The link stage is designed to solve this puzzle. It addresses macro-level properties that propagate through the module graph, like the contagious nature of top-level await; it builds a communication bridge between different module system (CJS/ESM); and ultimately, it traces every imported symbol back to its unique, original definition.
+The link stage is designed to solve this puzzle. It addresses macro-level properties that propagate through the module graph, like the contagious nature of top-level await; it builds a communication bridge between different module systems (CJS/ESM); and ultimately, it traces every imported symbol back to its unique, original definition.
 
-To demysify this process, we will use a three-level mental model to unveil the inner workings of the link stage, exploring it step-by-step from a macro to a micro perspective.
+To demystify this process, we will use a three-level mental model to unveil the inner workings of the link stage, exploring it step-by-step from a macro to a micro perspective.
 
 ## Three-level mental model
 
-The output of the scan stage is a rudimentary module dependency graph, but its scope is limited to the file level. The link stage, in contrast, employs a series of data structures and algorithms to refine this graph, untimately generating a precise, symbol-level dependency map.
+The output of the scan stage is a rudimentary module dependency graph, but its scope is limited to the file level. The link stage, in contrast, employs a series of data structures and algorithms to refine this graph, ultimately generating a precise, symbol-level dependency map.
 
 - **Foundation & inherent properties**. The scan stage provides the initial graph, stored in the `ModuleTable`, which captures all module dependency relationships. A depth-first traversal is then performed on this graph to calculate and propagate _contagious_ properties like top-level await (TLA). These properties can impact entire chains of modules through indirect dependencies, making this analysis a crucial prerequisite for the code generation stage.
 
@@ -29,7 +29,7 @@ The output of the scan stage is a rudimentary module dependency graph, but its s
 
 ## Example project
 
-To navigate the complex data structures and algorithms of the link stage, we will use a concrete example project. This approach will help make the underlying logic more tangible. The project is intentionally designed to showcase serveral critical features that the link stage must handle:
+To navigate the complex data structures and algorithms of the link stage, we will use a concrete example project. This approach will help make the underlying logic more tangible. The project is intentionally designed to showcase several critical features that the link stage must handle:
 
 - CJS & ESM mixed usage
 - Top-level await
@@ -66,7 +66,7 @@ The scan stage produces a foundational module dependency graph. In this directed
 
 ### Graph design
 
-At the core of the graph's design is the `ModuleIdx`, a typed index used to refer to a specific module. Modules are categorized into two types, `NormalModule` and `ExternalModule`, though our analysis will primarily focus on the former. Each `NormalModule` encapsulates the result of its ECMAScript parsing, most notably including an `import_records` field that lists all of its import statements. The following calss diagram illustrates this data structure design.
+At the core of the graph's design is the `ModuleIdx`, a typed index used to refer to a specific module. Modules are categorized into two types, `NormalModule` and `ExternalModule`, though our analysis will primarily focus on the former. Each `NormalModule` encapsulates the result of its ECMAScript parsing, most notably including an `import_records` field that lists all of its import statements. The following class diagram illustrates this data structure design.
 
 ```mermaid
 classDiagram
@@ -142,7 +142,7 @@ module_table.modules[module_idx]
 
 ### Major data structure: `LinkingMetadata`
 
-The final output of the link stage is encapsulated within the `LinkStageOutput` struct. Its defination is as follows:
+The final output of the link stage is encapsulated within the `LinkStageOutput` struct. Its definition is as follows:
 
 ```rust
 pub struct LinkStageOutput {
@@ -183,7 +183,7 @@ classDiagram
 
 ### Computing TLA
 
-Top-level await (TLA), as the name implies, allows developers to use the `await` keyword at the top level of an ES Module, removing the need to wrap asynchronous code in an `async` function. Thes feature greatly simplifies asynchronous initialization tasks, offering clearer code than the traditional Immediately Invoked Function Expression (IIFE) pattern. Our example project's `api.js` file demostrates this:
+Top-level await (TLA), as the name implies, allows developers to use the `await` keyword at the top level of an ES Module, removing the need to wrap asynchronous code in an `async` function. This feature greatly simplifies asynchronous initialization tasks, offering clearer code than the traditional Immediately Invoked Function Expression (IIFE) pattern. Our example project's `api.js` file demonstrates this:
 
 ```javascript
 console.log('API module evaluation starts.')
@@ -204,8 +204,8 @@ A key characteristic of TLA is its contagious nature. If a module uses TLA, any 
 
 The logic for computing this flag follows naturally from TLA's behavior. Rolldown employs a recursive depth-first search (DFS) algorithm, using a hash map for memoization to prevent redundant computations on the same module. The core of the algorithm determines if a module is _TLA-affected_ by checking two conditions:
 
-- Does the module itself contains a top-level `await`? (This is known from the `ast_usage` field computed during the scan stage)
-- Does the module import any other module taht is, itself, TLA-affected?
+- Does the module itself contain a top-level `await`? (This is known from the `ast_usage` field computed during the scan stage)
+- Does the module import any other module that is, itself, TLA-affected?
 
 This recursive check ensures that the _contagious_ property is correctly propagated up the entire dependency chain from its origin.
 
@@ -213,27 +213,27 @@ This recursive check ensures that the _contagious_ property is correctly propaga
 
 In simple terms, a module is said to have side effects if, upon being imported, it does more than just export variables, functions, or classes. Specifically, it executes code that affects the global environment or modifies objects outside its own scope. Polyfills are a classic application, as they often augment global objects to allow new APIs to be used in outdated browsers.
 
-Our example project's `polyfill.js` is a perfect illustration. Although `main.js` imports it via `import './polyfill.js'` without referencing any symbols, the module is stll considered to have side effects because it modifies the global `globalThis` object. Therefore, Rolldown must ensure this module's code is included in the final bundle.
+Our example project's `polyfill.js` is a perfect illustration. Although `main.js` imports it via `import './polyfill.js'` without referencing any symbols, the module is still considered to have side effects because it modifies the global `globalThis` object. Therefore, Rolldown must ensure this module's code is included in the final bundle.
 
-Since bundlers cannot programmatically determine if a side effect is beneficaial, they must conservatively preserve any module marked as having them. The process for identifying these modules is analogous to computing TLA, as this property is also contagious. If a module has side effects, any module that imports it (directly or indirectly) is also considered to be affected. The underlying algorithm is therefore similar: a recursive depth-first searhc (DFS) that inspects the `side_effects()` information on each `Module`, with memoization to avoid redundant checks.
+Since bundlers cannot programmatically determine if a side effect is beneficial, they must conservatively preserve any module marked as having them. The process for identifying these modules is analogous to computing TLA, as this property is also contagious. If a module has side effects, any module that imports it (directly or indirectly) is also considered to be affected. The underlying algorithm is therefore similar: a recursive depth-first search (DFS) that inspects the `side_effects()` information on each `Module`, with memoization to avoid redundant checks.
 
-Our module graph is now labeled with macro-attributes such as top-level await and side effects. However, this is not yet sufficient. Before we can precisely link symbols, we must first address the fact that modules can use different system (like CJS and ESM). They need a common communication protocol. This is the goal of our next step.
+Our module graph is now labeled with macro-attributes such as top-level await and side effects. However, this is not yet sufficient. Before we can precisely link symbols, we must first address the fact that modules can use different systems (like CJS and ESM). They need a common communication protocol. This is the goal of our next step.
 
 ## Standardization & module communication protocol
 
 While the scan stage has already mapped out the module dependency graph, it only captures file-level relationships. This raw graph does not account for the fact that modules may use different systems -- such as CommonJS (CJS) and ES Modules (ESM) -- which are not inherently interoperable. To bridge this gap, a standardization process is required before any deeper linking logic can be applied.
 
-This standardization aoccurs during the link stage. Rolldown iterates over the module graph, computes the necessary normalization information for each module, and records it in the corresponding `LinkingMetadata` struct. This struct, as we've noted, is held within the `metas` field of the `LinkStageOutput`.
+This standardization occurs during the link stage. Rolldown iterates over the module graph, computes the necessary normalization information for each module, and records it in the corresponding `LinkingMetadata` struct. This struct, as we've noted, is held within the `metas` field of the `LinkStageOutput`.
 
 ### Module systems & wrappers
 
 Modern JavaScript is dominated by two mainstream module systems: CommonJS (CJS) and ES Modules (ESM).
 
-- **CommonJS (CJS)**: Primarilly used in the Node.js ecosystem, CJS is a synchronous system. Dependencies are loaded via a blocking `require()` call, and modules expose their API by assigning to the `module.exports` or `exports` objects.
+- **CommonJS (CJS)**: Primarily used in the Node.js ecosystem, CJS is a synchronous system. Dependencies are loaded via a blocking `require()` call, and modules expose their API by assigning to the `module.exports` or `exports` objects.
 
 - **ES Modules (ESM)**: The official standard introduced by ECMAScript, designed for both browsers and Node.js. Its static structure (using `import` and `export` statements) is designed for compile-time analysis, while the browser loading mechanism itself is **asynchronous** and non-blocking.
 
-These two systems are often used interchangeably within a single codebase, especially when modern ESM-based projects rely on older third-party libraries that only provide a CJS distribution. To handle this mixed usage, Rolldown determines when a module needs a **wrapper**. While the specific algorithms will be detailed later, the concept is straightforwar: a wrapper is a function closure that emulates a specific module environment, allowing incompatible systems to communicate.
+These two systems are often used interchangeably within a single codebase, especially when modern ESM-based projects rely on older third-party libraries that only provide a CJS distribution. To handle this mixed usage, Rolldown determines when a module needs a **wrapper**. While the specific algorithms will be detailed later, the concept is straightforward: a wrapper is a function closure that emulates a specific module environment, allowing incompatible systems to communicate.
 
 This simplified example below illustrates this core idea:
 
@@ -292,7 +292,7 @@ pub enum ExportsKind {
 }
 ```
 
-The crucial logic lies in the **combination** of the importer's `ImportKind` and the importee's `ExportsKind`. This interaction dicates the `WrapKind` needed for the importee. For instance, when a module is loaded via `requre()` (an `ImportKind::Require`), its `WrapKind` is determined by its own `ExportsKind`. This logic ensures the correct runtime environment is provided for the module being imported.
+The crucial logic lies in the **combination** of the importer's `ImportKind` and the importee's `ExportsKind`. This interaction dictates the `WrapKind` needed for the importee. For instance, when a module is loaded via `require()` (an `ImportKind::Require`), its `WrapKind` is determined by its own `ExportsKind`. This logic ensures the correct runtime environment is provided for the module being imported.
 
 ```rust
 // ...
@@ -313,7 +313,7 @@ With the necessary `WrapKind` for various interactions determined, the `wrap_mod
 
 A key complexity is a star export (`export * from './dep'`) from a CommonJS module. Since the full list of exports from CJS cannot be known at compile-time, these are treated as dynamic exports, requiring special handling.
 
-Furthermore, the wrapping process iteself is recursive. When a module requires a wrapper (e.g., a CJS module imported by an ESM one), it's not enough to wrap that single module. The wrapper might introduce new asynchronous behavior. Therefore, Rolldown must recursively traverse _up_ the import chain, ensuring that any module depending on the newly wrapped on is also handled correctly. This recursive propagation guarantees that dependencies are ready at runtime and preserves the correct execution order.
+Furthermore, the wrapping process itself is recursive. When a module requires a wrapper (e.g., a CJS module imported by an ESM one), it's not enough to wrap that single module. The wrapper might introduce new asynchronous behavior. Therefore, Rolldown must recursively traverse _up_ the import chain, ensuring that any module depending on the newly wrapped one is also handled correctly. This recursive propagation guarantees that dependencies are ready at runtime and preserves the correct execution order.
 
 ## Connecting everything: symbol genealogy
 
@@ -321,7 +321,7 @@ After establishing the graph's foundational properties and standardizing the mod
 
 Consider this scenario from our example project: `main.js` imports a symbol named `source` from `helpers.js`, which in turn re-exports everything from `api.js`. How does the bundler prove that the `source` used in `main.js` is the _exact same_ variable defined in `api.js`?
 
-This fundamentally a question of **equivalence**. To sovle this efficiently, Rolldown employs the Disjoin Set Union (DSU) data structure, an algorithm specifically designed for thsi class of problem. In this model, each symbol reference is treated as an element, and the goal is to group all references that point to the same original definition into a single, unified set.
+This is fundamentally a question of **equivalence**. To solve this efficiently, Rolldown employs the Disjoint Set Union (DSU) data structure, an algorithm specifically designed for this class of problem. In this model, each symbol reference is treated as an element, and the goal is to group all references that point to the same original definition into a single, unified set.
 
 ### Disjoint set union
 
@@ -438,21 +438,21 @@ pub struct ResolvedExport {
 }
 ```
 
-However, this process is complicated by ES Module's star exports (`export * from './dep'`), which re-export all names from another module. Our `helpers.js` file uses this syntax: `export * from '.api.js'`.
+However, this process is complicated by ES Module's star exports (`export * from './dep'`), which re-export all names from another module. Our `helpers.js` file uses this syntax: `export * from './api.js'`.
 
-Star exports can introduce ambiguity that must be resolved before the final inking. Therefore, for any module containing them, Rolldown invokes a dedicated function, `add_exports_for_export_star`. This function uses a recursive depth-first search (DFS) to traverse the dependency graph of star exports. To detect cycles and manage export precedence, it uses a `module_stack` in a classic backtracking pattern: a module's ID is pushed onto the stack before a recursive call and popped off after it returns.
+Star exports can introduce ambiguity that must be resolved before the final linking. Therefore, for any module containing them, Rolldown invokes a dedicated function, `add_exports_for_export_star`. This function uses a recursive depth-first search (DFS) to traverse the dependency graph of star exports. To detect cycles and manage export precedence, it uses a `module_stack` in a classic backtracking pattern: a module's ID is pushed onto the stack before a recursive call and popped off after it returns.
 
 This recursive traversal has two primary responsibilities:
 
-- **Shadowing**: explicit named exports within a module always taks precedence. They will _shadow_ any same-named export that might be imported via a star export from a deeper dependency. The `module_stack` helps determine this precedence based on proximity in the import chain.
+- **Shadowing**: explicit named exports within a module always take precedence. They will _shadow_ any same-named export that might be imported via a star export from a deeper dependency. The `module_stack` helps determine this precedence based on proximity in the import chain.
 
-- **Ambiguity detection**: ambiguity arises when a module attempts to export the same name from multiple, distinct sources at teh same level of precedence (e.g., via two different star exports: `export * from 'a'` and `export * from 'b'`). If an incoming star-exported symbol has the same name as an existing one but is not shadowed, it is recorded in the `potentially_ambiguous_symbol_refs` field for later resolution.
+- **Ambiguity detection**: ambiguity arises when a module attempts to export the same name from multiple, distinct sources at the same level of precedence (e.g., via two different star exports: `export * from 'a'` and `export * from 'b'`). If an incoming star-exported symbol has the same name as an existing one but is not shadowed, it is recorded in the `potentially_ambiguous_symbol_refs` field for later resolution.
 
 Throughout this process, the function manipulates a single, mutable `resolve_exports FxHashMap` that is passed in from the caller, progressively building up the complete set of resolved exports for the module.
 
 ### Match imports with exports
 
-With all module exports resolved, the next step is to match each import to its correspondig export. This entire precess is managed using the data and structures encapsulated within the `BindImportsAndExportsContext`.
+With all module exports resolved, the next step is to match each import to its corresponding export. This entire process is managed using the data and structures encapsulated within the `BindImportsAndExportsContext`.
 
 ```rust
 struct BindImportsAndExportsContext<'a> {
@@ -467,7 +467,7 @@ struct BindImportsAndExportsContext<'a> {
 
 The ultimate goal here is to populate the `symbol_db`, using the Disjoint Set Union logic to link each imported symbol to its true origin. The process iterates through each `NormalModule` and runs a matching function on its named imports (each represented by a `NamedImport` struct, like `import { foo } from 'foo'`).
 
-However, before internal symbols are linked, **external imports receive special, priliminary handling**. When an imports is from an external module (e.g., `'react'`), it isn't resolved immediately. Instead, it is collected and grouped within the `external_import_binding_merger`.
+However, before internal symbols are linked, **external imports receive special, preliminary handling**. When an import is from an external module (e.g., `'react'`), it isn't resolved immediately. Instead, it is collected and grouped within the `external_import_binding_merger`.
 
 The data structure is a nested hash map designed to aggregate all imports that refer to the same named export from the same external module.
 
@@ -521,7 +521,7 @@ After all modules and their imports have been visited, Rolldown will iterate ove
 
 ### Tracing an import to its origin
 
-The workhorse of symbol resolution is the recursive function `mathc_import_with_export`. Its mission is to trace a single import, described by an `ImportTracker`, all the way back to its original definition.
+The workhorse of symbol resolution is the recursive function `match_import_with_export`. Its mission is to trace a single import, described by an `ImportTracker`, all the way back to its original definition.
 
 ```rust
 struct ImportTracker {
@@ -604,13 +604,13 @@ export * from './moduleA'; // Exports a `foo`
 export * from './moduleB'; // Also exports a `foo`
 ```
 
-Rolldown's strategy is conservative: if an export name refers to multiple, different original definitions, that name is effectively ignored and will not be part of module's public API. This prevents unstable or unpredictable runtime behavior.
+Rolldown's strategy is conservative: if an export name refers to multiple, different original definitions, that name is effectively ignored and will not be part of the module's public API. This prevents unstable or unpredictable runtime behavior.
 
-However, not all potential conflicts result in true ambiguity. In our example project, `main.js`'s import of `source` from `helpers.js` follows a re-export chain (`export * from './api.js'`), but since there is only one unique origin for `source`, the `mathc_import_with_export` function resolves it cleanly without conflict.
+However, not all potential conflicts result in true ambiguity. In our example project, `main.js`'s import of `source` from `helpers.js` follows a re-export chain (`export * from './api.js'`), but since there is only one unique origin for `source`, the `match_import_with_export` function resolves it cleanly without conflict.
 
 ## Result of the link stage
 
-The link stage transform the rudimentary, file-level dependency graph from the scan stage into a rich, deeply understood structure. The final output is encapsulated in the `LinkStageOutput` struct:
+The link stage transforms the rudimentary, file-level dependency graph from the scan stage into a rich, deeply understood structure. The final output is encapsulated in the `LinkStageOutput` struct:
 
 ```rust
 pub struct LinkStageOutput {
@@ -627,11 +627,11 @@ This structure contains both the original `ModuleTable` and, more importantly, t
 
 - `SymbolRefDb`. The _database_ of symbol relationships. It uses the Disjoint Set Union structure to maintain the equivalence classes of all internal symbols. With this database, any imported symbol can be traced to its unique, original definition using the `find_mut` method.
 
-In essence, the link stage is a powerful optimization and resolution phase for the module graph. By its conclusion, all modules and symbols are fully resolved, and all ambiguity has been eliminated. This creates a stable and predictable foundation, which is critical for the subsequent stages of code generation, tree shaking, and code spliting to operate correctly and efficiently.
+In essence, the link stage is a powerful optimization and resolution phase for the module graph. By its conclusion, all modules and symbols are fully resolved, and all ambiguity has been eliminated. This creates a stable and predictable foundation, which is critical for the subsequent stages of code generation, tree shaking, and code splitting to operate correctly and efficiently.
 
 ## Summary
 
-The link stage is a sophisticated process that transforms the rudimentary dependency graph from the scan stage into a fully resolved, unambiguous symbol map. We've seen how it systematically traverses the graph to propagate properties like TLA and side effects, and how it standardizes different module formats to ensure interoperability. At its heart, this process relies on a series of efficient data structures, like `IndexVec` and `FxHashMap`, and powerful algorithms, namely deep-first search and the Disjoint Set Union. This combination of carefully chosen data structures and algorithms is what underpins Rolldown's exceptional performance.
+The link stage is a sophisticated process that transforms the rudimentary dependency graph from the scan stage into a fully resolved, unambiguous symbol map. We've seen how it systematically traverses the graph to propagate properties like TLA and side effects, and how it standardizes different module formats to ensure interoperability. At its heart, this process relies on a series of efficient data structures, like `IndexVec` and `FxHashMap`, and powerful algorithms, namely depth-first search and the Disjoint Set Union. This combination of carefully chosen data structures and algorithms is what underpins Rolldown's exceptional performance.
 
 I hope this deep dive has given you a solid understanding of the link stage and helped you build a durable mental model of its inner workings. If you spot an error or have any suggestions, please drop a comment below -- your feedback is invaluable!
 
