@@ -38,7 +38,7 @@ export default function GlossaryTooltip({
   return (
     <HoverCard.Root openDelay={200} closeDelay={100}>
       <HoverCard.Trigger asChild>
-        <span className='cursor-help border-b border-dashed border-[#d0d0c0] transition-colors duration-200 hover:border-[rgb(80,80,65)]'>
+        <span className='relative cursor-help border-b-2 border-dotted border-[#c5c5b8] bg-gradient-to-b from-transparent to-[#f8f8f0]/30 transition-all duration-200 hover:border-[#a8a89d] hover:to-[#f2f2e3]/50'>
           {children || term}
         </span>
       </HoverCard.Trigger>
@@ -74,27 +74,48 @@ export default function GlossaryTooltip({
               duration: 0.18,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className='w-80 max-w-[calc(100vw-2rem)] rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] p-4 shadow-xl'
+            className='w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] p-5 ring-1 shadow-lg ring-black/5'
           >
             <div className='relative'>
               {typeof entry === 'object' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05, duration: 0.15 }}
-                  className='mb-2 text-xs font-semibold uppercase tracking-wide text-[rgb(100,100,85)]'
+                  transition={{
+                    delay: 0.05,
+                    duration: 0.2,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className='mb-3 flex items-center gap-2'
                 >
-                  {title}
+                  <div className='h-1 w-1 rounded-full bg-[rgb(100,100,85)]'></div>
+                  <span className='text-xs font-semibold uppercase tracking-wide text-[rgb(100,100,85)]'>
+                    {title}
+                  </span>
                 </motion.div>
               )}
               <motion.div
-                initial={{ opacity: 0, y: 4 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08, duration: 0.15 }}
+                transition={{
+                  delay: 0.1,
+                  duration: 0.2,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 className='text-sm leading-relaxed text-[rgb(74,74,64)]'
               >
                 {description}
               </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{
+                  delay: 0.15,
+                  duration: 0.25,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className='mt-3 h-px w-full bg-gradient-to-r from-[#e5e5d8] via-[#d0d0c0] to-transparent'
+              />
             </div>
           </motion.div>
         </HoverCard.Content>
