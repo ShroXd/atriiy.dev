@@ -12,6 +12,7 @@ import { highlight } from 'sugar-high'
 // @ts-ignore
 import { EXIT, visit } from 'unist-util-visit'
 
+import remarkGlossary from '../lib/remark-glossary.mjs'
 import AnimatedLink from './AnimatedLink'
 import AudioPlayer from './Audio'
 import Color from './Color'
@@ -22,6 +23,7 @@ import {
   NunitoSansWrapper,
   SpectralWrapper,
 } from './Fonts'
+import GlossaryTooltip from './GlossaryTooltip'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
 import VectorDecomposition from './VectorDecomposition'
@@ -223,6 +225,7 @@ let components = {
   strong: CustomStrong,
   p: CustomParagraph,
   Color: Color,
+  GlossaryTooltip: GlossaryTooltip,
   MontserratWrapper: MontserratWrapper,
   NunitoSansWrapper: NunitoSansWrapper,
   SpectralWrapper: SpectralWrapper,
@@ -410,7 +413,7 @@ export function CustomMDX({
         }}
         options={{
           mdxOptions: {
-            remarkPlugins: [remarkMath, remarkGfm],
+            remarkPlugins: [remarkMath, remarkGfm, remarkGlossary],
             rehypePlugins: filteredRehypePlugins,
           },
         }}

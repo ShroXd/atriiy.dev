@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",
+    "@radix-ui/react-hover-card": "^1.1.15",
     "@react-spring/web": "^9.7.5",
     "@tailwindcss/postcss": "4.0.0-alpha.13",
     "@vercel/analytics": "^1.1.3",
