@@ -38,8 +38,11 @@ export default function GlossaryTooltip({
   return (
     <HoverCard.Root openDelay={200} closeDelay={100}>
       <HoverCard.Trigger asChild>
-        <span className='relative cursor-help border-b-2 border-dotted border-[#c5c5b8] bg-gradient-to-b from-transparent to-[#f8f8f0]/30 transition-all duration-200 hover:border-[#a8a89d] hover:to-[#f2f2e3]/50'>
+        <span className='relative cursor-help border-b-2 border-dotted border-[#c5c5b8] bg-gradient-to-b from-transparent to-[#f8f8f0]/30 transition-all duration-200 hover:border-[#a8a89d] hover:to-[#f2f2e3]/50 hover:[&>span:last-child]:opacity-80'>
           {children || term}
+          <span className='absolute -top-2 -right-2 text-[10px] text-[rgb(100,100,85)] opacity-60 transition-opacity duration-200'>
+            ?
+          </span>
         </span>
       </HoverCard.Trigger>
 
@@ -74,7 +77,7 @@ export default function GlossaryTooltip({
               duration: 0.18,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className='w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] p-5 ring-1 shadow-lg ring-black/5'
+            className='w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] py-3 px-4 ring-1 shadow-lg ring-black/5'
           >
             <div className='relative'>
               {typeof entry === 'object' && (
@@ -106,16 +109,6 @@ export default function GlossaryTooltip({
               >
                 {description}
               </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scaleX: 0 }}
-                animate={{ opacity: 1, scaleX: 1 }}
-                transition={{
-                  delay: 0.15,
-                  duration: 0.25,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className='mt-3 h-px w-full bg-gradient-to-r from-[#e5e5d8] via-[#d0d0c0] to-transparent'
-              />
             </div>
           </motion.div>
         </HoverCard.Content>
