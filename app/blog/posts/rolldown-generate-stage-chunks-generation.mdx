@@ -91,7 +91,7 @@ let mut name_to_module_groups: FxHashMap<(usize, ArcStr), ModuleGroupIdx>
 let mut index_module_groups: IndexVec<ModuleGroupIdx, ModuleGroup>
 ```
 
-This is a two level data structure design. We get the `match_group_index` and [match group](abbr:match_group) from the `match_groups` stored in the `chunking_options`, we use it to create a related index. And the group related data is stored underthe `ModuleGroup` data structure, which can be refered by the index, stored in the `IndexVec`. Such design avoid the inefficient linear seach and also good for sorting after this step.
+This is a two level data structure design. We get the `match_group_index` and [match group](abbr:match_group.md) from the `match_groups` stored in the `chunking_options`, we use it to create a related index. And the group related data is stored underthe `ModuleGroup` data structure, which can be refered by the index, stored in the `IndexVec`. Such design avoid the inefficient linear seach and also good for sorting after this step.
 
 `name_to_module_group` is a hash map that maps `(match_group_index, group_name)` to `ModuleGroupIdx`. And the related data could be found in the `index_module_groups`, which is used for storing module groups.
 
