@@ -10,6 +10,7 @@ export type GlossaryData = Record<string, GlossaryEntry>
 export interface GlossaryTooltipProps {
   term: string
   children?: React.ReactNode
+  isMarkdownFile?: boolean
 }
 
 export interface GlossaryTooltipContent {
