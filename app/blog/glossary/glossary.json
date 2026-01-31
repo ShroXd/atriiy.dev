@@ -1,0 +1,4 @@
+{
+  "ModuleIdx": "`ModuleIdx`, an index used to identify a module in the module dependency graph.",
+  "match_group": "This is called Manual Code Splitting in Rolldown, you can read the [document](https://rolldown.rs/in-depth/manual-code-splitting#why-use-manual-code-splitting) to get more information. And here is the basic example, you may have already seen similar configurations in the Webpack:\n {name:'react-vendor',test:/node_modules\/(react|react-dom)/,priority:20,minSize:20000}"
+}

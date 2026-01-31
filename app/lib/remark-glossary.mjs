@@ -22,23 +22,35 @@ export default function remarkGlossary() {
       }
 
       if (node.type === 'link' && node.url && node.url.startsWith('abbr:')) {
-        const term = node.url.replace('abbr:', '')
+        const fullTerm = node.url.replace('abbr:', '')
+        const isMarkdownFile = fullTerm.endsWith('.md')
+        const term = isMarkdownFile ? fullTerm.replace('.md', '') : fullTerm
 
         const linkText =
           node.children && node.children.length > 0
             ? node.children
             : [{ type: 'text', value: term }]
 
+        const attributes = [
+          {
+            type: 'mdxJsxAttribute',
+            name: 'term',
+            value: term,
+          },
+        ]
+
+        if (isMarkdownFile) {
+          attributes.push({
+            type: 'mdxJsxAttribute',
+            name: 'isMarkdownFile',
+            value: true,
+          })
+        }
+
         const glossaryElement = {
           type: 'mdxJsxTextElement',
           name: 'GlossaryTooltip',
-          attributes: [
-            {
-              type: 'mdxJsxAttribute',
-              name: 'term',
-              value: term,
-            },
-          ],
+          attributes,
           children: linkText,
           data: {
             _mdxExplicitJsx: true,

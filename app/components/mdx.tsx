@@ -23,6 +23,7 @@ import {
   NunitoSansWrapper,
   SpectralWrapper,
 } from './Fonts'
+import GlossaryProvider from './GlossaryProvider'
 import GlossaryTooltip from './GlossaryTooltip'
 import { Mermaid } from './Mermaid/Mermaid'
 import { MotionEstimationVisualizer } from './MotionEstimationVisualizer'
@@ -403,7 +404,7 @@ export function CustomMDX({
   const filteredRehypePlugins = rehypePlugins.filter(Boolean)
 
   return (
-    <>
+    <GlossaryProvider source={source}>
       <MDXRemote
         source={source}
         {...props}
@@ -418,6 +419,6 @@ export function CustomMDX({
           },
         }}
       />
-    </>
+    </GlossaryProvider>
   )
 }
