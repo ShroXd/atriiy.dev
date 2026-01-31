@@ -102,34 +102,11 @@ export default function GlossaryTooltip({
             }}
             className={`${
               isMarkdownFile
-                ? 'w-96 max-w-[calc(100vw-1rem)]'
+                ? 'scroll h-80 w-xl max-w-[calc(100vw-1rem)] overflow-y-auto'
                 : 'w-80 max-w-[calc(100vw-2rem)]'
-            } rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] py-3 px-4 ring-1 shadow-lg ring-black/5`}
+            } rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] py-2 px-6 ring-1 shadow-lg ring-black/5`}
           >
             <div className='relative'>
-              {/* Header */}
-              <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.05,
-                  duration: 0.2,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className='mb-3 flex items-center gap-2'
-              >
-                <div className='h-1 w-1 rounded-full bg-[rgb(100,100,85)]'></div>
-                <span className='text-xs font-semibold uppercase tracking-wide text-[rgb(100,100,85)]'>
-                  {tooltipContent?.title || term}
-                </span>
-                {isMarkdownFile && (
-                  <span className='text-xs text-[rgb(100,100,85)] opacity-70'>
-                    markdown
-                  </span>
-                )}
-              </motion.div>
-
-              {/* Content */}
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
