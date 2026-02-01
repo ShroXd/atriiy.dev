@@ -3,7 +3,7 @@ title: 'How Rolldown Works: Chunks generation and optimization'
 publishedAt: 2025-12-09
 tags:
   ['rolldown', 'vite', 'rust', 'chunks']
-draft: false
+draft: true
 description: ""
 ---
 
@@ -107,9 +107,31 @@ struct ModuleGroup {
 
 
 
+Next, iterate all modules stored in the module table, which is scanned and processed during the scan & link stage. For each module, use each match group to test it. Determining if current module should be put into this group. User can use regex or function in the match group, Rolldown will execute them to check the current module. After that, the module size will be checked if the `allow_min_module_size` and `allow_max_module_size` is setted. The `match_group_index` and `group_name` will be combined as the unique key of module group. At the end of the processing, if the `include_dependencies_recursively` is true, the dependencies will be added to the group recursively. `add_module_and_dependencies_to_group_recursively` is a classic depth-first recursive function on dependencies graph. Finally, all related modules will be added in the group. Pay attention, all dependencies will be added with bypassing the size and shar-count checks.
+
+In the rolldown's design, the group means root plus deps. And the manual group match is only for the _entry_ selection, nto every dependency.
+
+
 3. Module group sorting and filtering.
+
+Module group will be sorted according to its priority. For the same priority, the one with lower index goes first. For the same priority and index, use dictionary order to sort. Since the sorted vector will be consumed via `pop`, therefore there is a outer `Reverse`.
+
 4. Runtime Module Handling
+
+Manually pull out the runtime module into a standalone chunk and also remove the runtime module from other module groups if it exists.
+
 5. Main processing loop
+
+This is the core of the manual code splitting algorithm. The module group is a stack, we have already sort it according to the priority in the previous step. Now we can use `pop` to iterate the module groups according to the priority. The module groups which is smaller than the allow min size will be skipped. The large module groups will be splitted and make sure its size in the given scope. And this part is the most interested part.
+
+First, preprocessing the modules in this module group according to its size, stable id and executation order. The purpose of doing this is for better segemation. Because there is a giant module which is bigger than the max group size limitation at left part of the module vector, the algorithm won't be able to segementate it.
+
+Second, algorithm iterate the modules from left and right at the same time. Because the given module group is a range, therefore we need to make sure the division won't create a tiny module group that can't match the minimaize size configuration. More specificaly, if `next_right_index + 1 < next_left_index` is true, it means this group can't be split into two groups with both satisfied the min size requirement. Rolldown will ignore the max size requirement and keep the group as whole in this case.
+
+Once the split index is confirmed, the algorithm will try to let the left group includes as many as possible modules until it reach the allowed max size, while ensuring the right module group matches the requirements. Finally, push these two module group into the module group stack. If the right module group is still can be split, it will follow the same logic in the next loop, otherwise, the module group will be skip until next large module group appears.  
+
+After the module groups split loop finished, the chunks will be created based on the result. And the modules in current module group will be removed from other groups.
+
 6. size-based group splitting logic
 
 
