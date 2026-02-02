@@ -1,17 +1,10 @@
 ---
 title: 'How Rolldown Works: Chunks generation and optimization'
 publishedAt: 2025-12-09
-draft: true
+draft: false
 tags:
   ['rolldown', 'vite', 'rust', 'chunks']
 ---
-
-## JSON Glossary Entries
-
-These work as before, showing content from the JSON file:
-
-- When working with bundlers, you might encounter a [ModuleIdx](abbr:ModuleIdx) in your build output.
-- Code splitting can be configured using [match groups](abbr:match_group) to optimize your bundles.
 
 # Introduction
 
@@ -124,33 +117,48 @@ Once the split index is confirmed, the algorithm will try to let the left group 
 
 After the module groups split loop finished, the chunks will be created based on the result. And the modules in current module group will be removed from other groups.
 
-#### 
+#### Hanlde all remaining included modules
+
+After the manual module assignment, we will process the rest unprocessed modules. As we mentioned before, all reachable module has been marked the entry in the bit during the graph traversal, and this is the key of chunk generation algorithm. The bits will decides how to place current module. Before delve into the Rolldown's solution, let's consider the basic mental module of this algorithm. 
+
+Let's set the details of this code aside and rethink the wording of this question. In a big project, modules are existing in the module graph. The code execute starting from the entries. If some modules coule be reached from the same entries, it would be better to put them in the same bundle. This could avoid duplicating code across entry chunks, minimize unnecessary sharing. Which is the best strategy for automatic splitting.
+
+Now, the problem has been transform to: give you multiple modules, all of them has been marked the entry. Or in other words, the entry combinations. How to find and classification them according to the entry combinations?
+
+Here is a good [LeetCode problem](https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/) which illustrate the basic idea of the solution. Basically, the question is, give you two series of numbers, you need to iterate the given numebrs and calculate the number of prefix common array. Suppose these numbers are the unique index of entry, and every time we process a module during the module graph traveral, we will record a entry unique index on the module, in this problem, it's the number of the number series. Because the entry is not ordered, therefore we need to handle the scenario like `[1, 2]` and `[2, 1]`. A smart solution is using bit. Suppose the number is the position of the bit. Everytime we have a number, set the position x to be 1 on the bit. When we want to compare and check if there is any common prefix array, we can use `&` directly. Here is the solution of the LeetCode problem.
+
+```Python
+def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
+  a, b = 0, 0
+  ans = []
+
+  for x, y in zip(A, B):
+      a |= 1 << x
+      b |= 1 << y
+      ans.append((a & b).bit_count())
+    
+  return ans
+```
+
+Based on the understanding of this usage of bit. Let's back to the Rolldown's automatic code splitting algorithm. During the module traversal stage, all reachable modules are marked the entry unique index in the bit. And all modules that have same bit could be put into the same chunk. In the source code, the bit will be extract from the `index_splitting_info`.
+
+Case A. Chunk for these bit already exists. This is the simplest scenario, just add the module to chunk.
+
+Case B. Keep certain user-defined entry modules in their entry chunk. User-defined entry modules that are not wrapped should stay in their own entry chunk, even when reachable from multiple entires. This avoids creating unnecessary common chunks that would turn the entry into a [facade](abbr:facade_entry.md). Otherwise, the browser would waste more time to load the code for first screen rendering.
+
+Case C. Chunk optimization path. The modules would be insert into the `pending_commpon_chunks` to later try smarter merging. Bacause the optimization algorithm needs more information about the common modules.
+
+Case D. Default. Create a new common chunk for this bitset, and record the mapping relationship between the bit and chunk.
 
 
-  - Step 3: In the main loop, any unassigned module is either placed into an
-    existing chunk if its bitset already maps to a chunk (entry/advanced) or
-    queued in pending_common_chunks when optimization is allowed. If optimization
-    is disallowed, a new common chunk is created immediately.
-  - Step 4: try_insert_common_module_to_exist_chunk tries to merge each pending
-    common group into an existing entry chunk when safe (respecting strict entry
-    signatures), otherwise makes a new common chunk.
+#### Chunk optimization (Optional)
 
-#### Automatic chunk assignment
+Since these two optimization algorithm includes more information that we can explain all details in one article, we will only focus on the high level understanding.
 
-Assign modules to corresponding chunks
-Create shared chunks to store modules that belong to multiple chunks
+First is trying to insert common module to exist chunk. Instead of creating new common chunks for shared modules directly, the optimizer iterates through pending common chunks and try to merge the modules into an existing entry chunk if it's safe to do. The _safe_ means: Dependency / order safe, async boundary safe, dynamic-import safe, and API-shape safe.
 
-TODO. explain the `pending_common_chunks`
+Second optimization function is `optimize_facade_dynamic_entry_chunks`. During previous processing, some entry chunk maybe empty as the modules were moved to a common chunk. The function will remove such facade chunk and patches symbol / runtime inclusion so behavior matches as if the facade chunk still existed.
 
-#### Chunk optimization
-
-try insert common module to exist chunk
-optimize facade dynamic entry chunks
-
-
-#### Algo.
-
-Optimized and configurable chunks' size.
 
 ## Post processing phase
 
@@ -160,24 +168,3 @@ Optimized and configurable chunks' size.
 4. Create final sorted chunk index vector
 5. Find entry-level external modules
 
-## Chunk ordering strategy
-
-1. User-defined entry chunks come first (by index)
-2. Other chunks ordered by exec order
-3. Entry chunks before common chunks when exec order are equal
-
------
-
-Summary of Rolldown's Code Splitting Algorithm
-
-**Entry Points and Discovery**: Rolldown starts with user-defined entry points from your config, but automatically discovers additional "virtual" entry points from dynamic imports (`import()` statements) in your code. Each entry point gets assigned a unique bit position (0, 1, 2, etc.).
-
-**BitSet Reachability Analysis**: The algorithm performs a depth-first traversal from each entry point, marking every reachable module with that entry's bit. Each module accumulates a BitSet representing which entry points can reach it - for example, a module reachable from entries 0 and 2 would have BitSet `101`.
-
-**Pattern-Based Chunking**: Modules with identical BitSets (same reachability patterns) are grouped into the same chunk. The algorithm maintains a `bits_to_chunk` HashMap that maps each unique BitSet pattern to a chunk, enabling perfect deduplication.
-
-**Manual Code Splitting Integration**: Before the automatic BitSet-based splitting runs, rolldown applies user-defined manual code splitting rules using pattern matching (regex) or functions. Modules captured by manual rules are marked as assigned and excluded from automatic splitting.
-
-**Optimal Chunk Creation**: The final result is mathematically optimal chunking where shared dependencies automatically become common chunks, entry-specific code stays separate, and modules with identical usage patterns are co-located for optimal caching and loading performance.
-
-**Real-World Benefits**: This approach delivers faster initial loads (users download only what they need), better caching (shared code cached once), and near-instant subsequent navigation - all with minimal configuration since the algorithm discovers optimal boundaries from your actual code structure.
