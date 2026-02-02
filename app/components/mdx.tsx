@@ -52,9 +52,32 @@ function Code({ children, ...props }) {
   )
 }
 
-function slugify(str) {
-  return str
-    .toString()
+// Helper function to extract text from React children (handles nested elements)
+function getTextFromChildren(children: any): string {
+  if (children == null) {
+    return ''
+  }
+  if (typeof children === 'string') {
+    return children
+  }
+  if (typeof children === 'number') {
+    return String(children)
+  }
+  if (Array.isArray(children)) {
+    return children.map(getTextFromChildren).join('')
+  }
+  if (
+    React.isValidElement<{ children?: React.ReactNode }>(children) &&
+    children.props?.children
+  ) {
+    return getTextFromChildren(children.props.children)
+  }
+  return ''
+}
+
+function slugify(str: any) {
+  const text = getTextFromChildren(str)
+  return text
     .toLowerCase()
     .trim() // Remove whitespace from both ends of a string
     .replace(/\s+/g, '-') // Replace spaces with -
