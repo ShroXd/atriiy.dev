@@ -1,10 +1,9 @@
 ---
 title: 'How Rolldown Works: Chunks generation and optimization'
 publishedAt: 2025-12-09
+draft: true
 tags:
   ['rolldown', 'vite', 'rust', 'chunks']
-draft: true
-description: ""
 ---
 
 ## JSON Glossary Entries
@@ -13,13 +12,6 @@ These work as before, showing content from the JSON file:
 
 - When working with bundlers, you might encounter a [ModuleIdx](abbr:ModuleIdx) in your build output.
 - Code splitting can be configured using [match groups](abbr:match_group) to optimize your bundles.
-
-## Markdown Glossary Entries
-
-These are new! They load and render markdown files:
-
-- [React](abbr:React.md) is a popular library for building user interfaces.
-- [JavaScript](abbr:JavaScript.md) is the programming language that powers modern web development.
 
 # Introduction
 
@@ -132,28 +124,9 @@ Once the split index is confirmed, the algorithm will try to let the left group 
 
 After the module groups split loop finished, the chunks will be created based on the result. And the modules in current module group will be removed from other groups.
 
-6. size-based group splitting logic
+#### 
 
 
-Handles user-defined code splitting rules (like import() statements)
-Assigns modules based on manual splitting configuration
-Update `module_to_assigned` tracker
-
-Next, the `apply_manual_code_splitting` is called for running the algorithm. It based on the advanced chunks option from user defined.
-
-Some important things about the `apply_advanced_chunks`.
-1. This happens before auto splitting algo. For a fixed project, generate same result.
-2. This allows develoepr control content of the generate chunks, put some modules or one module in specific chunks. Helping for performance and CDN, etc.
-
-Get the `match_groups` from the `chunking_options` from `self.options.advanced_chunks`, it has a `test` field, which could be Regex or Function. This is defined in the `enum MatchGroupTest`
-Also init `index_module_group` & `name_to_module_group`. Also the core is the `SplittingInfo`, which includes bits and share count.
-
-Then it go through all modules from the `module_table`, and use each matcher to test it.
-
-  - Step 2: apply_advanced_chunks creates chunks for modules matching group
-    tests plus size/share filters, optionally pulling deps; it also peels off
-    the runtime module into its own chunk. Matched modules are marked assigned so
-    they’re skipped later.
   - Step 3: In the main loop, any unassigned module is either placed into an
     existing chunk if its bitset already maps to a chunk (entry/advanced) or
     queued in pending_common_chunks when optimization is allowed. If optimization
