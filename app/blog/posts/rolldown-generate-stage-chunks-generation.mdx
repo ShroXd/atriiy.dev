@@ -162,9 +162,59 @@ Second optimization function is `optimize_facade_dynamic_entry_chunks`. During p
 
 ## Post processing phase
 
-1. Merge external import namespaces at chunk level
-2. Sort modules within chunks
-3. Assign execution order to chunks
-4. Create final sorted chunk index vector
-5. Find entry-level external modules
+After the basic chunks created, some post processing need to be done before writing the real result to the disk. We will focus on the high level understanding.
 
+### Merge external import namespaces at chunk level
+
+During the scan & link stage, the [external namespace](abbr:ExternalNamespace) was collected and putted into the merger. Since the symbol linking can only happens in the internal of chunks, now it's time to finish that work.
+
+Basically, Rolldown will re-grouping the symbols based on the chunks they belongs to, since the symbol linking could only happen in the same chunk. 
+
+Rolldown uses the logic in your code to perform Symbol Deduplication for these namespaces. Specifically, it handles the scenario where multiple different modules within your project all import the same external library as a namespace.
+
+Before Merging:
+
+```javascript
+// Module A (in Chunk 1)
+import * as React_1 from 'react';
+
+// Module B (in Chunk 1)
+import * as React_2 from 'react';
+
+// Even though they are the same library, they start as separate symbols
+```
+
+After Merging:
+
+```javascript
+// Rolldown keeps only one namespace reference
+import * as React_Namespace from 'react';
+
+// All code that originally used React_1 or React_2 
+// is rewritten to use React_Namespace
+console.log(React_Namespace.useState);
+```
+
+
+### Sort modules & chunks
+
+All modules in every chunks will be sorted by execution order. After that, the chunks will also be sorted according to the chunks's kind. 
+
+### Find entry-level external modules
+
+The entry-level external modules is an __external module__ that is reachable from an __entry module__ by following only `export *` edges through normal modules. Here is an example:
+
+```javascript
+// entry.js
+export * from './a.js'
+
+// a.js
+export * from 'external'
+```
+
+Such relationship will affect `re-export-all` surface where the set of exported names is _not_ statically known to the bundler. This function will idenfify external modules re-exported via `export *` from each entry, tag the exact import records as "entry-level external", and then __recompute dynamic-export metadata__ for the following processing.
+
+
+# Summary
+
+TODO
