@@ -102,8 +102,6 @@ This reachability information later determines which modules go into which chunk
 
 ### Phase 2: User-Driven Partitioning (Manual Splitting)
 
-Suggestion: Focus on the Constraint Solving aspect. The logic about next_right_index and min_size is essentially a bin-packing problem. Frame it as: "How Rolldown balances user size constraints with the need to split code."
-
 Based on the reachability information, Rolldown runs first round code splitting. The splitting rules is defined by user's configuration, the [match group](abbr:match_group.md). These rules have higher priority than the automatic splitting, thus Rolldown does this first.
 
 Here is the core data structure of this manual splitting algorithm:
@@ -130,17 +128,15 @@ Next, modules will be added to corresponding module group accroding to the resul
 
 Then, module groups will be sorted according to its priority. For the same priority, the one with lower index goes first. For the same priority and index, use dictionary order to sort. The sorted result is reversed for easier consumption later. Also, the runtime module will also be added into a standalone chunk.
 
+After previous steps, we have bunch of module groups. These module groups need to be splitted or tweaks to make sure the size of each group is in the given scope, so that we can generate the final chunks based on them. Basically, Rolldown iterates the module groups and for each group, tries to cut off segment one by one from the left of the module group vector if that group is larger than the given scope. The splitting algorithm includes the following steps:
 
+1. Preprocessing, sort the modules in the current module group according to its size, stable id and executation order. Smaller modules will be put at the left side of the vector, which is easier to divide a segment whose size is in the given scope. Without this sorting, in some edge cases, the gaint module at left could prevent the splitting.
 
-5. Main processing loop
+2. Try to split greedily. Algorithm iterate the modules starts from left and right, try to find two segments whose size is larger than `allow_min_size`. The segment at left would be the result segment, and the right segment is used for checking if the splitting is valid. Because if two segments is overlapped, current group can't be split into two groups with both satisfied the min size requirement. In that case, Rolldown will ignore the max size requirement and keep the group as whole in this case. This makes sure that the browser won't send many http request for loading small files. 
 
-This is the core of the manual code splitting algorithm. The module group is a stack, we have already sort it according to the priority in the previous step. Now we can use `pop` to iterate the module groups according to the priority. The module groups which is smaller than the allow min size will be skipped. The large module groups will be splitted and make sure its size in the given scope. And this part is the most interested part.
+3. Add more modules to splitted group as many as possible. As long as the size of group is lower than the max size reuqirement, it's valid. This makes the final chunks' number small, which is good for the browser loading performance.
 
-First, preprocessing the modules in this module group according to its size, stable id and executation order. The purpose of doing this is for better segemation. Because there is a giant module which is bigger than the max group size limitation at left part of the module vector, the algorithm won't be able to segementate it.
-
-Second, algorithm iterate the modules from left and right at the same time. Because the given module group is a range, therefore we need to make sure the division won't create a tiny module group that can't match the minimaize size configuration. More specificaly, if `next_right_index + 1 < next_left_index` is true, it means this group can't be split into two groups with both satisfied the min size requirement. Rolldown will ignore the max size requirement and keep the group as whole in this case.
-
-Once the split index is confirmed, the algorithm will try to let the left group includes as many as possible modules until it reach the allowed max size, while ensuring the right module group matches the requirements. Finally, push these two module group into the module group stack. If the right module group is still can be split, it will follow the same logic in the next loop, otherwise, the module group will be skip until next large module group appears.  
+4. Add splitted group and remaining right part to the module group stack. If the remaining group is still larger than max size requirement, it will be splitted in the next loop with the same logic.
 
 After the module groups split loop finished, the chunks will be created based on the result. And the modules in current module group will be removed from other groups.
 
