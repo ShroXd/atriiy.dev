@@ -104,43 +104,33 @@ This reachability information later determines which modules go into which chunk
 
 Suggestion: Focus on the Constraint Solving aspect. The logic about next_right_index and min_size is essentially a bin-packing problem. Frame it as: "How Rolldown balances user size constraints with the need to split code."
 
-1. Early exit checks. This is used for extract the code splitting related configrations. Exit the function if there's no configrations.
+Based on the reachability information, Rolldown runs first round code splitting. The splitting rules is defined by user's configuration, the [match group](abbr:match_group.md). These rules have higher priority than the automatic splitting, thus Rolldown does this first.
 
-2. Module group creation phase. 
+Here is the core data structure of this manual splitting algorithm:
 
 ```rust
 let mut name_to_module_groups: FxHashMap<(usize, ArcStr), ModuleGroupIdx>
 let mut index_module_groups: IndexVec<ModuleGroupIdx, ModuleGroup>
 ```
 
-This is a two level data structure design. We get the `match_group_index` and [match group](abbr:match_group.md) from the `match_groups` stored in the `chunking_options`, we use it to create a related index. And the group related data is stored underthe `ModuleGroup` data structure, which can be refered by the index, stored in the `IndexVec`. Such design avoid the inefficient linear seach and also good for sorting after this step.
-
-`name_to_module_group` is a hash map that maps `(match_group_index, group_name)` to `ModuleGroupIdx`. And the related data could be found in the `index_module_groups`, which is used for storing module groups.
+The `name_to_module_groups` makes the mapping from user defined group name to module group index easily. And the module group index can be used to access the related module group. Here is the defination of module group, you can understand it as a bucket which will hold the modules assigned to it.
 
 ```rust
 struct ModuleGroup {
   name: ArcStr,
   match_group_index: usize,
-  modules: FxHashSet<ModuleIdx>,
+  // Modules belonging to this group
+  modules: FxHashSet<ModuleIdx>, 
   priority: u32,
   sizes: f64,
 }
 ```
 
+Next, modules will be added to corresponding module group accroding to the result of rule test. Iterate all modules and try each match group to check if current module is matched. Not matched modules will be skipped. The matched modules' size will be checked if the `allow_min_module_size`, `allow_max_module_size`, and `allow_min_share_count` is setted. If all checks passed, the module will be added to the corresponding group. The group can be accessed via the unique key. Rolldown utilizes the combination of `match_group_index` and `group_name` as the unique key, which is defined in the `name_to_module_groups`'s type. Finally, the module's dependencies will be added to the group recursively via the function `add_module_and_dependencies_to_group_recursively`.
+
+Then, module groups will be sorted according to its priority. For the same priority, the one with lower index goes first. For the same priority and index, use dictionary order to sort. The sorted result is reversed for easier consumption later. Also, the runtime module will also be added into a standalone chunk.
 
 
-Next, iterate all modules stored in the module table, which is scanned and processed during the scan & link stage. For each module, use each match group to test it. Determining if current module should be put into this group. User can use regex or function in the match group, Rolldown will execute them to check the current module. After that, the module size will be checked if the `allow_min_module_size` and `allow_max_module_size` is setted. The `match_group_index` and `group_name` will be combined as the unique key of module group. At the end of the processing, if the `include_dependencies_recursively` is true, the dependencies will be added to the group recursively. `add_module_and_dependencies_to_group_recursively` is a classic depth-first recursive function on dependencies graph. Finally, all related modules will be added in the group. Pay attention, all dependencies will be added with bypassing the size and shar-count checks.
-
-In the rolldown's design, the group means root plus deps. And the manual group match is only for the _entry_ selection, nto every dependency.
-
-
-3. Module group sorting and filtering.
-
-Module group will be sorted according to its priority. For the same priority, the one with lower index goes first. For the same priority and index, use dictionary order to sort. Since the sorted vector will be consumed via `pop`, therefore there is a outer `Reverse`.
-
-4. Runtime Module Handling
-
-Manually pull out the runtime module into a standalone chunk and also remove the runtime module from other module groups if it exists.
 
 5. Main processing loop
 
