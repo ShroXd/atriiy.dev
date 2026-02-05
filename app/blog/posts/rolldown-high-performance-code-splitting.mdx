@@ -56,8 +56,11 @@ This function essentially transforms the module dependency graph into an efficie
 
 The split_chunks function includes several steps:
 1. entry analysis. `determine_reachable_modules_for_entry` does BFS on the module graph. Starts from each entry, go through all modules. and assign the entry_index to the modules' bits so that we can split the modules to chunks based on this.
+
 2. manual splitting. according to the user-defined groups, which includes pattern matching and function, to split the modules to chunks first. this is because the user has more business information so that make it better than the auto algo.
+
 3. module assignment. group by bts pattern matching. This is a auto algo to makes the chunks not to large, not too small.
+
 4. if its possible, merge and optimize the chunks.
 
 User intent is high-priority; we carve out what the user specifically asked for first, then let the algorithm solve the remaining 'puzzle' of shared dependencies.
@@ -245,15 +248,13 @@ Second optimization function is `optimize_facade_dynamic_entry_chunks`. During p
 
 # Post processing phase
 
-Once the physical boundaries of the chunks are decided, Rolldown must perform a final 'polish' to ensure symbols are correctly wired and the output is optimized for execution
+The final step is to perform some optimizations and processing on the generated chunks. This includes merging external import namespaces, sorting modules and chunks, handling all entry level external modules.
 
 ## Merge external import namespaces at chunk level
 
-During the scan & link stage, the [external namespace](abbr:ExternalNamespace) was collected and putted into the merger. Since the symbol linking can only happens in the internal of chunks, now it's time to finish that work.
+The [external namespace](abbr:ExternalNamespace) was collected during the link stage, you can read my [previous article](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution#match-imports-with-exports) to learn more about it. During the link stage, collect namespaces import symbols grouped by external modules. Now chunks are ready, we can start merging and linking the symbols at chunk level.
 
-Basically, Rolldown will re-grouping the symbols based on the chunks they belongs to, since the symbol linking could only happen in the same chunk. 
-
-Rolldown uses the logic in your code to perform Symbol Deduplication for these namespaces. Specifically, it handles the scenario where multiple different modules within your project all import the same external library as a namespace.
+The process of merging is pretty straightforward. First, Rolldown will re-grouping the symbols based on the chunks they belongs to. In one chunk, multiple modules might import the same external namespace, and those modules might end up in the same chunk. Second, Rolldown confirms if current the modules are actually included in the bundle and sorts them by execution order. Finally, all same namespace symbols in the same chunk will be linked to the first symbols that's actually used.
 
 Before Merging:
 
@@ -263,8 +264,6 @@ import * as React_1 from 'react';
 
 // Module B (in Chunk 1)
 import * as React_2 from 'react';
-
-// Even though they are the same library, they start as separate symbols
 ```
 
 After Merging:
@@ -278,13 +277,17 @@ import * as React_Namespace from 'react';
 console.log(React_Namespace.useState);
 ```
 
-## Sort modules & chunks
+## Sort, find entry-level external modules
 
-All modules in every chunks will be sorted by execution order. After that, the chunks will also be sorted according to the chunks's kind. 
+All modules in every chunks will be sorted by execution order. After that, the chunks will also be sorted according to the chunks's kind. The ordering rules are as follows:
 
-## Find entry-level external modules
+- Entry chunks are always before other chunks
+- Static chunks are always before dynamic chunks
+- Other chunks has stable order at per entry chunk level
 
-The entry-level external modules is an __external module__ that is reachable from an __entry module__ by following only `export *` edges through normal modules. Here is an example:
+
+
+The entry-level external modules is an external module that is reachable from an entry module by following __only__ `export *` edges through normal modules. Here is an example:
 
 ```javascript
 // entry.js
@@ -294,7 +297,13 @@ export * from './a.js'
 export * from 'external'
 ```
 
-Such relationship will affect `re-export-all` surface where the set of exported names is _not_ statically known to the bundler. This function will idenfify external modules re-exported via `export *` from each entry, tag the exact import records as "entry-level external", and then __recompute dynamic-export metadata__ for the following processing.
+Without optimization, Rolldown would need to generate complex interoperability code using the `__reExport` runtime helper, but it's not necessary. Therefore, this function detects when an external module is re-exported through an unbroken `export *` chain all the way to an entry point. When this happens, Rolldown can simply output:
+
+```javascript
+import * from 'external';
+```
+
+But an edge case, if someone actually uses the namespace object, which means not just re-exports it like the code above, Rolldown cannot optimize it. Because all symbols must be available on that namespace object.
 
 # Summary
 
