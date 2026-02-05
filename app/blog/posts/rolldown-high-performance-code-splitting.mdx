@@ -8,63 +8,68 @@ tags:
 
 # Introduction
 
-Rolldown is a powerful tool for high-performance code bundling, Vite is planning integrate Rolldown as its default bundler.
-
-The bundling process includes three major stages: module scanning, symbol linking and final code generation. I have write two articles to explain the detail of previous two stages, you can check them here:
+Rolldown is a high-performance JavaScript bundler that Vite plans to integrate as its future default. The bunlding process consists of three major stages: module scanning, symbol linking, and final code generation. I have already written two articles detailing the first two stages, which you can find here:
 
 - [How Rolldown Works: Module Loading, Dependency Graphs, and Optimization Explained](https://www.atriiy.dev/blog/rolldown-module-loader-and-dependency-graph)
 - [How Rolldown Works: Symbol Linking, CJS/ESM Resolution, and Export Analysis Explained](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution)
 
-After previous two stages, we already have precise information about the whole project. From high level module graph to underlying symbol relationships. Therefore, in the last stage, we will use these information to generate the bundling result.
+With those stages complete, we now have a precise "map" of the project -- ranging from high-level module graphs to underlying symbol relationships. In this final stage, we leverage this information to generate the actually bundled output. This is the stage that directly impacts your application's loading speend and bundle size.
 
-There're two major strategy of code generation. Preserve mode and normal mode. In the preserve mode, Rolldown will create seperate chunks for each modules using the original modules name as the file name. You can check more details [here](https://rolldown.rs/reference/OutputOptions.preserveModules#preservemodules). The source code about this part is pretty straightforward, thus we will focus on the normal mode.
+# Code generation strategies
 
-In the normal mode, the module graph from previous stage will be transformed to a series of chunks. The most interesting thing of this stage is how the code splitting algorithm implemented to generate suitable chunks with high performance.
+Rolldown utilizes two primary strategies for code generation: __Preserve mode__ and __Normal mode__. In Preserve mode, the bundler creates separate chunks for every module, maintaining the original module names as filenames. This is a relatively straightforward 1-to-1 mapping often used for library distribution. In contrast, Normal mode is where the core complexity lies; here, Rolldown transforms the module graph into a series of optimized chunks, merged chunks.
 
-Finally, we will introduce the post processing phase. This phase includes some optimizations, but we will only focus on the high level explanation instead of the code implementation.
+This article will focus primarily on the __code splitting algorithm__ that drives this high-performance generation. To wrap up, we will explore the post-processing phase, where Rolldown applies final structural optimizations to the output.
 
 # Generate chunks
 
-This is the function for chunk generation of the generate stage. Because the whole generation stage includes a bunch of steps to handle the namespaces, chunk linking, wrapper, etc. This article will only focus on the chunk generation processing and algorithm. And it's what this function does. 
+This section focuses on the core logic of the chunk generation stage. Since the full generation process involves many moving parts -- such as handling namespaces, chunk linking, and wrappers -- we will narrow our focus to the __chunk generation algorithm__ itself.
 
-The basic structure of this function is pretty simple. First, it will create some basic data structures. You don't need to worry about the details of these data structures.
+The basic structure of this function is straightforward It begins by initializing several key data structures:
 
 ```rust
 let mut chunk_graph = ChunkGraph::new(self.link_output.module_table.modules.len());
-let mut index_splitting_info: IndexSplittingInfo = // BitSet for each module
+// BitSet for each module
+let mut index_splitting_info: IndexSplittingInfo = ...;
 let mut bits_to_chunk = FxHashMap::with_capacity(self.link_output.entries.len());
 let input_base = ArcStr::from(self.get_common_dir_of_all_modules(...));
 ```
 
-Next, according to the mode configuration, the function uses different strategies for the processing. In the preverse mode, it traverse the module table binded on the  link_output. The chunk will be created directly and added to the chunk graph.
+From here, the function branches based on the user's configuration. In preserve mode, the algorithm simply traverses the module table provided by the `link_output` and creates chunks directly, adding them to the `chunk_graph`. This mode is always used by library authors who want to keep their files seperate instead of merging them -- for several specific, high-value reasons.
 
-But for the normal bundling mode, the function will use a different approach.
+- Better tree-shaking. Allows the user is able to import only the necessary parts of a library, ensuring they don't ship "dead code" to their users.
+
+- Deep imports. It lets users import specific parts directly (e.g., `import Button from 'ui/Button'`) because the file strucutre remains the same as your source code.
+
+- Easier debugging. The output folder look exactly like your source folder, making it much easier to read and troubleshoot errors in the browser.
+
+- Atomic updates. If you change one file, ony that specific file changes. This is better for caching and environments that load modules on demand.
+
+However, for normal mode, Rolldown adopts a more sophisticated approach to transform the module graph into an optimized set of bundles.
 
 # Normal bundling mode
 
-This is the normally used mode in the general JavaScript project. In this mode, Rolldown transforms the module graph to a chunk graph. It creates entry points according to the [entries](abbr:entries.md). And then traverse all reachable modules from these entries. After that, Rolldown performs manual splitting first to split the high priority modules to chunks. The manual splitting is configured by the user. Then the remaining modules will be processed via the automatic splitting. Finally, Rolldown performs some structural optimization to reduce the unnecessary duplicated modules between different chunks and remove uncessary facades.
+This is the standard mode for most JavaScript projects, where Rolldown transforms the module graph into a series of optimized chunks. The process begins by identifying entry points based on the user's configuration, then traversing the graph to find every reachable module. To balance control and performance, Rolldown first executes __manual splitting__, carving out high-priority modules based on user-defined rules. Once these specific requirements are met, the remaining "unclaimed" modules are processed via an __automatic splitting__ algorithm. Finally, the process concludes with a _structural optimization_ phase, where Rolldown cleans up the result by merging duplicated modules and removing redundant facade chunks to ensure final output is as lean as possible.
 
 ## Entry point creation
 
-Since the module traversal is starting from the entry, it's important to init the entry point at first. In the bundling, entry is just a special module. Therefore this function iterates the `entry_point` on the link output and create chunk for each of them.
+Since module traversal begins at the entry points, initializing them is the first critical step of the process. In the context of bundling, an entry point is essentially a specialized module that serves as a root for the dependency graph. During this phase, Rolldown iterates through the `entry_points` defined in the link output and initializes a corresponding chunk for each one.
 
-The most import information of the entry chunk is the `bits`. We will explain the algorithm based on it later, but basically, it's just a wrapped data structure, used like the binary number. The bit length is the length of entries. The normal module will also use the same logic to create the bit of them so that we can use the bit position to record which entry can reach current module. This is important for the code splitting algorithm.
+The most vital piece of metadata for these entry chunks is the `bits` field. While we will explore the algorithm in detail later, `bits` is essential a wrapped data structure that functions like a bitmask. The total length of this bitset corresponds to the number of entry points in the project, which each entry being assigned a unique bit position.
+
+The same logic is extended to every normal module in the graph. By using bit positions to record which entires can reach a specific module, Rolldown creates a "reachability fingerprint". This fingerprint is the foundation of the code splitting algorithm, as it allows the bundler to determine exactly which modules are shared between entires and which remain private.
 
 ## Split chunks
 
-This function essentially transforms the module dependency graph into an efficient chunk allocation strategy. Also apply automatic splitting logic and user-defined code splitting rules.
+The `split_chunks` function is the engine that transforms a raw module dependency graph into an efficient chunk allocation strategy. Its primary goal is to balance automated efficiency with explicit user control, ensuring that the final bundle structure aligns with both performance best practices and specific project reuqirements.
 
-The split_chunks function includes several steps:
-1. entry analysis. `determine_reachable_modules_for_entry` does BFS on the module graph. Starts from each entry, go through all modules. and assign the entry_index to the modules' bits so that we can split the modules to chunks based on this.
+The process begins with __entry analysis__, where the `determine_reachable_modules_for_entry` function performs a Breadth-First Search (BFS) across the module graph. Starting from each entry point, the algorithm visits every reachable module and assigns the corresponding `entry_index` to the module's bitset. This creates the "fingerprint" mentioned earlier, allowing Rolldown to identify exactly which entires depend on which modules.
 
-2. manual splitting. according to the user-defined groups, which includes pattern matching and function, to split the modules to chunks first. this is because the user has more business information so that make it better than the auto algo.
+Once reachability is established, Rolldown moves into __manual splitting__. Because developers often possess business logic context that an algorithm cannot infer, user-defined groups -- configured via regex patterns or custom functions -- are processed first. By carving out these high-priority modules into specific chunks before the automated logic takes over, Rolldown ensures that user intent always takes precedence.
 
-3. module assignment. group by bts pattern matching. This is a auto algo to makes the chunks not to large, not too small.
+Following the manual phase, the remaining modules undergo __automatic allocation__. Here, modules are grouped based on their bitset patterns to ensure that the resulting chunks are neither too large for efficient loading nor too small for optimal HTTP performance. Finally, the function performs a cleanup pass to __merge and optimize__ the resulting chunks, resolving any structural redundancies.
 
-4. if its possible, merge and optimize the chunks.
-
-User intent is high-priority; we carve out what the user specifically asked for first, then let the algorithm solve the remaining 'puzzle' of shared dependencies.
-
+Ultimately, this multi-phased approach treats the user's configuration as the primary blueprint, leaving the algorithm to solve the remaining "puzzle" of shared dependencies.
 
 ### Phase 1: Defining Reachability (The BitSet Fingerprint)
 
