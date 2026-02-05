@@ -142,17 +142,36 @@ After the module groups split loop finished, the chunks will be created based on
 
 ### Phase 3: Automated Allocation (The Core Loop)
 
-Logical Tweak: You mention "Case B" (keeping user-defined entries). This is crucial. Maybe explain that if we didn't do this, every entry would become a tiny 1-line "facade" file that just imports from a giant shared chunk, which is bad for HTTP/2 multiplexing and initial load.
+Manual module assignment processed the high priority modules, then Rolldown executed the automatic allocation to the remaining modules. The automatic allocation algorithm will assign modules to corresponding chunks based on their __bits__ and also create shared chunks to store modules that belongs to multiple chunks.
 
-After the manual module assignment, we will process the rest unprocessed modules. As we mentioned before, all reachable module has been marked the entry in the bit during the graph traversal, and this is the key of chunk generation algorithm. The bits will decides how to place current module. Before delve into the Rolldown's solution, let's consider the basic mental module of this algorithm. 
+__Warm up__
 
-Let's set the details of this code aside and rethink the wording of this question. In a big project, modules are existing in the module graph. The code execute starting from the entries. If some modules coule be reached from the same entries, it would be better to put them in the same bundle. This could avoid duplicating code across entry chunks, minimize unnecessary sharing. Which is the best strategy for automatic splitting.
+Before explaining the algorithm details, let's consider an interesting [LeetCode problem](https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/). Here is the problem description:
 
-Now, the problem has been transform to: give you multiple modules, all of them has been marked the entry. Or in other words, the entry combinations. How to find and classification them according to the entry combinations?
+_You are given two 0-indexed integer permutations A and B of length n. A prefix common array of A and B is an array C such that `C[i]` is equal to the count of numbers that are present at or before the index `i` in both A and B. Return the __prefix common array__ of A and B. A sequence of n integers is called a permutation if it contains all integers from 1 to n exactly once._
 
-Here is a good [LeetCode problem](https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/) which illustrate the basic idea of the solution. Basically, the question is, give you two series of numbers, you need to iterate the given numebrs and calculate the number of prefix common array. Suppose these numbers are the unique index of entry, and every time we process a module during the module graph traveral, we will record a entry unique index on the module, in this problem, it's the number of the number series. Because the entry is not ordered, therefore we need to handle the scenario like `[1, 2]` and `[2, 1]`. A smart solution is using bit. Suppose the number is the position of the bit. Everytime we have a number, set the position x to be 1 on the bit. When we want to compare and check if there is any common prefix array, we can use `&` directly. Here is the solution of the LeetCode problem.
+In the example 1, the input is A = [1,3,2,5], B = [3,1,2,4], and the output would be [0,2,3,0]. Although the input is two arrays, we can treat them as a series of pairs since the problem needs use to iterate over them. Therefore we actually trying to compare two arrays in a pair, see if they have same elements.
 
-```Python
+- At i = 0, the pair is [1] and [3].
+- At i = 1, the pair is [1,3] and [3,1].
+- At i = 2, the pair is [1,3,2] and [3,1,2].
+- At i = 4, the pair is [1,3,2,5] and [3,1,2,4].
+
+Actually, for each `i`, the problems are equal. Give you of two arrays with same length, check if they have same elements. A brute force solution would be to use a hash map or nested loops, but it's not efficient. Bits manipulation is a better choice.
+
+We can use a bit mask to represent the presence of each number. For example, if the array is [1, 3], the bit mask would be `0b01010`. And for another array [1, 2], the bit mask would be `0b00110`. Then calculate the result of `&` between two bit masks.
+
+<img
+  className='!my-4 block max-w-md'
+  alt='Bit calculation'
+  src='https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-05-10-57-27.png'
+/>
+
+As the illustration shows, the result is `0b000010`. The number of `1` in the binary representation of the result is the number of common elements. This is easily to get via built-in method. Although the time complexity is O(N), such bit manipulation in many programming languages could use the hardware support to speed up the calculation, which is extremely fast in real project.
+
+Based on the discussion above, the solution of this problem would be:
+
+```python3
 def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
   a, b = 0, 0
   ans = []
@@ -165,16 +184,56 @@ def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
   return ans
 ```
 
-Based on the understanding of this usage of bit. Let's back to the Rolldown's automatic code splitting algorithm. During the module traversal stage, all reachable modules are marked the entry unique index in the bit. And all modules that have same bit could be put into the same chunk. In the source code, the bit will be extract from the `index_splitting_info`.
+__Back to Rolldown automatic allocation__
 
-Case A. Chunk for these bit already exists. This is the simplest scenario, just add the module to chunk.
+I believe you have already understand the idea of the LeetCode problem, but what is the relationship with our Rolldown source code? The solution actually indicate a awsome idea, that we can use bit mask to represent a series of element, so that find the common element or _check if two groups are equal_ from two __unsorted__ arrays based on the bit calculation.
 
-Case B. Keep certain user-defined entry modules in their entry chunk. User-defined entry modules that are not wrapped should stay in their own entry chunk, even when reachable from multiple entires. This avoids creating unnecessary common chunks that would turn the entry into a [facade](abbr:facade_entry.md). Otherwise, the browser would waste more time to load the code for first screen rendering.
+If we can check the equality of unsorted arrays based on the bits, it's also means the __bits__ could be understand the unique key of each array, which makes us easily to calculate the number of __different__ (when I say different, I mean the arrays have different elements, instead of same elements with different order) arrays.
 
-Case C. Chunk optimization path. The modules would be insert into the `pending_commpon_chunks` to later try smarter merging. Bacause the optimization algorithm needs more information about the common modules.
+In phase 1, each entry have their unique index and been setted on the module via the method `set_bit`. The bits is actually the unique key of each module group, just like the bits of the given arrays pair in the LeetCode problem. Therefore we can use a _map_ to allocate the module groups, the module groups who have same `bits` could be in the same chunk. The source code of this part is:
 
-Case D. Default. Create a new common chunk for this bitset, and record the mapping relationship between the bit and chunk.
+```rust
+let bits = &index_splitting_info[normal_module.idx].bits;
+if let Some(chunk_id) = bits_to_chunk.get(bits).copied() {
+    // Add module to chunk
+}
+// ...
+```
 
+Pretty straight forward, right?
+
+Of course, the real source code needs to handle more scenarios. And the code above is the case _A_. In the case _B_, for the user defined entry, Rolldown will try to keep them in their own entry chunk. This avoids creating unnecessary common chunks that would turn the entry into a tiny 1 line [facade](abbr:facade_entry.md) file.
+
+Suppose we configure two entries:
+
+```typescript
+// src/admin.ts
+export const runAdmin = () => console.log('Admin');
+
+// src/main.ts
+import { runAdmin } from './admin.ts';
+runAdmin();
+```
+
+The `admin.ts` is a user-defined entry, but it is also reachable from `main.ts` via a normal static import. Without the optimization in case B, Rolldown notices that the `admin.ts` is referenced by multiple entry points, which is good to store it in the shared chunk. So `admin.ts` moves into something like `chunk-XYZ.js`, and the `admin` entry becomes a __facade entry__ whose job is just _re-export everything from the real chunk`.
+
+```javascript
+// chunk-xyz
+export function runAdmin() { console.log('Admin'); }
+
+// chunk-admin
+export * from './chunk-xyz.js';
+
+// chunk-main
+import { runAdmin } from './chunk-xyz.js';
+runAdmin();
+```
+
+Such tiny facade chunks would increase the number of HTTP requests, which is bad for HTTP/2 multiplexing and initial load.
+
+In the case _C_, The modules would be insert into the `pending_commpon_chunks` to later try smarter merging. Bacause the optimization algorithm needs more information about the common modules.
+
+And the final case D is the default case. If the target bits is not exist, create a new common chunk for this bitset, and record the mapping relationship between the bit and chunk.
 
 ### Phase 4: Structural Optimization (Merging & Facades)
 
