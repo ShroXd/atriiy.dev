@@ -237,13 +237,11 @@ And the final case D is the default case. If the target bits is not exist, creat
 
 ### Phase 4: Structural Optimization (Merging & Facades)
 
-Suggestion: focusing on the "Empty Facade" problem. It’s a common frustration in bundlers (getting a index.js that only contains export * from './chunk-xyz.js'). Mentioning that Rolldown actively cleans these up adds a lot of "value" to the reader.
+Since these two optimization algorithm includes more information than we can explain all details in one article, we will only focus on the high level understanding.
 
-Since these two optimization algorithm includes more information that we can explain all details in one article, we will only focus on the high level understanding.
+First optimization is trying to insert common module to exist chunk. Instead of creating new common chunks for shared modules directly, the optimizer iterates through pending common chunks and try to merge the modules into an existing entry chunk if it's safe to do. The _safe_ means: Dependency / order safe, async boundary safe, dynamic-import safe, and API-shape safe.
 
-First is trying to insert common module to exist chunk. Instead of creating new common chunks for shared modules directly, the optimizer iterates through pending common chunks and try to merge the modules into an existing entry chunk if it's safe to do. The _safe_ means: Dependency / order safe, async boundary safe, dynamic-import safe, and API-shape safe.
-
-Second optimization function is `optimize_facade_dynamic_entry_chunks`. During previous processing, some entry chunk maybe empty as the modules were moved to a common chunk. The function will remove such facade chunk and patches symbol / runtime inclusion so behavior matches as if the facade chunk still existed.
+Second optimization function is `optimize_facade_dynamic_entry_chunks`. During previous processing, some entry chunk maybe empty as the modules were moved to a common chunk. The function will remove such facade chunk and patches symbol / runtime inclusion so behavior matches as if the facade chunk still existed. The purpose is similar to the user defined facade chunk opitmization, but it works for the empty entry chunks.
 
 # Post processing phase
 
