@@ -1,5 +1,4 @@
 {
   "ModuleIdx": "`ModuleIdx`, an index used to identify a module in the module dependency graph.",
-  "ExternalNamespace": "An external namespace is a single object containing all exports from a library left outside your bundle.",
-  "Entry": "Entry is not only the user-defined entry point from configuration, but also includes the internal modules like the runtime support."
+  "ExternalNamespace": "An external namespace is a single object containing all exports from a library left outside your bundle."
 }
