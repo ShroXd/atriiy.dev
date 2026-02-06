@@ -2,8 +2,7 @@
 title: 'How Rolldown Works: High-Performance Code Splitting with Bitset Logic'
 publishedAt: 2026-01-28
 draft: false
-tags:
-  ['rolldown', 'vite', 'rust', 'chunks']
+tags: ['rolldown', 'vite', 'rust', 'chunk generation', 'code splitting']
 ---
 
 # Introduction
@@ -13,7 +12,7 @@ Rolldown is a high-performance JavaScript bundler that Vite plans to integrate a
 - [How Rolldown Works: Module Loading, Dependency Graphs, and Optimization Explained](https://www.atriiy.dev/blog/rolldown-module-loader-and-dependency-graph)
 - [How Rolldown Works: Symbol Linking, CJS/ESM Resolution, and Export Analysis Explained](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution)
 
-With those stages complete, we now have a precise "map" of the project -- ranging from high-level module graphs to underlying symbol relationships. In this final stage, we leverage this information to generate the actually bundled output. This is the stage that directly impacts your application's loading speend and bundle size.
+With those stages complete, we now have a precise "map" of the project &mdash; ranging from high-level module graphs to underlying symbol relationships. In this final stage, we leverage this information to generate the actually bundled output. This is the stage that directly impacts your application's loading speend and bundle size.
 
 # Code generation strategies
 
@@ -23,7 +22,7 @@ This article will focus primarily on the __code splitting algorithm__ that drive
 
 # Generate chunks
 
-This section focuses on the core logic of the chunk generation stage. Since the full generation process involves many moving parts -- such as handling namespaces, chunk linking, and wrappers -- we will narrow our focus to the __chunk generation algorithm__ itself.
+This section focuses on the core logic of the chunk generation stage. Since the full generation process involves many moving parts &mdash; such as handling namespaces, chunk linking, and wrappers &mdash; we will narrow our focus to the __chunk generation algorithm__ itself.
 
 The basic structure of this function is straightforward It begins by initializing several key data structures:
 
@@ -35,7 +34,7 @@ let mut bits_to_chunk = FxHashMap::with_capacity(self.link_output.entries.len())
 let input_base = ArcStr::from(self.get_common_dir_of_all_modules(...));
 ```
 
-From here, the function branches based on the user's configuration. In preserve mode, the algorithm simply traverses the module table provided by the `link_output` and creates chunks directly, adding them to the `chunk_graph`. This mode is always used by library authors who want to keep their files seperate instead of merging them -- for several specific, high-value reasons.
+From here, the function branches based on the user's configuration. In preserve mode, the algorithm simply traverses the module table provided by the `link_output` and creates chunks directly, adding them to the `chunk_graph`. This mode is always used by library authors who want to keep their files seperate instead of merging them &mdash; for several specific, high-value reasons.
 
 - Better tree-shaking. Allows the user is able to import only the necessary parts of a library, ensuring they don't ship "dead code" to their users.
 
@@ -65,7 +64,7 @@ The `split_chunks` function is the engine that transforms a raw module dependenc
 
 The process begins with __entry analysis__, where the `determine_reachable_modules_for_entry` function performs a Breadth-First Search (BFS) across the module graph. Starting from each entry point, the algorithm visits every reachable module and assigns the corresponding `entry_index` to the module's bitset. This creates the "fingerprint" mentioned earlier, allowing Rolldown to identify exactly which entires depend on which modules.
 
-Once reachability is established, Rolldown moves into __manual splitting__. Because developers often possess business logic context that an algorithm cannot infer, user-defined groups -- configured via regex patterns or custom functions -- are processed first. By carving out these high-priority modules into specific chunks before the automated logic takes over, Rolldown ensures that user intent always takes precedence.
+Once reachability is established, Rolldown moves into __manual splitting__. Because developers often possess business logic context that an algorithm cannot infer, user-defined groups &mdash; configured via regex patterns or custom functions &mdash; are processed first. By carving out these high-priority modules into specific chunks before the automated logic takes over, Rolldown ensures that user intent always takes precedence.
 
 Following the manual phase, the remaining modules undergo __automatic allocation__. Here, modules are grouped based on their bitset patterns to ensure that the resulting chunks are neither too large for efficient loading nor too small for optimal HTTP performance. Finally, the function performs a cleanup pass to __merge and optimize__ the resulting chunks, resolving any structural redundancies.
 
@@ -73,9 +72,9 @@ Ultimately, this multi-phased approach treats the user's configuration as the pr
 
 ### Phase 1: Defining Reachability (The BitSet Fingerprint)
 
-The first step of code splitting algorithm is to analyze all reachable modules, determine which modules could be reached from which entry. An _entry_ is a root module that Rolldown treats as a chunk starting point. It includes [three different kinds](abbr:entry_types.md) in Rolldown. Start from these entries, Rolldown could find all reachable modules, and mark the starting entry on the module. The purpose of doing this is to make sure the module still keeps reachable from the entry point after code splitting. Because after the code splitting, the source code would be split into multiple chunks, and the chunk is the resource that browser will fetch for rendering. Each chunk is a separate file that can be loaded asynchronously. Therefore it's important to ensure the topological relationships of modules won't be broken after code splitting.
+The first step of the code-splitting algorithm is to analyze reachability: determining which modules can be accessed from which entry points. In Rolldown, an __entry__ is a root module &mdash; of which there are [three different kinds](abbr:entry_types.md) &mdash; that serves as a starting point for a chunk. By tracing the graph from these entries, Rolldown marks every reachable module to ensure that topological relationships remain intact after code splitting. This is critical because, in the final bundle, each chunk is a separate file loaded asynchronously by the browser; if reachability is broken, the application will fail to resolve its dependencies at runtime.
 
-The function utilizes a classic breadth-first graph traversal algorithm on the module graph. Function starts from the entry points, for all new normal module, and also not be marked as not included, it will write the bit and share counting data. Rolldown uses an array, whose type is `SplittingInfo`, to mapping the module index to the splitting information.
+To map this out, Rolldown utilizes a classic breadth-first search (BFS) on the module graph. Starting from the entry points, the algorithm traverses all included modules, updating their "reachability data" as it goes. This data is stored in an array of `SplittingInfo` structures, indexed by the module's unique ID:
 
 ```rust
 // Type definition for SplittingInfo
@@ -84,13 +83,12 @@ pub struct SplittingInfo {
   pub share_count: u32,
 }
 
+// Updating info during traversal
 index_splitting_info[module_idx].bits.set_bit(entry_index);
 index_splitting_info[module_idx].share_count += 1;
 ```
 
-As we can see, the splitting information includes a field `bits` which represents the bit mask for each entry point. The `bits` field is originally set to `0`, but the length is the length of the `entry_points` vector. Assign the bit mask for each entry point, like the following table. If a module is reachable from Entry A, the first bit position will be set to `1` on that module.
-
-Suppose we have three entry points: Entry A, Entry B, and Entry C. The bit mask for each entry point is as follows:
+The core of this structure is the `bits` field &mdash; a bitmask where the length corresponds to the total number of entry points. Each entry point is assigned a specific bit position. For instance, in a project with three entries, the mapping might look like this:
 
 | Entry | Bit |
 |-------|-----|
@@ -106,20 +104,22 @@ The algorithm would be as follows:
   src='https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-04-15-37-05.png'
 />
 
-This reachability information later determines which modules go into which chunks during the final bundle generation. We will go through the determining process later.
+If a module is reachable from Entry A, the 0th bit is set to `1`. If it is _also_ reachable from Entry C the 2nd bit is also set, resulting in a binary representation like `101`. This "fingerprint" becomes the definitive signature for the module, later determining exactly which chunk it belongs to or whether it needs to be moved into a shared chunk.
 
 ### Phase 2: User-Driven Partitioning (Manual Splitting)
 
-Based on the reachability information, Rolldown runs first round code splitting. The splitting rules is defined by user's configuration, the [match group](abbr:match_group.md). These rules have higher priority than the automatic splitting, thus Rolldown does this first.
+Once reachability is defined, Rolldown begins the first round of code splitting. This phase is driven by __manual splitting__ rules &mdash; specifically [match groups](abbr:match_group.md) &mdash; which allow users to explicitly define how certain modules should be bundled. Because these rules represent direct developer intent, they take priority over the automatic algorithm and are processed first.
 
-Here is the core data structure of this manual splitting algorithm:
+The engine behind this phase relies on two primary data structures: a map to link group names to indices, and a vector to store the actual group data.
 
 ```rust
+// Maps user-defined group names to their internal index
 let mut name_to_module_groups: FxHashMap<(usize, ArcStr), ModuleGroupIdx>
+// Stores the actuall module group data
 let mut index_module_groups: IndexVec<ModuleGroupIdx, ModuleGroup>
 ```
 
-The `name_to_module_groups` makes the mapping from user defined group name to module group index easily. And the module group index can be used to access the related module group. Here is the defination of module group, you can understand it as a bucket which will hold the modules assigned to it.
+You can think of a `ModuleGroup` as a bucket. It doesn't just hold a name and a set of modules; it also tracks priority and total size to inform later splitting decisions.
 
 ```rust
 struct ModuleGroup {
@@ -132,42 +132,31 @@ struct ModuleGroup {
 }
 ```
 
-Next, modules will be added to corresponding module group accroding to the result of rule test. Iterate all modules and try each match group to check if current module is matched. Not matched modules will be skipped. The matched modules' size will be checked if the `allow_min_module_size`, `allow_max_module_size`, and `allow_min_share_count` is setted. If all checks passed, the module will be added to the corresponding group. The group can be accessed via the unique key. Rolldown utilizes the combination of `match_group_index` and `group_name` as the unique key, which is defined in the `name_to_module_groups`'s type. Finally, the module's dependencies will be added to the group recursively via the function `add_module_and_dependencies_to_group_recursively`.
+#### The assignment process
 
-Then, module groups will be sorted according to its priority. For the same priority, the one with lower index goes first. For the same priority and index, use dictionary order to sort. The sorted result is reversed for easier consumption later. Also, the runtime module will also be added into a standalone chunk.
+Rolldown iterates through every module and tests it against the user's match group configurations. If a module matches a rule and satisfies the defined constraints &mdash; such as `allow_min_module_size` or `allow_min_share_count` &mdash; it is assigned to a corresponding group. Crucially, this isn't just a surface-level match; Rolldown uses `add_module_and_dependencies_to_group_recursively` to ensure that a module's entire dependency tree is pulled into the group, preserving the integrity of the manual chunk.
 
-After previous steps, we have bunch of module groups. These module groups need to be splitted or tweaks to make sure the size of each group is in the given scope, so that we can generate the final chunks based on them. Basically, Rolldown iterates the module groups and for each group, tries to cut off segment one by one from the left of the module group vector if that group is larger than the given scope. The splitting algorithm includes the following steps:
+After assignment, the groups are stored by priority. If priorities are equal, the algorithm falls back to the original index and then dictionary order to maintain a stable, predictable sorting result. The final list is then reversed, preparing it for the "greedy" splitting logic.
 
-1. Preprocessing, sort the modules in the current module group according to its size, stable id and executation order. Smaller modules will be put at the left side of the vector, which is easier to divide a segment whose size is in the given scope. Without this sorting, in some edge cases, the gaint module at left could prevent the splitting.
+#### Refining the groups
 
-2. Try to split greedily. Algorithm iterate the modules starts from left and right, try to find two segments whose size is larger than `allow_min_size`. The segment at left would be the result segment, and the right segment is used for checking if the splitting is valid. Because if two segments is overlapped, current group can't be split into two groups with both satisfied the min size requirement. In that case, Rolldown will ignore the max size requirement and keep the group as whole in this case. This makes sure that the browser won't send many http request for loading small files. 
+Even though a user defines a group, the resulting "bucket" might be too large or too small for optimal performance. Rolldown performs a "greedy" refinement process to ensure each group stays within a reasonable size range. This is handled through a sequence of logic steps rather than a simple cut.
 
-3. Add more modules to splitted group as many as possible. As long as the size of group is lower than the max size reuqirement, it's valid. This makes the final chunks' number small, which is good for the browser loading performance.
+First, modules within a group are pre-sorted by size and execution order. By placing smaller modules at the begining of the vector, Rolldown can more easily carve out segments that meet the minimum size requirements without being blocked by a single massive module.
 
-4. Add splitted group and remaining right part to the module group stack. If the remaining group is still larger than max size requirement, it will be splitted in the next loop with the same logic.
+The algorithm then attempts to split the group greedily. It scans from both ends to find two segments that each exceed the `allow_min_size`. The left segment becomes a potential new chunk, while the right segment serves as a validation check. If these segments overlap, the group is kept whole to prevent the creation of tiny, inefficient files that would degrade browser loading performance.
 
-After the module groups split loop finished, the chunks will be created based on the result. And the modules in current module group will be removed from other groups.
+If a split is valid, Rolldown expands the left segment as much as possible &mdash; adding modules until it hits the `allow_max_size` limit. This minimizes the total number of chunks, which is generally better for HTTP/2 multiplexing. Any remaining parts of the group are pushed back onto a stack to be re-evaluated and potentially split again in the next iteration. Once a chunk is successfully finalized, its modules are removed from all other groups to prevent duplication.
 
 ### Phase 3: Automated Allocation (The Core Loop)
 
-Manual module assignment processed the high priority modules, then Rolldown executed the automatic allocation to the remaining modules. The automatic allocation algorithm will assign modules to corresponding chunks based on their __bits__ and also create shared chunks to store modules that belongs to multiple chunks.
+After manual assignment handles high-priority modules, Rolldown executes the __automatic allocation__ for the remaining codebase. This algorithm assigns modules to chunks based on their __bits__ (reachability fingerprints) and intelligently creates shared chunks for modules belonging to multiple entires.
 
-__Warm up__
+#### A bitwise "warm up"
 
-Before explaining the algorithm details, let's consider an interesting [LeetCode problem](https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/). Here is the problem description:
+To understand the beauty of this algorithm, let's look at a seemingly unrelated challenge: the [Find the Prefix Common Array](https://leetcode.com/problems/find-the-prefix-common-array-of-two-arrays/) LeetCode problem.
 
-_You are given two 0-indexed integer permutations A and B of length n. A prefix common array of A and B is an array C such that `C[i]` is equal to the count of numbers that are present at or before the index `i` in both A and B. Return the __prefix common array__ of A and B. A sequence of n integers is called a permutation if it contains all integers from 1 to n exactly once._
-
-In the example 1, the input is A = [1,3,2,5], B = [3,1,2,4], and the output would be [0,2,3,0]. Although the input is two arrays, we can treat them as a series of pairs since the problem needs use to iterate over them. Therefore we actually trying to compare two arrays in a pair, see if they have same elements.
-
-- At i = 0, the pair is [1] and [3].
-- At i = 1, the pair is [1,3] and [3,1].
-- At i = 2, the pair is [1,3,2] and [3,1,2].
-- At i = 4, the pair is [1,3,2,5] and [3,1,2,4].
-
-Actually, for each `i`, the problems are equal. Give you of two arrays with same length, check if they have same elements. A brute force solution would be to use a hash map or nested loops, but it's not efficient. Bits manipulation is a better choice.
-
-We can use a bit mask to represent the presence of each number. For example, if the array is [1, 3], the bit mask would be `0b01010`. And for another array [1, 2], the bit mask would be `0b00110`. Then calculate the result of `&` between two bit masks.
+The problem asks us to compare two permutations, $A$ and $B$, and find how many common elements they share at each index $i$. While a hash map would work, __bit manipulation__ is far more elegant and efficient. By representing the presence of a number as a bit in a bitmask (e.g., the number `3` sets the 3rd bit), we can compare two sets using a simple bitwise `AND` ($\&$) operation.
 
 <img
   className='!my-4 block max-w-md'
@@ -175,9 +164,7 @@ We can use a bit mask to represent the presence of each number. For example, if 
   src='https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-05-10-57-27.png'
 />
 
-As the illustration shows, the result is `0b000010`. The number of `1` in the binary representation of the result is the number of common elements. This is easily to get via built-in method. Although the time complexity is O(N), such bit manipulation in many programming languages could use the hardware support to speed up the calculation, which is extremely fast in real project.
-
-Based on the discussion above, the solution of this problem would be:
+The number of set bit (`bit_count`) in the result tells us exactly how many elements the two arrays share. This operation is lightning-fast because it leverages hardware-level instructions.
 
 ```python3
 def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
@@ -192,13 +179,11 @@ def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
   return ans
 ```
 
-__Back to Rolldown automatic allocation__
+#### Applying the logic to Rolldown
 
-I believe you have already understand the idea of the LeetCode problem, but what is the relationship with our Rolldown source code? The solution actually indicate a awsome idea, that we can use bit mask to represent a series of element, so that find the common element or _check if two groups are equal_ from two __unsorted__ arrays based on the bit calculation.
+What does this have to do with bundling? In Phase 1, we asigned each entry point a unique bit position. Just as the bitmask in the LeetCode problem represents a set of number, the `bit` field in Rolldown represents the __set of entires__ that can reach a specific module.
 
-If we can check the equality of unsorted arrays based on the bits, it's also means the __bits__ could be understand the unique key of each array, which makes us easily to calculate the number of __different__ (when I say different, I mean the arrays have different elements, instead of same elements with different order) arrays.
-
-In phase 1, each entry have their unique index and been setted on the module via the method `set_bit`. The bits is actually the unique key of each module group, just like the bits of the given arrays pair in the LeetCode problem. Therefore we can use a _map_ to allocate the module groups, the module groups who have same `bits` could be in the same chunk. The source code of this part is:
+This means the `bits` value acts as a __unique key__ for a module's reachability. If two modules have the exact same `bits` value, they belong to the exact same set of entires and should, therefore, live in the same chunk.
 
 ```rust
 let bits = &index_splitting_info[normal_module.idx].bits;
@@ -208,58 +193,33 @@ if let Some(chunk_id) = bits_to_chunk.get(bits).copied() {
 // ...
 ```
 
-Pretty straight forward, right?
+Pretty straight forward, right? This logic allows Rolldown to group modules into shared chunks automatically. However, the production implementation handles several specialized cases to ensure the best performance.
 
-Of course, the real source code needs to handle more scenarios. And the code above is the case _A_. In the case _B_, for the user defined entry, Rolldown will try to keep them in their own entry chunk. This avoids creating unnecessary common chunks that would turn the entry into a tiny 1 line [facade](abbr:facade_entry.md) file.
+- Case A (the common case): If the bitset matches an existing chunk, the module is added there.
 
-Suppose we configure two entries:
+- Case B (facade prevention): For user-defined entries, Rolldown tries to keep modules within the original entry chunk even if they are technically shared. This prevents the creation of [facade entries](abbr:facade_entry.md) &mdash; tiny files that do nothing but re-export code from a shared chunk. Minimizing these facades reduces the total number of HTTP requests, which is vital for initial load performance.
 
-```typescript
-// src/admin.ts
-export const runAdmin = () => console.log('Admin');
+- Case C (pending optimization): Certain modules are marked as "pending". These are held back for a smarter merging phase later, as they require more context about the overall bundle structure to be placed optimally.
 
-// src/main.ts
-import { runAdmin } from './admin.ts';
-runAdmin();
-```
-
-The `admin.ts` is a user-defined entry, but it is also reachable from `main.ts` via a normal static import. Without the optimization in case B, Rolldown notices that the `admin.ts` is referenced by multiple entry points, which is good to store it in the shared chunk. So `admin.ts` moves into something like `chunk-XYZ.js`, and the `admin` entry becomes a __facade entry__ whose job is just _re-export everything from the real chunk`.
-
-```javascript
-// chunk-xyz
-export function runAdmin() { console.log('Admin'); }
-
-// chunk-admin
-export * from './chunk-xyz.js';
-
-// chunk-main
-import { runAdmin } from './chunk-xyz.js';
-runAdmin();
-```
-
-Such tiny facade chunks would increase the number of HTTP requests, which is bad for HTTP/2 multiplexing and initial load.
-
-In the case _C_, The modules would be insert into the `pending_commpon_chunks` to later try smarter merging. Bacause the optimization algorithm needs more information about the common modules.
-
-And the final case D is the default case. If the target bits is not exist, create a new common chunk for this bitset, and record the mapping relationship between the bit and chunk.
+- Case D (the default): If the bitset is entirely new, Rolldown creates a new common chunk and records the mapping so future modules with the same bits can join it.
 
 ### Phase 4: Structural Optimization (Merging & Facades)
 
-Since these two optimization algorithm includes more information than we can explain all details in one article, we will only focus on the high level understanding.
+Because these optimization algorithms involve complex edge cases that could fill an entire article on their own, we will focus on a high-level conceptual understanding of how they refine the bundle.
 
-First optimization is trying to insert common module to exist chunk. Instead of creating new common chunks for shared modules directly, the optimizer iterates through pending common chunks and try to merge the modules into an existing entry chunk if it's safe to do. The _safe_ means: Dependency / order safe, async boundary safe, dynamic-import safe, and API-shape safe.
+The first optimization involves __merging common modules into existing chunks__. Rather than reflexively creating a new shared chunk for every shared dependency, the optimizer scans through the "pending" common modules and attempts to "tuck" them into an existing entry chunk. This is only done if the move is deemed "safe". In this context, __safety__ means the merger must not violate dependency ordering, cross asynchronous boundaries, break dynamic import logic, or later the expected API shape of the chunk. By consolidating these modules, Rolldown reduces the total "chunk count", which minimizes the overhead of managing multiple files in the browser. 
 
-Second optimization function is `optimize_facade_dynamic_entry_chunks`. During previous processing, some entry chunk maybe empty as the modules were moved to a common chunk. The function will remove such facade chunk and patches symbol / runtime inclusion so behavior matches as if the facade chunk still existed. The purpose is similar to the user defined facade chunk opitmization, but it works for the empty entry chunks.
+The second optimization is handled by the `optimize_facade_dynamic_entry_chunks` function. During the earlier splitting phases, some entry chunks may become "empty" because all their internal modules were moved into shared chunks. This leaves behind a "facade" &mdash; a file that contains no logic of its own and only exists to point elsewhere. This optimization identifies these redundant files, removes them, and patch the symbol references and runtime logic so the application behaves as if the facade still existed. This is a crucial step for maintaining a clean output, especially in large-scale projects with complex dynamic imports.
 
 # Post processing phase
 
-The final step is to perform some optimizations and processing on the generated chunks. This includes merging external import namespaces, sorting modules and chunks, handling all entry level external modules.
+The final stage of the pipeline involves a series of refinements to ensure the generated chunks are clean, logically ordered, and optimized for performance. This phase primarily focuses on merging external namespaces, sorting modules and chunks, and streamlining entry-level external modules. 
 
 ## Merge external import namespaces at chunk level
 
-The [external namespace](abbr:ExternalNamespace) was collected during the link stage, you can read my [previous article](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution#match-imports-with-exports) to learn more about it. During the link stage, collect namespaces import symbols grouped by external modules. Now chunks are ready, we can start merging and linking the symbols at chunk level.
+During the link stage, Rolldown collects [external namespace](abbr:ExternalNamespace) import symbols and groups them by their respective external modules. You can read my [previous article](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution#match-imports-with-exports) if you're interested. Once the chunks are finalized, we can begin merging and linking these symbols at the chunk level.
 
-The process of merging is pretty straightforward. First, Rolldown will re-grouping the symbols based on the chunks they belongs to. In one chunk, multiple modules might import the same external namespace, and those modules might end up in the same chunk. Second, Rolldown confirms if current the modules are actually included in the bundle and sorts them by execution order. Finally, all same namespace symbols in the same chunk will be linked to the first symbols that's actually used.
+The process is highly efficient. Rolldown first re-groups these symbols according to the chunks they belong to. In a typical project, multiple modules might import the same external namespace (like React); if these modules end up in the same chunk, there is no need to keep redundant references. After confirming that the modules are actually included in the final bundle and sorting them by execution order, Rolldown links all identical namespace symbols in a single chunk to the first used instance.
 
 Before Merging:
 
@@ -284,15 +244,11 @@ console.log(React_Namespace.useState);
 
 ## Sort, find entry-level external modules
 
-All modules in every chunks will be sorted by execution order. After that, the chunks will also be sorted according to the chunks's kind. The ordering rules are as follows:
+Consistency is key to a stable build process. To achieve this, all modules within every chunk are sorted by execution order. The chunks themselves are then sorted according to their type: entry chunks take priority, followed by static chunks, and finally dynamic chunks. This ensures a stable, predictable order across different entry points.
 
-- Entry chunks are always before other chunks
-- Static chunks are always before dynamic chunks
-- Other chunks has stable order at per entry chunk level
+A final, elegant optimization occurs with __entry-level external modules__. These are external modules reachable from an entry point through an unbroken chain of `export *` statements.
 
-
-
-The entry-level external modules is an external module that is reachable from an entry module by following __only__ `export *` edges through normal modules. Here is an example:
+Example scenario:
 
 ```javascript
 // entry.js
@@ -302,14 +258,20 @@ export * from './a.js'
 export * from 'external'
 ```
 
-Without optimization, Rolldown would need to generate complex interoperability code using the `__reExport` runtime helper, but it's not necessary. Therefore, this function detects when an external module is re-exported through an unbroken `export *` chain all the way to an entry point. When this happens, Rolldown can simply output:
+Normally, Rolldown would need to generate complex interoperability code (using the `__reExport` runtime helper) to bridge these files. However, if the chain remains unbroken, the function detects this "entry-level" status and outputs a simple, clean import:
 
 ```javascript
 import * from 'external';
 ```
 
-But an edge case, if someone actually uses the namespace object, which means not just re-exports it like the code above, Rolldown cannot optimize it. Because all symbols must be available on that namespace object.
+However, there is a vital exception to this rule: if the code explicitly references the namespace object itself &mdash; rather than simply passing through the exports &mdash; Rolldown must bypass this optimization. This ensures that the namespace object remains fully populated and spec-compliant, preventing any missng symbols that might occur with a direct re-export.
 
 # Summary
 
-TODO
+The journey from a raw module graph to a production-ready bundle is a balancing act between developer intent and algorithmic efficiency. By leveraging a BitSet-based reachability fingerprint, Rolldown transforms complex dependency relationships into a high-performance bitmask, allowing it to identify shared modules with hardware-level speed.
+
+The real beauty of this final stage is how it balances __developer intent__ with __algorithm muscle__. You get the control of manual splitting when you need it, but the "smart" defaults handle the headache of facade chunks and namespace merging behind the scenes. Whether you're shipping a library or a massive web app, the goal remains the same: less bloat, faster loads, and a cleaner output.
+
+This concludes our deep dive into the Rolldown pipeline. From scanning and linking to this final generation stage, the focus remains clear: bringing the performance of Rust to the flexibility of the JavaScript ecosystem, one bit at a time.
+
+But don't think we've reached the finish line just yet! 😉 This is only the beginning of our journey through the Rolldown codebase. There are still plenty of fascinating corners to explore. I’ll be back with more articles soon to break down these "hidden gems" and share more my understanding of what makes this bundler tick. Stay tuned!
