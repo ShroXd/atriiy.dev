@@ -61,12 +61,41 @@ export default function GlossaryTooltip({
   return (
     <HoverCard.Root openDelay={200} closeDelay={100}>
       <HoverCard.Trigger asChild>
-        <span className='relative cursor-help border-b-2 border-dotted border-[#c5c5b8] bg-gradient-to-b from-transparent to-[#f8f8f0]/30 transition-all duration-200 hover:border-[#a8a89d] hover:to-[#f2f2e3]/50 hover:[&>span:last-child]:opacity-80'>
-          {children || term}
-          <span className='absolute -top-2 -right-2 text-[10px] text-[rgb(100,100,85)] opacity-60 transition-opacity duration-200'>
-            {isMarkdownFile ? '📝' : '?'}
+        <motion.span
+          className='group inline-flex cursor-help items-baseline gap-0.5'
+          whileHover='hover'
+          initial='initial'
+        >
+          <span className='rounded-sm bg-[#f5f3e8] py-0.5 px-1 text-[#5a5a4d] underline decoration-[#c5b89a] decoration-wavy decoration-from-font underline-offset-3 transition-all duration-200 group-hover:bg-[#ebe7d6] group-hover:text-[#4a4a3d] group-hover:decoration-[#a89870]'>
+            {children || term}
           </span>
-        </span>
+          <motion.span
+            className='inline-block text-[15px] text-[#9a8a6a]'
+            variants={{
+              initial: {
+                scale: 1,
+                rotate: 0,
+                y: 0,
+              },
+              hover: {
+                scale: [1, 1.3, 1.15],
+                rotate: [0, -12, 12, -8, 8, 0],
+                y: [0, -2, 0],
+                color: '#6a5a3a',
+                transition: {
+                  duration: 0.5,
+                  ease: 'easeOut',
+                  rotate: {
+                    duration: 0.6,
+                    ease: 'easeInOut',
+                  },
+                },
+              },
+            }}
+          >
+            {isMarkdownFile ? '📝' : '✨'}
+          </motion.span>
+        </motion.span>
       </HoverCard.Trigger>
 
       <HoverCard.Portal>
