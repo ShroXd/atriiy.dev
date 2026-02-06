@@ -113,6 +113,7 @@ html {
   @apply text-xl text-[rgb(74,74,64)];
   font-family: var(--font-spectral), serif;
   font-size: 21px;
+  line-height: 1.8;
   letter-spacing: 0.01em;
 }
 
@@ -160,6 +161,7 @@ html {
 .prose blockquote {
   font-family: var(--font-libre-baskerville), serif;
   @apply mb-4;
+  line-height: 1.75;
   letter-spacing: 0.015em; /* Libre Baskerville benefits from slightly looser spacing */
 }
 
@@ -173,10 +175,12 @@ html {
 
 .prose ul {
   @apply mb-4 list-disc pl-6;
+  line-height: 1.75;
 }
 
 .prose ol {
   @apply list-decimal pl-6;
+  line-height: 1.75;
 }
 
 .prose > :first-child {
@@ -253,6 +257,7 @@ table {
 
   .prose {
     font-size: 18px;
+    line-height: 1.75;
     letter-spacing: 0.005em;
   }
 

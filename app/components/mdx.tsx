@@ -205,8 +205,8 @@ function CustomParagraph({ children, className, ...props }) {
         // Ensure the className prop is correctly passed and includes 'mb-4'
         <p className={`${className || ''} mb-4`} {...props}>
           <span
-            className='float-left mt-1 mr-2 text-6xl font-bold'
-            style={{ color: '#a51c30', lineHeight: '0.8' }}
+            className='float-left mt-1 mr-3 text-7xl font-bold'
+            style={{ color: '#a51c30', lineHeight: '0.75' }}
           >
             {firstChar}
           </span>
