@@ -10,6 +10,9 @@ const navItems = {
   '/reading': {
     name: 'reading',
   },
+  '/memos': {
+    name: 'memos',
+  },
 }
 
 export function Navbar() {
