@@ -1,6 +1,7 @@
+/* Tailwind directives -------------------------------------------------- */
 @import 'tailwindcss';
 
-/* maple-mono-latin-400-normal */
+/* Custom font faces ---------------------------------------------------- */
 @font-face {
   font-family: 'Maple Mono';
   font-style: normal;
@@ -13,7 +14,6 @@
       format('woff');
 }
 
-/* maple-mono-latin-500-normal */
 @font-face {
   font-family: 'Maple Mono';
   font-style: normal;
@@ -26,239 +26,128 @@
       format('woff');
 }
 
-::selection {
-  background-color: #47a3f3;
-  color: #fefefe;
-}
-
-:root {
-  --sh-class: #2d5e9d;
-  --sh-identifier: #354150;
-  --sh-sign: #8996a3;
-  --sh-string: #007f7a;
-  --sh-keyword: #e02518;
-  --sh-comment: #a19595;
-  --sh-jsxliterals: #6266d1;
-  --sh-property: #e25a1c;
-  --sh-entity: #e25a1c;
-  --font-spectral: 'Spectral', serif;
-  --font-libre-baskerville: 'Libre Baskerville', serif;
-  --font-montserrat: 'Montserrat', sans-serif;
-  --font-nunito-sans: 'Nunito Sans', sans-serif;
-  --font-maple-mono: 'Maple Mono', monospace;
-}
-
-/* Removed dark mode media query */
-
-html {
-  min-width: 360px;
-  scroll-behavior: smooth;
-  font-family: var(--font-nunito-sans), sans-serif;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-}
-
-.prose .anchor {
-  @apply invisible absolute no-underline;
-
-  margin-left: -1em;
-  padding-right: 0.5em;
-  width: 80%;
-  max-width: 700px;
-  cursor: pointer;
-}
-
-.anchor:hover {
-  @apply visible;
-}
-
-.prose .anchor:after {
-  @apply text-neutral-300;
-  content: '#';
-}
-
-.prose *:hover > .anchor {
-  @apply visible;
-}
-
-.prose pre {
-  @apply overflow-x-auto rounded-lg border-2 border-[#d0d0c0] bg-[#f2f2e3] py-2 px-3;
-  font-size: 0.9rem;
-}
-
-.prose code {
-  @apply rounded-lg py-0.5 px-1;
-  font-size: 0.9rem;
-  letter-spacing: 0;
-}
-
-.prose pre code {
-  @apply p-0;
-  border: initial;
-  line-height: 1.5;
-  font-family: 'Maple Mono', monospace;
-}
-
-.prose code span {
-  /* @apply font-medium; */
-  font-weight: 400;
-}
-
-.prose img {
-  /* Don't apply styles to next/image */
-  @apply m-0 mx-auto rounded-lg transition-all;
-}
-
-.prose {
-  @apply text-xl text-[rgb(74,74,64)];
-  font-family: var(--font-spectral), serif;
-  font-size: 21px;
-  line-height: 1.8;
-  letter-spacing: 0.01em;
-}
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  @apply font-bold text-[rgb(80,80,65)];
-  font-family: var(--font-montserrat), sans-serif;
-  letter-spacing: -0.02em;
-}
-
-.prose h1 {
-  font-size: 2.25rem;
-  @apply mt-10 mb-4;
-}
-
-.prose h2 {
-  font-size: 1.875rem;
-  @apply mt-8 mb-4;
-}
-
-.prose h3 {
-  font-size: 1.5rem;
-  @apply mt-6 mb-4;
-}
-
-.prose h4 {
-  font-size: 1.25rem;
-  @apply mt-4 mb-4;
-}
-
-.prose h5 {
-  font-size: 1.125rem;
-  @apply mt-3 mb-4;
-}
-
-.prose h6 {
-  font-size: 1rem;
-  @apply mt-2 mb-4;
-}
-
-.prose blockquote {
-  font-family: var(--font-libre-baskerville), serif;
-  @apply mb-4;
-  line-height: 1.75;
-  letter-spacing: 0.015em; /* Libre Baskerville benefits from slightly looser spacing */
-}
-
-.prose p {
-  @apply mb-4;
-}
-
-.prose strong {
-  @apply font-medium;
-}
-
-.prose ul {
-  @apply mb-4 list-disc pl-6;
-  line-height: 1.75;
-}
-
-.prose ol {
-  @apply list-decimal pl-6;
-  line-height: 1.75;
-}
-
-.prose > :first-child {
-  /* Override removing top margin, causing layout shift */
-  margin-top: 1.25em !important;
-  margin-bottom: 1.25em !important;
-}
-
-pre::-webkit-scrollbar {
-  display: none;
-}
-
-pre {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  @apply mb-4;
-}
-
-/* Remove Safari input shadow on mobile */
-input[type='text'],
-input[type='email'] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-table {
-  display: block;
-  max-width: fit-content;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.title {
-  text-wrap: balance;
-}
-
-.table-of-contents {
-  @apply text-base;
-  letter-spacing: -0.01em; /* Match the base HTML spacing */
-}
-
-.table-of-contents::before {
-  content: 'Table of Contents';
-  @apply mb-3 block text-sm font-medium text-[rgb(80,80,65)];
-}
-
-.table-of-contents ul {
-  @apply list-none space-y-1.5 pl-0;
-}
-
-.table-of-contents ul ul {
-  @apply mt-1.5 ml-3 border-l border-neutral-200;
-}
-
-.table-of-contents li {
-  @apply leading-relaxed text-[rgb(80,80,65)];
-}
-
-.table-of-contents a {
-  @apply block py-0.5 px-2 text-[rgb(80,80,65)] no-underline transition-colors duration-200 hover:text-[rgb(80,80,65)];
-}
-
-.table-of-contents .active {
-  @apply text-[rgb(80,80,65)];
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  html {
-    font-size: 16px;
-    letter-spacing: -0.005em; /* Slightly looser on mobile for better readability */
+/* Base defaults -------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 
-  .prose {
+  html {
+    min-width: 360px;
+    scroll-behavior: smooth;
+    font-family: var(--font-body, 'Nunito Sans'), sans-serif;
     font-size: 18px;
-    line-height: 1.75;
-    letter-spacing: 0.005em;
+    letter-spacing: 0.02em;
+    background-color: var(--color-base);
+    color: var(--color-body);
+  }
+
+  body {
+    margin: 0;
+    font-family: inherit;
+    background-color: inherit;
+    color: inherit;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  :is(pre, code, kbd, samp) {
+    font-family: var(--font-maple-mono), monospace;
+    letter-spacing: 0;
+  }
+
+  pre {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    @apply mb-4;
+  }
+
+  pre::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Remove Safari input shadow on mobile */
+  input[type='text'],
+  input[type='email'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  table {
+    display: block;
+    max-width: fit-content;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Design tokens -------------------------------------------------------- */
+@layer base {
+  :root {
+    --color-base: #fdfdf8;
+    --color-body: #4a4a40;
+    --color-heading: #505041;
+    --color-subtle: #5f5f4c;
+    --color-surface: #f2f2e3;
+    --color-surface-border: #d0d0c0;
+    --color-accent: #47a3f3;
+    --color-accent-muted: #d6ecff;
+    --color-accent-foreground: #fefefe;
+    --color-accent-soft: rgba(71, 163, 243, 0.12);
+    --color-accent-soft-border: rgba(71, 163, 243, 0.45);
+
+    --radius-lg: 0.75rem;
+    --radius-pill: 999px;
+    --shadow-card: 0 15px 45px rgba(32, 35, 41, 0.08);
+
+    --font-spectral: 'Spectral', serif;
+    --font-libre-baskerville: 'Libre Baskerville', serif;
+    --font-montserrat: 'Montserrat', sans-serif;
+    --font-nunito-sans: 'Nunito Sans', sans-serif;
+    --font-maple-mono: 'Maple Mono', monospace;
+
+    --font-body: var(--font-nunito-sans);
+    --font-heading: var(--font-montserrat);
+    --font-reading: var(--font-spectral);
+
+    --sh-class: #2d5e9d;
+    --sh-identifier: #354150;
+    --sh-sign: #8996a3;
+    --sh-string: #007f7a;
+    --sh-keyword: #e02518;
+    --sh-comment: #a19595;
+    --sh-jsxliterals: #6266d1;
+    --sh-property: #e25a1c;
+    --sh-entity: #e25a1c;
+  }
+}
+
+/* Components & primitives ---------------------------------------------- */
+@layer components {
+  .prose {
+    @apply text-xl;
+    color: var(--color-body);
+    font-family: var(--font-reading);
+    font-size: 21px;
+    line-height: 1.8;
+    letter-spacing: -0.01em;
   }
 
   .prose h1,
@@ -267,12 +156,187 @@ table {
   .prose h4,
   .prose h5,
   .prose h6 {
+    @apply font-bold;
+    color: var(--color-heading);
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .prose h1 {
+    font-size: 2.25rem;
+    @apply mt-10 mb-4;
+  }
+
+  .prose h2 {
+    font-size: 1.875rem;
+    @apply mt-8 mb-4;
+  }
+
+  .prose h3 {
+    font-size: 1.5rem;
+    @apply mt-6 mb-4;
+  }
+
+  .prose h4 {
+    font-size: 1.25rem;
+    @apply mt-4 mb-4;
+  }
+
+  .prose h5 {
+    font-size: 1.125rem;
+    @apply mt-3 mb-4;
+  }
+
+  .prose h6 {
+    font-size: 1rem;
+    @apply mt-2 mb-4;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose strong {
+    @apply font-medium;
+  }
+
+  .prose ul {
+    @apply mb-4 list-disc pl-6;
+    line-height: 1.75;
+  }
+
+  .prose ol {
+    @apply list-decimal pl-6;
+    line-height: 1.75;
+  }
+
+  .prose blockquote {
+    font-family: var(--font-libre-baskerville);
+    @apply mb-4;
+    line-height: 1.75;
+    letter-spacing: 0.015em;
+  }
+
+  .prose img {
+    @apply m-0 mx-auto rounded-lg transition-all;
+  }
+
+  .prose pre {
+    @apply overflow-x-auto rounded-lg border-2 py-2 px-3;
+    border-color: var(--color-surface-border);
+    background-color: var(--color-surface);
+    font-size: 0.9rem;
+  }
+
+  .prose code {
+    @apply rounded-lg py-0.5 px-1;
+    font-size: 0.9rem;
+  }
+
+  .prose pre code {
+    @apply p-0;
+    border: initial;
+    line-height: 1.5;
+  }
+
+  .prose code span {
+    font-weight: 400;
+  }
+
+  .prose > :first-child {
+    margin-top: 1.25em !important;
+    margin-bottom: 1.25em !important;
+  }
+
+  .prose .anchor {
+    @apply invisible absolute no-underline;
+    margin-left: -1em;
+    padding-right: 0.5em;
+    width: 80%;
+    max-width: 700px;
+    cursor: pointer;
+  }
+
+  .prose .anchor:hover,
+  .prose *:hover > .anchor {
+    @apply visible;
+  }
+
+  .prose .anchor:after {
+    @apply text-neutral-300;
+    content: '#';
+  }
+
+  .surface-card {
+    @apply rounded-2xl border p-6;
+    padding: clamp(1.5rem, 2vw, 2.5rem);
+    background-color: var(--color-surface);
+    border-color: var(--color-surface-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .title {
+    text-wrap: balance;
+  }
+
+  .table-of-contents {
+    @apply text-base;
+    letter-spacing: -0.01em;
+  }
+
+  .table-of-contents::before {
+    content: 'Table of Contents';
+    @apply mb-3 block text-sm font-medium text-[rgb(80,80,65)];
+  }
+
+  .table-of-contents ul {
+    @apply list-none space-y-1.5 pl-0;
+  }
+
+  .table-of-contents ul ul {
+    @apply mt-1.5 ml-3 border-l border-neutral-200;
+  }
+
+  .table-of-contents li {
+    @apply leading-relaxed text-[rgb(80,80,65)];
+  }
+
+  .table-of-contents a {
+    @apply block py-0.5 px-2 text-[rgb(80,80,65)] no-underline transition-colors duration-200 hover:text-[rgb(80,80,65)];
+  }
+
+  .table-of-contents .active {
+    @apply text-[rgb(80,80,65)];
+  }
+
+  .badge-soft {
+    @apply inline-flex items-center gap-1 rounded-full py-1 px-3 text-sm font-medium;
+    background-color: var(--color-accent-soft);
+    border: 1px solid var(--color-accent-soft-border);
+    color: var(--color-subtle);
+  }
+}
+
+/* Responsive adjustments ------------------------------------------------ */
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+    letter-spacing: -0.005em;
+  }
+
+  .prose {
+    font-size: 18px;
+    line-height: 1.75;
+    letter-spacing: 0.005em;
+  }
+
+  .prose :is(h1, h2, h3, h4, h5, h6) {
     letter-spacing: -0.015em;
   }
 }
 
 @media (min-width: 1440px) {
   .prose {
-    letter-spacing: 0.015em;
+    letter-spacing: -0.01em;
   }
 }
