@@ -11,17 +11,13 @@ interface AnimatedLinkProps {
   className?: string
 }
 
-export default function AnimatedLink({
-  href,
-  children,
-  className = '',
-}: AnimatedLinkProps) {
+export default function AnimatedLink({ href, children }: AnimatedLinkProps) {
   const isExternal = !href.startsWith('/') && !href.startsWith('#')
   const isHash = href.startsWith('#')
 
   const linkProps = isExternal
     ? { target: '_blank', rel: 'noopener noreferrer' }
-    : {}
+    : { className: 'no-underline' }
 
   const Component = isHash ? 'a' : Link
 
@@ -29,11 +25,11 @@ export default function AnimatedLink({
     <motion.span className='relative inline-block' whileTap={{ scale: 0.98 }}>
       <Component
         href={href}
-        className={`group relative inline-block text-[#6e7554] transition-all [.table-of-contents_&]:border-0 ${className}`}
+        className='group relative inline-block font-semibold text-[var(--color-heading)] underline decoration-[var(--color-accent)] decoration-2 underline-offset-4 transition-colors duration-300 ease-out hover:text-[var(--color-accent)]'
         {...linkProps}
       >
         {children}
-        <span className='absolute bottom-0 left-1/2 h-[1px] w-0 bg-[#6e7554] transition-all duration-400 ease-[linear(0,_0.008_1.1%,_0.031_2.2%,_0.129_4.8%,_0.257_7.2%,_0.671_14.2%,_0.789_16.5%,_0.881_18.6%,_0.957_20.7%,_1.019_22.9%,_1.063_25.1%,_1.094_27.4%,_1.114_30.7%,_1.112_34.5%,_1.018_49.9%,_0.99_59.1%,_1)] group-hover:left-0 group-hover:w-full' />
+        <span className='absolute bottom-0 left-1/2 h-[1px] w-0' />
       </Component>
     </motion.span>
   )
