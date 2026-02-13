@@ -284,7 +284,7 @@ let components = {
         </div>
       )
     }
-    return <code className={`${className} font-maple-mono`}>{children}</code>
+    return <Code className={`${className} font-maple-mono`}>{children}</Code>
   },
 }
 

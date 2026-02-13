@@ -24,7 +24,7 @@ export default function Page() {
         <FadeIn delay={0.4}>
           <div className='h-28 md:h-20 lg:h-20'>
             <DecryptedText
-              text={`Dev, using TypeScript, Rust and Golang. Vim fans. Eighteen plus eleven years old now, still have hair, wanna learn many things. Writing, reading, playing video games.`}
+              text={`Dev, using TypeScript, Rust and Golang. Vim fan. Eighteen plus eleven years old now, still have hair, wanna learn many things. Writing, reading, playing video games.`}
               animateOn='hover'
               speed={30}
               sequential
