@@ -35,9 +35,20 @@ function CustomLink(props) {
 
 function RoundedImage(props) {
   return (
-    <div className='my-4 flex justify-center'>
-      <Image alt={props.alt} className='rounded-lg transition-all' {...props} />
-    </div>
+    <>
+      <Image
+        alt={props.alt}
+        width={props.width || 460}
+        height={props.height || 500}
+        className='my-2 block max-w-md justify-center rounded-lg transition-all'
+        {...props}
+      />
+      {props.alt && (
+        <span className='color-subtle font-spectral inline-block w-full text-center text-sm'>
+          {props.alt}
+        </span>
+      )}
+    </>
   )
 }
 
@@ -241,7 +252,7 @@ let components = {
   h5: createHeading(5),
   h6: createHeading(6),
   a: CustomLink,
-  Image: RoundedImage,
+  img: RoundedImage,
   table: CustomTable,
   thead: CustomThead,
   th: CustomTh,

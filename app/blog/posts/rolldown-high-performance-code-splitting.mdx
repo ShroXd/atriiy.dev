@@ -98,11 +98,7 @@ The core of this structure is the `bits` field &mdash; a bitmask where the lengt
 
 The algorithm would be as follows:
 
-<img
-  className='!my-4 block max-w-md'
-  alt='Bit Mask for Entry Points'
-  src='https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-04-15-37-05.png'
-/>
+![Bit Mask for Entry Points](https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-04-15-37-05.png)
 
 If a module is reachable from Entry A, the 0th bit is set to `1`. If it is _also_ reachable from Entry C the 2nd bit is also set, resulting in a binary representation like `101`. This "fingerprint" becomes the definitive signature for the module, later determining exactly which chunk it belongs to or whether it needs to be moved into a shared chunk.
 
@@ -158,11 +154,7 @@ To understand the beauty of this algorithm, let's look at a seemingly unrelated 
 
 The problem asks us to compare two permutations, $A$ and $B$, and find how many common elements they share at each index $i$. While a hash map would work, __bit manipulation__ is far more elegant and efficient. By representing the presence of a number as a bit in a bitmask (e.g., the number `3` sets the 3rd bit), we can compare two sets using a simple bitwise `AND` ($\&$) operation.
 
-<img
-  className='!my-4 block max-w-md'
-  alt='Bit calculation'
-  src='https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-05-10-57-27.png'
-/>
+![Bit calculation](https://raw.githubusercontent.com/ShroXd/img-hosting/refs/heads/main/blog/2026-02-05-10-57-27.png)
 
 The number of set bit (`bit_count`) in the result tells us exactly how many elements the two arrays share. This operation is lightning-fast because it leverages hardware-level instructions.
 
