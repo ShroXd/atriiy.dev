@@ -278,7 +278,11 @@
   .tooltip-card {
     border-radius: 1rem;
     padding: 1.25rem 1.5rem;
-    background: linear-gradient(140deg, var(--color-base), var(--color-surface));
+    background: linear-gradient(
+      140deg,
+      var(--color-base),
+      var(--color-surface)
+    );
     border: 1px solid var(--color-surface-border);
     box-shadow: 0 20px 35px rgba(32, 35, 41, 0.08);
     font-family: var(--font-body);
