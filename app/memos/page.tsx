@@ -23,7 +23,7 @@ export default function Page() {
               aria-hidden
             />
             <p className='font-baskerville relative text-3xl italic leading-relaxed tracking-tight text-[rgb(80,80,65)]'>
-              「さあ、これから何を書こうか」
+              「遠くから見れば、大抵のものは綺麗に見える」
             </p>
             <div className='relative mt-3 h-[1.5px] w-20 bg-gradient-to-r from-neutral-500 via-neutral-700 to-transparent' />
           </div>
