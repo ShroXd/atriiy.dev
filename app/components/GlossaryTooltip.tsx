@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 
 import type {
   GlossaryData,
-  GlossaryEntry,
   GlossaryTooltipContent,
   GlossaryTooltipProps,
 } from '../../types/glossary'
@@ -129,13 +128,21 @@ export default function GlossaryTooltip({
               duration: 0.18,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className={`${
+            className={`tooltip-card ${
               isMarkdownFile
-                ? 'scroll h-80 w-xl max-w-[calc(100vw-1rem)] overflow-y-auto'
-                : 'w-80 max-w-[calc(100vw-2rem)]'
-            } rounded-xl border border-[#e5e5d8] bg-gradient-to-br from-[#fafaf5] to-[#f5f5ef] py-2 px-6 ring-1 shadow-lg ring-black/5`}
+                ? 'h-80 w-[30rem] max-w-[calc(100vw-1rem)] overflow-y-auto'
+                : 'w-[22rem] max-w-[calc(100vw-2rem)]'
+            } relative ring-1 ring-black/5`}
           >
-            <div className='relative'>
+            <div className='relative flex flex-col gap-3'>
+              {tooltipContent?.title && (
+                <>
+                  <p className='text-lg font-semibold uppercase tracking-[0.35em] text-[var(--color-subtle)]'>
+                    {tooltipContent.title}
+                  </p>
+                  <div className='pointer-events-none inset-x-6 top-3 h-px rounded-full bg-gradient-to-r from-[var(--color-body)] to-[var(--color-accent-soft)] opacity-80' />
+                </>
+              )}
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -144,12 +151,14 @@ export default function GlossaryTooltip({
                   duration: 0.2,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className='text-sm leading-relaxed text-[rgb(74,74,64)]'
+                className='font-nunito-sans text-[0.95rem] leading-relaxed text-[var(--color-body)]'
               >
                 {isMarkdownFile && markdownContent ? (
                   <TooltipMDX source={markdownContent} />
                 ) : (
-                  tooltipContent?.description
+                  <p className='text-[0.95rem] leading-relaxed text-[var(--color-body)]'>
+                    {tooltipContent?.description}
+                  </p>
                 )}
               </motion.div>
             </div>

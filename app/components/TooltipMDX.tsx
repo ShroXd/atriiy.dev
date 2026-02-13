@@ -1,8 +1,10 @@
 'use client'
 
 import React from 'react'
+
 import { MDXRemote } from 'next-mdx-remote'
 import { highlight } from 'sugar-high'
+
 import AnimatedLink from './AnimatedLink'
 
 // Reuse the existing Code component but with tooltip-friendly styling
@@ -11,7 +13,7 @@ function TooltipCode({ children, ...props }) {
   return (
     <code
       dangerouslySetInnerHTML={{ __html: codeHTML }}
-      className='font-maple-mono font-medium rounded bg-gray-100 px-1 py-0.5 text-xs'
+      className='font-maple-mono py-0.5 px-1.5 text-[0.85rem] font-medium text-[var(--color-heading)]'
       {...props}
     />
   )
@@ -19,20 +21,16 @@ function TooltipCode({ children, ...props }) {
 
 // Reuse CustomLink but with tooltip-friendly styling
 function TooltipLink(props) {
-  return (
-    <AnimatedLink
-      {...props}
-      className='text-blue-600 underline hover:text-blue-800 text-sm'
-      target='_blank'
-      rel='noopener noreferrer'
-    />
-  )
+  return <AnimatedLink {...props} target='_blank' rel='noopener noreferrer' />
 }
 
 // Tooltip-friendly strong component
 function TooltipStrong({ children }) {
   return (
-    <strong className='font-bold text-sm' style={{ fontWeight: 700 }}>
+    <strong
+      className='font-semibold text-[var(--color-heading)]'
+      style={{ fontWeight: 600 }}
+    >
       {children}
     </strong>
   )
@@ -41,7 +39,10 @@ function TooltipStrong({ children }) {
 // Tooltip-friendly paragraph component
 function TooltipParagraph({ children, ...props }) {
   return (
-    <p className='mb-2 last:mb-0 text-sm leading-relaxed' {...props}>
+    <p
+      className='font-nunito-sans mb-2 text-[0.95rem] leading-relaxed text-[var(--color-body)] last:mb-0'
+      {...props}
+    >
       {children}
     </p>
   )
@@ -50,13 +51,16 @@ function TooltipParagraph({ children, ...props }) {
 // Tooltip-friendly heading components
 function createTooltipHeading(level) {
   const Heading = ({ children }) => {
-    const className = level === 1
-      ? 'text-base font-bold mb-2'
-      : level === 2
-      ? 'text-sm font-semibold mb-1'
-      : 'text-sm font-medium mb-1'
+    const className =
+      level === 1 ? 'text-base' : level === 2 ? 'text-[1rem]' : 'text-[0.95rem]'
 
-    return React.createElement(`h${level}`, { className }, children)
+    return React.createElement(
+      `h${level}`,
+      {
+        className: `${className} mb-1 font-montserrat font-semibold tracking-tight text-[var(--color-heading)]`,
+      },
+      children
+    )
   }
   Heading.displayName = `TooltipHeading${level}`
   return Heading
@@ -64,21 +68,33 @@ function createTooltipHeading(level) {
 
 // Tooltip-friendly list components
 function TooltipUl({ children }) {
-  return <ul className='ml-4 list-disc space-y-1 mb-2'>{children}</ul>
+  return (
+    <ul className='mb-2 ml-4 list-disc space-y-1 text-[0.95rem] text-[var(--color-body)]'>
+      {children}
+    </ul>
+  )
 }
 
 function TooltipOl({ children }) {
-  return <ol className='ml-4 list-decimal space-y-1 mb-2'>{children}</ol>
+  return (
+    <ol className='mb-2 ml-4 list-decimal space-y-1 text-[0.95rem] text-[var(--color-body)]'>
+      {children}
+    </ol>
+  )
 }
 
 function TooltipLi({ children }) {
-  return <li className='text-sm'>{children}</li>
+  return (
+    <li className='font-nunito-sans text-[0.95rem] leading-relaxed text-[var(--color-body)]'>
+      {children}
+    </li>
+  )
 }
 
 // Tooltip-friendly blockquote
 function TooltipBlockquote({ children }) {
   return (
-    <blockquote className='border-l-3 border-gray-300 pl-3 italic text-gray-600 text-sm mb-2'>
+    <blockquote className='font-nunito-sans mb-2 rounded-md border-l-2 border-[var(--color-surface-border)] bg-[var(--color-surface)]/70 py-2 pr-2 pl-3 text-[0.92rem] italic text-[var(--color-subtle)]'>
       {children}
     </blockquote>
   )
@@ -87,7 +103,7 @@ function TooltipBlockquote({ children }) {
 // Tooltip-friendly pre component
 function TooltipPre({ children }) {
   return (
-    <pre className='overflow-x-auto rounded bg-gray-900 text-white p-2 text-xs mb-2 max-w-full'>
+    <pre className='font-maple-mono mb-2 max-w-full overflow-x-auto rounded-xl border-2 border-[var(--color-surface-border)] bg-[var(--color-surface)] p-3 text-[0.85rem] text-[var(--color-heading)] shadow-[0_4px_15px_rgba(32,35,41,0.08)]'>
       {children}
     </pre>
   )
@@ -95,7 +111,11 @@ function TooltipPre({ children }) {
 
 // Tooltip-friendly emphasis
 function TooltipEm({ children }) {
-  return <em className='italic text-sm'>{children}</em>
+  return (
+    <em className='font-nunito-sans text-[0.95rem] italic text-[var(--color-subtle)]'>
+      {children}
+    </em>
+  )
 }
 
 // Components optimized for tooltip rendering
@@ -133,7 +153,7 @@ export function TooltipMDX({ source }: TooltipMDXProps) {
   }
 
   return (
-    <div className='prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>
+    <div className='prose prose-sm font-nunito-sans max-w-none text-[var(--color-body)] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>
       <MDXRemote {...source} components={tooltipComponents} />
     </div>
   )
