@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -12,23 +11,20 @@ interface NavLinkProps {
 export default function NavLink({ href, children }: NavLinkProps) {
   const pathname = usePathname()
   const isActive = pathname === href
+  const baseClasses =
+    'group relative m-1 inline-flex items-center justify-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-300 ease-out focus-visible:outline-offset-2 focus-visible:outline-neutral-800 hover:-translate-y-0.5'
 
   return (
-    <motion.div
-      className='relative m-1 py-1 px-2'
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.98 }}
+    <Link
+      href={href}
+      aria-current={isActive ? 'page' : undefined}
+      className={`${baseClasses} ${
+        isActive
+          ? 'bg-neutral-900/90 text-neutral-50 ring-1 ring-neutral-900/60'
+          : 'text-neutral-600 ring-1 ring-transparent hover:text-neutral-900 hover:ring-neutral-900/20'
+      }`}
     >
-      <Link
-        href={href}
-        className={`relative inline-block transition-colors duration-200 ${
-          isActive
-            ? 'border-b border-neutral-800 text-neutral-800'
-            : 'text-neutral-600 hover:text-neutral-800'
-        }`}
-      >
-        {children}
-      </Link>
-    </motion.div>
+      {children}
+    </Link>
   )
 }
