@@ -54,6 +54,7 @@ export function Navbar() {
                   alt='Atriiy'
                   width={96}
                   height={96}
+                  priority
                   className='-ml-3.5 rounded-full transition-all duration-300 ease-out hover:scale-110'
                 />
               </Link>
