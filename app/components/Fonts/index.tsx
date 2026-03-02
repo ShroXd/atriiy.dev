@@ -1,12 +1,12 @@
 import Font from './Font'
-import MapleMonoWrapper from './MapleMonoWrapper'
+import JetBrainsMonoWrapper from './JetBrainsMonoWrapper'
 import MontserratWrapper from './MontserratWrapper'
 import NunitoSansWrapper from './NunitoSansWrapper'
 import SpectralWrapper from './SpectralWrapper'
 
 export {
   Font,
-  MapleMonoWrapper,
+  JetBrainsMonoWrapper,
   MontserratWrapper,
   NunitoSansWrapper,
   SpectralWrapper,

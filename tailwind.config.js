@@ -6,7 +6,7 @@ module.exports = {
         baskerville: ['var(--font-libre-baskerville)', 'serif'],
         montserrat: ['var(--font-montserrat)', 'sans-serif'],
         'nunito-sans': ['var(--font-nunito-sans)', 'sans-serif'],
-        'maple-mono': ['Maple Mono', 'monospace'],
+        'jetbrains-mono': ['var(--font-jetbrains-mono)', 'monospace'],
       },
       keyframes: {
         gradient: {

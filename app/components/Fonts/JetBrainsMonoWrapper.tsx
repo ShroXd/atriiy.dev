@@ -4,24 +4,24 @@ import React from 'react'
 
 import Font from './Font'
 
-interface MapleMonoProps {
+interface JetBrainsMonoProps {
   children: React.ReactNode
   description?: string
 }
 
-const MapleMonoWrapper: React.FC<MapleMonoProps> = ({
+const JetBrainsMonoWrapper: React.FC<JetBrainsMonoProps> = ({
   children,
   description,
 }) => {
   return (
     <Font
-      name='Maple Mono'
+      name='JetBrains Mono'
       description={description || 'Code & monospaced text'}
-      fontFamily='var(--font-maple-mono)'
+      fontFamily='var(--font-jetbrains-mono)'
     >
       {children}
     </Font>
   )
 }
 
-export default MapleMonoWrapper
+export default JetBrainsMonoWrapper

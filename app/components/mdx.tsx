@@ -18,7 +18,7 @@ import AudioPlayer from './Audio'
 import Color from './Color'
 import DCTVisualization from './DCTVisualization'
 import {
-  MapleMonoWrapper,
+  JetBrainsMonoWrapper,
   MontserratWrapper,
   NunitoSansWrapper,
   SpectralWrapper,
@@ -57,7 +57,7 @@ function Code({ children, ...props }) {
   return (
     <code
       dangerouslySetInnerHTML={{ __html: codeHTML }}
-      className='font-maple-mono font-medium'
+      className='font-jetbrains-mono font-medium'
       {...props}
     />
   )
@@ -264,7 +264,7 @@ let components = {
   MontserratWrapper: MontserratWrapper,
   NunitoSansWrapper: NunitoSansWrapper,
   SpectralWrapper: SpectralWrapper,
-  MapleMonoWrapper: MapleMonoWrapper,
+  JetBrainsMonoWrapper: JetBrainsMonoWrapper,
   MotionEstimationVisualizer,
   VectorDecomposition,
   DCTVisualization,
@@ -282,7 +282,7 @@ let components = {
     }
 
     return (
-      <pre className='font-maple-mono'>
+      <pre className='font-jetbrains-mono'>
         <Code className={childClassName}>{code}</Code>
       </pre>
     )
@@ -295,7 +295,7 @@ let components = {
         </div>
       )
     }
-    return <Code className={`${className} font-maple-mono`}>{children}</Code>
+    return <Code className={`${className} font-jetbrains-mono`}>{children}</Code>
   },
 }
 

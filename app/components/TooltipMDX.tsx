@@ -13,7 +13,7 @@ function TooltipCode({ children, ...props }) {
   return (
     <code
       dangerouslySetInnerHTML={{ __html: codeHTML }}
-      className='font-maple-mono py-0.5 px-1.5 text-[0.85rem] font-medium text-[var(--color-heading)]'
+      className='font-jetbrains-mono py-0.5 px-1.5 text-[0.85rem] font-medium text-[var(--color-heading)]'
       {...props}
     />
   )
@@ -103,7 +103,7 @@ function TooltipBlockquote({ children }) {
 // Tooltip-friendly pre component
 function TooltipPre({ children }) {
   return (
-    <pre className='font-maple-mono mb-2 max-w-full overflow-x-auto rounded-xl border-2 border-[var(--color-surface-border)] bg-[var(--color-surface)] p-3 text-[0.85rem] text-[var(--color-heading)] shadow-[0_4px_15px_rgba(32,35,41,0.08)]'>
+    <pre className='font-jetbrains-mono mb-2 max-w-full overflow-x-auto rounded-xl border-2 border-[var(--color-surface-border)] bg-[var(--color-surface)] p-3 text-[0.85rem] text-[var(--color-heading)] shadow-[0_4px_15px_rgba(32,35,41,0.08)]'>
       {children}
     </pre>
   )
