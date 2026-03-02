@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="5" fill="#111111"/>
+  <!-- A centered using dominant-baseline + text-anchor -->
+  <text x="16" y="16" text-anchor="middle" dominant-baseline="central"
+    font-family="Georgia, 'Palatino Linotype', serif"
+    font-size="18" font-weight="700"
+    fill="#f5f0eb">A</text>
+  <!-- Amber cursor bar, nudged up slightly to sit just under the A -->
+  <rect x="20" y="23.5" width="5.5" height="1.8" rx="0.5" fill="#d4a96a" opacity="0.88"/>
+</svg>
