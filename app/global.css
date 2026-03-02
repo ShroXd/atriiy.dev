@@ -1,31 +1,6 @@
 /* Tailwind directives -------------------------------------------------- */
 @import 'tailwindcss';
 
-/* Custom font faces ---------------------------------------------------- */
-@font-face {
-  font-family: 'Maple Mono';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src:
-    url(https://cdn.jsdelivr.net/fontsource/fonts/maple-mono@latest/latin-400-normal.woff2)
-      format('woff2'),
-    url(https://cdn.jsdelivr.net/fontsource/fonts/maple-mono@latest/latin-400-normal.woff)
-      format('woff');
-}
-
-@font-face {
-  font-family: 'Maple Mono';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src:
-    url(https://cdn.jsdelivr.net/fontsource/fonts/maple-mono@latest/latin-500-normal.woff2)
-      format('woff2'),
-    url(https://cdn.jsdelivr.net/fontsource/fonts/maple-mono@latest/latin-500-normal.woff)
-      format('woff');
-}
-
 /* Base defaults -------------------------------------------------------- */
 @layer base {
   *,
@@ -68,7 +43,7 @@
   }
 
   :is(pre, code, kbd, samp) {
-    font-family: var(--font-maple-mono), monospace;
+    font-family: var(--font-jetbrains-mono), monospace;
     letter-spacing: 0;
   }
 
@@ -121,7 +96,7 @@
     --font-libre-baskerville: 'Libre Baskerville', serif;
     --font-montserrat: 'Montserrat', sans-serif;
     --font-nunito-sans: 'Nunito Sans', sans-serif;
-    --font-maple-mono: 'Maple Mono', monospace;
+    --font-jetbrains-mono: 'JetBrains Mono', monospace;
 
     --font-body: var(--font-nunito-sans);
     --font-heading: var(--font-montserrat);

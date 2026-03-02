@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import {
+  JetBrains_Mono,
   Libre_Baskerville,
   Montserrat,
   Nunito_Sans,
@@ -39,6 +40,12 @@ const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-nunito-sans',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 })
 
 export const metadata: Metadata = {
@@ -86,7 +93,8 @@ export default function RootLayout({
         spectral.variable,
         libreBaskerville.variable,
         montserrat.variable,
-        nunitoSans.variable
+        nunitoSans.variable,
+        jetbrainsMono.variable
       )}
     >
       <body className='font-nunito-sans mx-4 mt-8 max-w-6xl antialiased lg:mx-auto'>
