@@ -1,7 +1,6 @@
 import { BlogPosts } from 'app/components/posts'
 
 import BlurText from './components/BlurText/BlurText'
-import DecryptedText from './components/DecryptedText/DecryptedText'
 import FadeIn from './components/FadeIn'
 import PageTransition from './components/PageTransition'
 
