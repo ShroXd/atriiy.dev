@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <text x="60" y="60" text-anchor="middle" dominant-baseline="central"
+    font-family="Georgia, 'Palatino Linotype', serif"
+    font-size="62" font-weight="700"
+    fill="#111111">A</text>
+  <rect x="74" y="84" width="14" height="3" rx="1" fill="#d4a96a" opacity="0.88"/>
+</svg>

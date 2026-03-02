@@ -1,10 +1,10 @@
+import Image from 'next/image'
+import Link from 'next/link'
+
 import { BrandIcon } from './BrandIcon'
 import NavLink from './NavLink'
 
 const navItems = {
-  '/': {
-    name: 'home',
-  },
   '/blog': {
     name: 'blog',
   },
@@ -47,7 +47,16 @@ export function Navbar() {
           id='nav'
         >
           <div className='flex w-full flex-col flex-wrap gap-6 md:flex-row md:items-center md:justify-between'>
-            <div className='flex flex-row flex-wrap gap-x-6 gap-y-2'>
+            <div className='flex flex-row flex-wrap items-center gap-x-6 gap-y-2'>
+              <Link href='/' aria-label='Home'>
+                <Image
+                  src='/icon.svg'
+                  alt='Atriiy'
+                  width={96}
+                  height={96}
+                  className='-ml-3.5 rounded-full transition-all duration-300 ease-out hover:scale-110'
+                />
+              </Link>
               {Object.entries(navItems).map(([path, { name }]) => {
                 return (
                   <NavLink key={path} href={path}>
