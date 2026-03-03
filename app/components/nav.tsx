@@ -45,17 +45,15 @@ export function Navbar() {
           id='nav'
         >
           <div className='flex w-full flex-col flex-wrap gap-6 md:flex-row md:items-center md:justify-between'>
-            <div className='flex flex-row flex-wrap items-center gap-x-6 gap-y-2'>
+            <div className='flex flex-row flex-wrap items-center gap-2'>
               <NavIcon />
-              <div className='-ml-8'>
-                {Object.entries(navItems).map(([path, { name }]) => {
-                  return (
-                    <NavLink key={path} href={path}>
-                      {name}
-                    </NavLink>
-                  )
-                })}
-              </div>
+              {Object.entries(navItems).map(([path, { name }]) => {
+                return (
+                  <NavLink key={path} href={path}>
+                    {name}
+                  </NavLink>
+                )
+              })}
             </div>
             <ul className='flex flex-row items-center gap-3'>
               {socialLinks.map(link => (

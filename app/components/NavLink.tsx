@@ -12,7 +12,7 @@ export default function NavLink({ href, children }: NavLinkProps) {
   const pathname = usePathname()
   const isActive = pathname === href
   const baseClasses =
-    'group relative m-1 inline-flex items-center justify-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-300 ease-out focus-visible:outline-offset-2 focus-visible:outline-neutral-800 hover:-translate-y-0.5'
+    'group relative inline-flex items-center justify-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-300 ease-out focus-visible:outline-offset-2 focus-visible:outline-neutral-800 hover:-translate-y-0.5'
 
   return (
     <Link
