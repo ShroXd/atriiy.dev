@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 
 export default function BackLink() {
@@ -16,18 +15,29 @@ export default function BackLink() {
   }
 
   return (
-    <motion.div
-      className='relative inline-block'
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.98 }}
+    <button
+      type='button'
+      onClick={handleClick}
+      className='group flex items-center gap-1.5 text-sm opacity-50 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-[var(--color-link-hover)] hover:cursor-pointer focus-visible:outline-offset-2 focus-visible:outline-neutral-800'
     >
-      <button
-        type='button'
-        onClick={handleClick}
-        className='relative inline-block transition-all duration-300 ease-out hover:-translate-y-0.5 hover:cursor-pointer focus-visible:outline-offset-2 focus-visible:outline-neutral-800'
+      <svg
+        width='16'
+        height='16'
+        viewBox='0 0 16 16'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+        aria-hidden='true'
+        className='transition-transform duration-200 ease-out group-hover:-translate-x-0.5'
       >
-        cd ..
-      </button>
-    </motion.div>
+        <path
+          d='M10 12L6 8L10 4'
+          stroke='currentColor'
+          strokeWidth='1.5'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        />
+      </svg>
+      <span>back</span>
+    </button>
   )
 }
