@@ -1,10 +1,13 @@
-import { BlogPosts } from 'app/components/posts'
+import { getBlogPosts } from 'app/blog/utils'
 
 import BlurText from './components/BlurText/BlurText'
 import FadeIn from './components/FadeIn'
+import { HomeBlogList } from './components/HomeBlogList'
 import PageTransition from './components/PageTransition'
 
 export default function Page() {
+  const posts = getBlogPosts()
+
   return (
     <PageTransition>
       <section>
@@ -30,7 +33,7 @@ export default function Page() {
 
         <FadeIn delay={0.2}>
           <div className='my-8'>
-            <BlogPosts />
+            <HomeBlogList posts={posts} />
           </div>
         </FadeIn>
       </section>
