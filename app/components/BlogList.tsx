@@ -46,6 +46,7 @@ export function BlogList({ posts }: BlogListProps) {
         })
         .map(post => (
           <Link
+            key={post.slug}
             className='mb-4 flex flex-col space-y-1'
             href={`/blog/${post.slug}`}
           >
