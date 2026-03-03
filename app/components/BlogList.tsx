@@ -1,6 +1,5 @@
 'use client'
 
-import { formatDate } from 'app/lib/date'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -8,15 +7,13 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.08 },
   },
 }
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
+const listItem = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 }
 
 interface Post {
@@ -32,82 +29,82 @@ interface BlogListProps {
   posts: Post[]
 }
 
-export function BlogList({ posts }: BlogListProps) {
+function formatListDate(dateStr: string) {
+  const d = new Date(dateStr)
+  const year = d.getFullYear()
+  const month = d.toLocaleDateString('en-US', { month: 'short' })
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year} ${month} ${day}`
+}
+
+function DraftTitle({ title }: { title: string }) {
   return (
-    <motion.div variants={container} initial='hidden' animate='show'>
-      {posts
-        .sort((a, b) => {
-          if (
-            new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
-          ) {
-            return -1
-          }
-          return 1
-        })
-        .map(post => (
+    <motion.span className='inline-flex items-center gap-2'>
+      <motion.span
+        className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text font-medium text-transparent'
+        animate={{
+          opacity: [0.8, 1, 0.8],
+          backgroundPosition: ['0%', '100%', '0%'],
+        }}
+        transition={{
+          opacity: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
+          backgroundPosition: {
+            repeat: Infinity,
+            duration: 3,
+            ease: 'linear',
+          },
+        }}
+      >
+        {title}
+      </motion.span>
+      <motion.span
+        animate={{ y: [0, -3, 0], rotate: [0, -5, 0, 5, 0] }}
+        transition={{
+          y: { repeat: Infinity, duration: 1.5, ease: 'easeInOut' },
+          rotate: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
+        }}
+        title='Work in Progress'
+      >
+        🚧
+      </motion.span>
+    </motion.span>
+  )
+}
+
+export function BlogList({ posts }: BlogListProps) {
+  const sorted = [...posts].sort(
+    (a, b) =>
+      new Date(b.metadata.publishedAt).getTime() -
+      new Date(a.metadata.publishedAt).getTime()
+  )
+
+  return (
+    <motion.ul variants={container} initial='hidden' animate='show'>
+      {sorted.map(post => (
+        <motion.li key={post.slug} variants={listItem}>
           <Link
-            key={post.slug}
-            className='mb-4 flex flex-col space-y-1'
             href={`/blog/${post.slug}`}
+            className='group flex items-baseline gap-6 border-b border-[var(--color-surface-border)] py-3 last:border-b-0'
           >
-            <div className='group space-x-0 md:flex-row md:space-x-2'>
-              <span className='font-montserrat tracking-tight text-neutral-600 transition-all duration-200 group-hover:text-neutral-800'>
-                {post.metadata.draft ? (
-                  <motion.div className='inline-flex items-center'>
-                    <motion.span
-                      className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text font-medium text-transparent'
-                      animate={{
-                        opacity: [0.8, 1, 0.8],
-                        backgroundPosition: ['0%', '100%', '0%'],
-                      }}
-                      transition={{
-                        opacity: {
-                          repeat: Infinity,
-                          duration: 3,
-                          ease: 'easeInOut',
-                        },
-                        backgroundPosition: {
-                          repeat: Infinity,
-                          duration: 3,
-                          ease: 'linear',
-                        },
-                      }}
-                    >
-                      {post.metadata.title}
-                    </motion.span>
-                    <motion.span
-                      className='ml-2'
-                      animate={{
-                        y: [0, -3, 0],
-                        rotate: [0, -5, 0, 5, 0],
-                      }}
-                      transition={{
-                        y: {
-                          repeat: Infinity,
-                          duration: 1.5,
-                          ease: 'easeInOut',
-                        },
-                        rotate: {
-                          repeat: Infinity,
-                          duration: 2,
-                          ease: 'easeInOut',
-                        },
-                      }}
-                      title='Work in Progress'
-                    >
-                      🚧
-                    </motion.span>
-                  </motion.div>
-                ) : (
-                  <span className='inline-block'>{post.metadata.title}</span>
-                )}
-                <span className='ml-6 text-xs tabular-nums text-neutral-500 transition-colors duration-200 group-hover:text-neutral-600'>
-                  {formatDate(post.metadata.publishedAt)}
-                </span>
-              </span>
-            </div>
+            <time
+              dateTime={post.metadata.publishedAt}
+              className='w-32 shrink-0 font-mono text-xs tabular-nums text-neutral-400 dark:text-neutral-500'
+            >
+              {formatListDate(post.metadata.publishedAt)}
+            </time>
+            <span className='font-montserrat tracking-tight text-[var(--color-heading)] transition-colors duration-200 group-hover:text-[var(--color-link-hover)]'>
+              {post.metadata.draft ? (
+                <DraftTitle title={post.metadata.title} />
+              ) : (
+                post.metadata.title
+              )}
+            </span>
+            <span className='ml-auto translate-x-0 text-sm text-[var(--color-link-hover)] opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100'>
+              →
+            </span>
           </Link>
-        ))}
-    </motion.div>
+        </motion.li>
+      ))}
+    </motion.ul>
   )
 }

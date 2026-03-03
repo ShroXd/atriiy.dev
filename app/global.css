@@ -87,6 +87,7 @@
     --color-accent-foreground: #fefefe;
     --color-accent-soft: rgba(71, 163, 243, 0.12);
     --color-accent-soft-border: rgba(71, 163, 243, 0.45);
+    --color-link-hover: #d4a96a;
 
     --radius-lg: 0.75rem;
     --radius-pill: 999px;

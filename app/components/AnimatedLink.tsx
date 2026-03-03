@@ -25,7 +25,7 @@ export default function AnimatedLink({ href, children }: AnimatedLinkProps) {
     <motion.span className='relative inline-block' whileTap={{ scale: 0.98 }}>
       <Component
         href={href}
-        className='group relative inline-block font-semibold text-[var(--color-heading)] underline decoration-[var(--color-accent)] decoration-2 underline-offset-4 transition-colors duration-300 ease-out hover:text-[var(--color-accent)]'
+        className='group relative inline-block font-semibold text-[var(--color-heading)] underline decoration-[var(--color-link-hover)] decoration-2 underline-offset-4 transition-colors duration-300 ease-out hover:text-[var(--color-link-hover)]'
         {...linkProps}
       >
         {children}
