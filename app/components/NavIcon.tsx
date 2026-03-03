@@ -11,7 +11,7 @@ export function NavIcon() {
   return (
     <Link href='/' aria-label='Home'>
       <Image
-        src='/icon.svg'
+        src='/icon-animated.svg'
         alt='Atriiy'
         width={96}
         height={96}
