@@ -8,11 +8,11 @@ export default function Page() {
   return (
     <PageTransition>
       <section>
-        <FadeIn delay={0.2}>
+        <FadeIn>
           <h1 className='font-montserrat'>
             <BlurText
               text={`Hello, I'm Atriiy!`}
-              delay={150}
+              delay={100}
               animateBy='words'
               direction='top'
               className='mb-2 text-2xl font-semibold'
@@ -20,7 +20,7 @@ export default function Page() {
           </h1>
         </FadeIn>
 
-        <FadeIn delay={0.4}>
+        <FadeIn delay={0.1}>
           <div className='h-28 md:h-20 lg:h-20'>
             Dev, using TypeScript, Rust and Golang. Vim fan. Eighteen plus
             eleven years old now, still have hair, wanna learn many things.
@@ -28,7 +28,7 @@ export default function Page() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.6}>
+        <FadeIn delay={0.2}>
           <div className='my-8'>
             <BlogPosts />
           </div>
