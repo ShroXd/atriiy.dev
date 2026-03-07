@@ -22,7 +22,7 @@ export default function Page() {
         </FadeIn>
 
         <FadeIn delay={0.35} className='mt-10'>
-          <ReadingList entries={allEntries} />
+          <ReadingList data={allEntries} />
         </FadeIn>
       </section>
     </PageTransition>
