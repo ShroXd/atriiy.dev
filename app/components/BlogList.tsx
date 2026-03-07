@@ -31,10 +31,13 @@ interface BlogListProps {
 
 function formatListDate(dateStr: string) {
   const d = new Date(dateStr)
-  const year = d.getFullYear()
   const month = d.toLocaleDateString('en-US', { month: 'short' })
   const day = String(d.getDate()).padStart(2, '0')
-  return `${year} ${month} ${day}`
+  return `${month} ${day}`
+}
+
+function getYear(dateStr: string) {
+  return new Date(dateStr).getFullYear()
 }
 
 function DraftTitle({ title }: { title: string }) {
@@ -78,33 +81,44 @@ export function BlogList({ posts }: BlogListProps) {
       new Date(a.metadata.publishedAt).getTime()
   )
 
+  const years = Array.from(new Set(sorted.map(p => getYear(p.metadata.publishedAt)))).sort((a, b) => b - a)
+
   return (
-    <motion.ul variants={container} initial='hidden' animate='show'>
-      {sorted.map(post => (
-        <motion.li key={post.slug} variants={listItem}>
-          <Link
-            href={`/blog/${post.slug}`}
-            className='group flex items-baseline gap-6 border-b border-[var(--color-surface-border)] py-3 last:border-b-0'
-          >
-            <time
-              dateTime={post.metadata.publishedAt}
-              className='w-32 shrink-0 font-mono text-xs tabular-nums text-neutral-400 dark:text-neutral-500'
-            >
-              {formatListDate(post.metadata.publishedAt)}
-            </time>
-            <span className='font-montserrat tracking-tight text-[var(--color-heading)] transition-colors duration-200 group-hover:text-[var(--color-link-hover)]'>
-              {post.metadata.draft ? (
-                <DraftTitle title={post.metadata.title} />
-              ) : (
-                post.metadata.title
-              )}
-            </span>
-            <span className='ml-auto translate-x-0 text-sm text-[var(--color-link-hover)] opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100'>
-              →
-            </span>
-          </Link>
-        </motion.li>
+    <motion.div variants={container} initial='hidden' animate='show' className='space-y-10'>
+      {years.map(year => (
+        <div key={year}>
+          <p className='mb-5 font-mono text-xs text-neutral-400'>{year}</p>
+          <ul>
+            {sorted
+              .filter(p => getYear(p.metadata.publishedAt) === year)
+              .map(post => (
+                <motion.li key={post.slug} variants={listItem}>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className='group flex items-baseline gap-6 border-b border-[var(--color-surface-border)] py-3 last:border-b-0'
+                  >
+                    <time
+                      dateTime={post.metadata.publishedAt}
+                      className='w-14 shrink-0 font-mono text-xs tabular-nums text-neutral-400 dark:text-neutral-500'
+                    >
+                      {formatListDate(post.metadata.publishedAt)}
+                    </time>
+                    <span className='font-montserrat tracking-tight text-[var(--color-heading)] transition-colors duration-200 group-hover:text-[var(--color-link-hover)]'>
+                      {post.metadata.draft ? (
+                        <DraftTitle title={post.metadata.title} />
+                      ) : (
+                        post.metadata.title
+                      )}
+                    </span>
+                    <span className='ml-auto translate-x-0 text-sm text-[var(--color-link-hover)] opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100'>
+                      →
+                    </span>
+                  </Link>
+                </motion.li>
+              ))}
+          </ul>
+        </div>
       ))}
-    </motion.ul>
+    </motion.div>
   )
 }
