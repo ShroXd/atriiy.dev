@@ -174,7 +174,7 @@ export default function LikeButton({ postId }: LikeButtonProps) {
             ref={buttonRef}
             onClick={handleLike}
             aria-label={liked ? `${likes} likes` : 'Like this post'}
-            className='group flex items-center gap-1.5 rounded-full py-1.5 px-3 text-sm font-medium transition-colors duration-200'
+            className='like-btn group flex items-center gap-1.5 rounded-full py-1.5 px-3 text-sm font-medium transition-all duration-200 hover:scale-110'
             style={{
               backgroundColor: liked
                 ? 'var(--color-like-soft)'
