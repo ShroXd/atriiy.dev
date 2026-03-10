@@ -6,12 +6,13 @@ import { formatDate } from 'app/lib/date'
 import { motion } from 'framer-motion'
 
 import BackLink from './BackLink'
-import Comments from './Comments'
 import FadeIn from './FadeIn'
+import LikeButton from './LikeButton'
 
 interface BlogContentProps {
   title: string
   publishedAt: string
+  slug: string
   isDraft?: boolean
   children: ReactNode
 }
@@ -19,6 +20,7 @@ interface BlogContentProps {
 export default function BlogContent({
   title,
   publishedAt,
+  slug,
   isDraft = false,
   children,
 }: BlogContentProps) {
@@ -27,7 +29,7 @@ export default function BlogContent({
       <div className='flex items-center'>
         <FadeIn delay={0.1}>
           {/* Can we try better shiny animation from Twitter? */}
-          <h1 className='font-montserrat text-2xl font-semibold tracking-tighter whitespace-pre-wrap break-words'>
+          <h1 className='font-montserrat whitespace-pre-wrap break-words text-2xl font-semibold tracking-tighter'>
             {isDraft ? (
               <motion.span
                 className='inline-block bg-gradient-to-r from-neutral-600 via-neutral-500 to-neutral-600 bg-clip-text text-transparent'
@@ -106,12 +108,13 @@ export default function BlogContent({
       </FadeIn>
 
       <FadeIn delay={0.35}>
-        <hr className='my-12 border-t border-neutral-200 dark:border-neutral-700' />
+        <div className='mt-10 flex items-center gap-3'>
+          {!isDraft && <LikeButton postId={slug} />}
+        </div>
+        <hr className='my-8 border-t border-neutral-200 dark:border-neutral-700' />
       </FadeIn>
 
-      <FadeIn delay={0.4}>{!isDraft && <Comments />}</FadeIn>
-
-      <FadeIn delay={0.5}>
+      <FadeIn delay={0.4}>
         <div className='mt-8 mb-4'>
           <BackLink />
         </div>

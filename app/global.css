@@ -88,6 +88,9 @@
     --color-accent-soft: rgba(71, 163, 243, 0.12);
     --color-accent-soft-border: rgba(71, 163, 243, 0.45);
     --color-link-hover: #d4a96a;
+    --color-like: #d64f4f;
+    --color-like-soft: rgba(214, 79, 79, 0.1);
+    --color-like-soft-border: rgba(214, 79, 79, 0.3);
 
     --radius-lg: 0.75rem;
     --radius-pill: 999px;
@@ -330,4 +333,41 @@
   .prose {
     letter-spacing: -0.01em;
   }
+}
+
+
+@keyframes like-burst {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(0.82); }
+  60%  { transform: scale(1.18); }
+  80%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+@keyframes particle-fly {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0.4); }
+}
+
+@keyframes share-pop-in {
+  0%   { opacity: 0; transform: translateX(10px) scale(0.85); }
+  60%  { transform: translateX(-3px) scale(1.04); }
+  80%  { transform: translateX(2px) scale(0.98); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes share-text-in {
+  0%   { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes share-label-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes share-nudge {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(-10deg) scale(1.1); }
+  75%  { transform: rotate(8deg) scale(1.1); }
 }
