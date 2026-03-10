@@ -87,6 +87,7 @@ export default function Blog({ params }) {
       <BlogContent
         title={post.metadata.title}
         publishedAt={post.metadata.publishedAt}
+        slug={post.slug}
         isDraft={post.metadata.draft}
       >
         <CustomMDX source={post.content} frontmatter={post.metadata} />

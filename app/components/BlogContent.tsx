@@ -8,10 +8,12 @@ import { motion } from 'framer-motion'
 import BackLink from './BackLink'
 import Comments from './Comments'
 import FadeIn from './FadeIn'
+import LikeButton from './LikeButton'
 
 interface BlogContentProps {
   title: string
   publishedAt: string
+  slug: string
   isDraft?: boolean
   children: ReactNode
 }
@@ -19,6 +21,7 @@ interface BlogContentProps {
 export default function BlogContent({
   title,
   publishedAt,
+  slug,
   isDraft = false,
   children,
 }: BlogContentProps) {
@@ -106,7 +109,10 @@ export default function BlogContent({
       </FadeIn>
 
       <FadeIn delay={0.35}>
-        <hr className='my-12 border-t border-neutral-200 dark:border-neutral-700' />
+        <div className='mt-8 flex items-center gap-3'>
+          {!isDraft && <LikeButton postId={slug} />}
+        </div>
+        <hr className='my-8 border-t border-neutral-200 dark:border-neutral-700' />
       </FadeIn>
 
       <FadeIn delay={0.4}>{!isDraft && <Comments />}</FadeIn>
