@@ -88,6 +88,9 @@
     --color-accent-soft: rgba(71, 163, 243, 0.12);
     --color-accent-soft-border: rgba(71, 163, 243, 0.45);
     --color-link-hover: #d4a96a;
+    --color-like: #d64f4f;
+    --color-like-soft: rgba(214, 79, 79, 0.1);
+    --color-like-soft-border: rgba(214, 79, 79, 0.3);
 
     --radius-lg: 0.75rem;
     --radius-pill: 999px;
@@ -330,4 +333,18 @@
   .prose {
     letter-spacing: -0.01em;
   }
+}
+
+
+@keyframes like-burst {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(0.82); }
+  60%  { transform: scale(1.18); }
+  80%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+@keyframes particle-fly {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0.4); }
 }
