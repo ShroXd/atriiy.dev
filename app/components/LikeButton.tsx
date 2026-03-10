@@ -173,7 +173,6 @@ export default function LikeButton({ postId }: LikeButtonProps) {
           <button
             ref={buttonRef}
             onClick={handleLike}
-            disabled={pending}
             aria-label={liked ? `${likes} likes` : 'Like this post'}
             className='group flex items-center gap-1.5 rounded-full py-1.5 px-3 text-sm font-medium transition-colors duration-200'
             style={{
@@ -182,7 +181,7 @@ export default function LikeButton({ postId }: LikeButtonProps) {
                 : 'var(--color-surface)',
               border: `1px solid ${liked ? 'var(--color-like-soft-border)' : 'var(--color-surface-border)'}`,
               color: liked ? 'var(--color-like)' : 'var(--color-subtle)',
-              cursor: pending ? 'default' : 'pointer',
+              cursor: 'pointer',
             }}
           >
             <HeartIcon filled={liked} />
