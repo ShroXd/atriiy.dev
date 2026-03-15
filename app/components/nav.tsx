@@ -32,6 +32,12 @@ const socialLinks: SocialLink[] = [
     external: true,
   },
   {
+    href: 'https://bsky.app/profile/atriiy.dev',
+    label: 'Bsky profile',
+    icon: 'siBluesky',
+    external: true,
+  },
+  {
     href: '/rss',
     label: 'RSS feed',
     icon: 'siRss',
