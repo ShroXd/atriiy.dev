@@ -1,8 +1,7 @@
-import { formatDate, getBlogPosts } from 'app/blog/utils'
+import { getBlogPosts } from 'app/blog/utils'
 import BlogContent from 'app/components/BlogContent'
 import { CustomMDX } from 'app/components/mdx'
 import { baseUrl } from 'app/sitemap'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
@@ -13,10 +12,10 @@ export async function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({ params }) {
+export function generateMetadata({ params }): import('next').Metadata {
   let post = getBlogPosts().find(post => post.slug === params.slug)
   if (!post) {
-    return
+    return {}
   }
 
   let {
@@ -79,7 +78,7 @@ export default function Blog({ params }) {
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               '@type': 'Person',
-              name: 'My Portfolio',
+              name: 'Atriiy',
             },
           }),
         }}

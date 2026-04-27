@@ -65,6 +65,12 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Atriiy',
+    description:
+      'Dev, using TypeScript, Rust and Golang. Writing, reading, and playing video games.',
+  },
   icons: {
     icon: '/favicon.svg',
   },
