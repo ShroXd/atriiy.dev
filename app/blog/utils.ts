@@ -5,10 +5,9 @@ import { getMDXData, type MDXEntry } from 'app/lib/mdx'
 type Metadata = {
   title: string
   publishedAt: string
-  summary: string
+  description: string
   image?: string
   draft?: boolean
-  description?: string
   tags?: string[]
 }
 
